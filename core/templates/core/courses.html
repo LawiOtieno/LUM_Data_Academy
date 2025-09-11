@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load currency_filters %}
 
 {% block title %}Courses - LUM Data Academy{% endblock %}
 
@@ -163,20 +164,52 @@
                             <div>
                                 {% if course.discount_price %}
                                 <div class="flex items-center">
+                                    {% if selected_currency == 'USD' %}
                                     <span class="text-2xl font-bold text-primary">
-                                        {{ course.get_currency_symbol:selected_currency }}{{ course.get_price_in_currency:selected_currency|floatformat:0 }}
+                                        ${{ course.get_display_price|floatformat:0 }}
                                     </span>
                                     <span class="text-lg text-gray-500 line-through ml-2">
-                                        {{ course.get_currency_symbol:selected_currency }}{{ course.get_original_price_in_currency:selected_currency|floatformat:0 }}
+                                        ${{ course.price|floatformat:0 }}
                                     </span>
+                                    {% elif selected_currency == 'NGN' %}
+                                    <span class="text-2xl font-bold text-primary">
+                                        ₦{{ course.get_display_price|multiply:800|floatformat:0 }}
+                                    </span>
+                                    <span class="text-lg text-gray-500 line-through ml-2">
+                                        ₦{{ course.price|multiply:800|floatformat:0 }}
+                                    </span>
+                                    {% else %}
+                                    <span class="text-2xl font-bold text-primary">
+                                        KShs.{{ course.get_display_price|multiply:150|floatformat:0 }}
+                                    </span>
+                                    <span class="text-lg text-gray-500 line-through ml-2">
+                                        KShs.{{ course.price|multiply:150|floatformat:0 }}
+                                    </span>
+                                    {% endif %}
                                 </div>
                                 <div class="text-sm text-green-600 font-medium">
-                                    Save {{ course.get_currency_symbol:selected_currency }}{{ course.get_savings|floatformat:0 }}!
+                                    {% if selected_currency == 'USD' %}
+                                    Save ${{ course.get_savings|floatformat:0 }}!
+                                    {% elif selected_currency == 'NGN' %}
+                                    Save ₦{{ course.get_savings|multiply:800|floatformat:0 }}!
+                                    {% else %}
+                                    Save KShs.{{ course.get_savings|multiply:150|floatformat:0 }}!
+                                    {% endif %}
                                 </div>
                                 {% else %}
+                                {% if selected_currency == 'USD' %}
                                 <span class="text-2xl font-bold text-primary">
-                                    {{ course.get_currency_symbol:selected_currency }}{{ course.get_price_in_currency:selected_currency|floatformat:0 }}
+                                    ${{ course.price|floatformat:0 }}
                                 </span>
+                                {% elif selected_currency == 'NGN' %}
+                                <span class="text-2xl font-bold text-primary">
+                                    ₦{{ course.price|multiply:800|floatformat:0 }}
+                                </span>
+                                {% else %}
+                                <span class="text-2xl font-bold text-primary">
+                                    KShs.{{ course.price|multiply:150|floatformat:0 }}
+                                </span>
+                                {% endif %}
                                 {% endif %}
                             </div>
                             <a href="{% url 'core:course_detail' course.slug %}" 

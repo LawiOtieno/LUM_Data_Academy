@@ -94,7 +94,7 @@ class Course(models.Model):
             return base_price * self.USD_TO_KES_RATE
         elif currency == 'NGN':
             return base_price * self.USD_TO_NGN_RATE
-        return base_price
+        return base_price * self.USD_TO_KES_RATE  # Default to KES
     
     def get_original_price_in_currency(self, currency='KES'):
         """Get original price in specified currency"""
@@ -104,7 +104,7 @@ class Course(models.Model):
             return self.price * self.USD_TO_KES_RATE
         elif currency == 'NGN':
             return self.price * self.USD_TO_NGN_RATE
-        return self.price
+        return self.price * self.USD_TO_KES_RATE  # Default to KES
     
     def get_currency_symbol(self, currency='KES'):
         """Get currency symbol"""
@@ -114,6 +114,29 @@ class Course(models.Model):
             'NGN': '₦'
         }
         return symbols.get(currency, 'KShs.')
+    
+    # Template-friendly properties that use default KES currency
+    @property
+    def price_kes(self):
+        """Price in Kenya Shillings"""
+        return self.get_price_in_currency('KES')
+    
+    @property
+    def original_price_kes(self):
+        """Original price in Kenya Shillings"""
+        return self.get_original_price_in_currency('KES')
+    
+    @property
+    def currency_symbol_kes(self):
+        """Currency symbol for Kenya Shillings"""
+        return self.get_currency_symbol('KES')
+    
+    @property
+    def savings_kes(self):
+        """Savings amount in Kenya Shillings"""
+        if self.discount_price:
+            return (self.price - self.discount_price) * self.USD_TO_KES_RATE
+        return 0
     
     def __str__(self):
         return self.title
