@@ -31,10 +31,26 @@ class CustomUserCreationForm(UserCreationForm):
             'placeholder': 'Enter your last name'
         })
     )
+    country = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent',
+            'placeholder': 'Enter your country'
+        })
+    )
+    state_city = forms.CharField(
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent',
+            'placeholder': 'Enter your state/city'
+        })
+    )
     
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+        fields = ('username', 'first_name', 'last_name', 'email', 'country', 'state_city', 'password1', 'password2')
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -76,6 +92,12 @@ class CustomUserCreationForm(UserCreationForm):
         user.last_name = self.cleaned_data['last_name']
         if commit:
             user.save()
+            # Update user profile with location data
+            profile, created = user.userprofile
+            if hasattr(user, 'userprofile'):
+                user.userprofile.country = self.cleaned_data['country']
+                user.userprofile.state_city = self.cleaned_data['state_city']
+                user.userprofile.save()
         return user
 
 
@@ -86,7 +108,7 @@ class UserProfileForm(forms.ModelForm):
         model = UserProfile
         fields = [
             'phone_number', 'bio', 'profile_image', 'date_of_birth',
-            'location', 'linkedin_profile', 'github_profile', 'website'
+            'location', 'country', 'state_city', 'linkedin_profile', 'github_profile', 'website'
         ]
         widgets = {
             'phone_number': forms.TextInput(attrs={
@@ -110,6 +132,14 @@ class UserProfileForm(forms.ModelForm):
                 'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent',
                 'placeholder': 'Enter your location'
             }),
+            'country': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent',
+                'placeholder': 'Enter your country'
+            }),
+            'state_city': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent',
+                'placeholder': 'Enter your state/city'
+            }),
             'linkedin_profile': forms.URLInput(attrs={
                 'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent',
                 'placeholder': 'https://linkedin.com/in/yourprofile'
@@ -129,6 +159,8 @@ class UserProfileForm(forms.ModelForm):
             'profile_image': 'Profile Picture',
             'date_of_birth': 'Date of Birth',
             'location': 'Location',
+            'country': 'Country',
+            'state_city': 'State/City',
             'linkedin_profile': 'LinkedIn Profile',
             'github_profile': 'GitHub Profile',
             'website': 'Personal Website',

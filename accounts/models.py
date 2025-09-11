@@ -19,6 +19,8 @@ class UserProfile(models.Model):
     profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     location = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    state_city = models.CharField(max_length=100, blank=True)
     linkedin_profile = models.URLField(blank=True)
     github_profile = models.URLField(blank=True)
     website = models.URLField(blank=True)
@@ -50,7 +52,7 @@ class UserProfile(models.Model):
     
     def get_profile_completion_percentage(self):
         """Calculate profile completion percentage"""
-        total_fields = 8
+        total_fields = 10
         completed_fields = 0
         
         if self.user.first_name and self.user.last_name:
@@ -64,6 +66,10 @@ class UserProfile(models.Model):
         if self.date_of_birth:
             completed_fields += 1
         if self.location:
+            completed_fields += 1
+        if self.country:
+            completed_fields += 1
+        if self.state_city:
             completed_fields += 1
         if self.linkedin_profile or self.github_profile or self.website:
             completed_fields += 1

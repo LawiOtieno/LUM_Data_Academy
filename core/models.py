@@ -42,6 +42,9 @@ class Course(models.Model):
     course_syllabus = CKEditor5Field(config_name='extends', blank=True, help_text="Detailed course syllabus")
     price = models.DecimalField(max_digits=10, decimal_places=2)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    # Exchange rates (base currency: USD)
+    USD_TO_KES_RATE = 150.0  # 1 USD = 150 KES (approximate)
+    USD_TO_NGN_RATE = 800.0  # 1 USD = 800 NGN (approximate)
     course_pdf = models.FileField(upload_to='course_pdfs/', blank=True, null=True)
     image = models.ImageField(upload_to='course_images/', blank=True, null=True)
     video_intro_url = models.URLField(blank=True, help_text="YouTube or Vimeo URL for course intro")
@@ -80,6 +83,37 @@ class Course(models.Model):
         if self.discount_price and self.price > 0:
             return int(((self.price - self.discount_price) / self.price) * 100)
         return 0
+    
+    def get_price_in_currency(self, currency='KES'):
+        """Convert price to specified currency"""
+        base_price = self.get_display_price()
+        
+        if currency == 'USD':
+            return base_price
+        elif currency == 'KES':
+            return base_price * self.USD_TO_KES_RATE
+        elif currency == 'NGN':
+            return base_price * self.USD_TO_NGN_RATE
+        return base_price
+    
+    def get_original_price_in_currency(self, currency='KES'):
+        """Get original price in specified currency"""
+        if currency == 'USD':
+            return self.price
+        elif currency == 'KES':
+            return self.price * self.USD_TO_KES_RATE
+        elif currency == 'NGN':
+            return self.price * self.USD_TO_NGN_RATE
+        return self.price
+    
+    def get_currency_symbol(self, currency='KES'):
+        """Get currency symbol"""
+        symbols = {
+            'USD': '$',
+            'KES': 'KShs.',
+            'NGN': '₦'
+        }
+        return symbols.get(currency, 'KShs.')
     
     def __str__(self):
         return self.title

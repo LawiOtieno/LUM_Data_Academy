@@ -50,6 +50,7 @@ def courses(request):
     categories = CourseCategory.objects.all()
     category_slug = request.GET.get('category')
     search_query = request.GET.get('search')
+    selected_currency = request.GET.get('currency', 'KES')
     
     courses_list = Course.objects.filter(is_active=True)
     
@@ -63,11 +64,19 @@ def courses(request):
     page_number = request.GET.get('page')
     courses_page = paginator.get_page(page_number)
     
+    currencies = [
+        {'code': 'KES', 'name': 'Kenyan Shillings', 'symbol': 'KShs.'},
+        {'code': 'USD', 'name': 'US Dollars', 'symbol': '$'},
+        {'code': 'NGN', 'name': 'Nigerian Nairas', 'symbol': '₦'},
+    ]
+    
     context = {
         'courses': courses_page,
         'categories': categories,
         'current_category': category_slug,
         'search_query': search_query,
+        'currencies': currencies,
+        'selected_currency': selected_currency,
     }
     return render(request, 'core/courses.html', context)
 
@@ -80,9 +89,18 @@ def course_detail(request, slug):
         is_active=True
     ).exclude(id=course.id)[:3]
     
+    selected_currency = request.GET.get('currency', 'KES')
+    currencies = [
+        {'code': 'KES', 'name': 'Kenyan Shillings', 'symbol': 'KShs.'},
+        {'code': 'USD', 'name': 'US Dollars', 'symbol': '$'},
+        {'code': 'NGN', 'name': 'Nigerian Nairas', 'symbol': '₦'},
+    ]
+    
     context = {
         'course': course,
         'related_courses': related_courses,
+        'currencies': currencies,
+        'selected_currency': selected_currency,
     }
     return render(request, 'core/course_detail.html', context)
 
