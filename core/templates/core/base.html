@@ -1,24 +1,25 @@
+
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}LUM Data Academy - Equipping Africa with Future-Ready Data Skills{% endblock %}</title>
-
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Linden+Hill:ital,wght@0,400;1,400&family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    
     <!-- AOS Animation Library -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
+    
     <!-- Custom Tailwind Config -->
     <script>
         tailwind.config = {
@@ -71,19 +72,19 @@
             }
         }
     </script>
-
+    
     <!-- Meta tags -->
     <meta name="description" content="{% block description %}LUM Data Academy - Premier data science and analytics training institution in Africa. Learn Python, AI, Machine Learning, Power BI, and more with industry experts.{% endblock %}">
     <meta name="keywords" content="data science training, python courses kenya, AI courses africa, machine learning bootcamp, power bi training, data analytics course">
     <meta name="author" content="LUM Data Academy">
-
+    
     <!-- Open Graph -->
     <meta property="og:title" content="{% block og_title %}LUM Data Academy{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Equipping Africa with Future-Ready Data Skills{% endblock %}">
     <meta property="og:image" content="{% block og_image %}{% load static %}{% static 'core/img/logo.jpg' %}{% endblock %}">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
     <meta property="og:type" content="website">
-
+    
     {% block extra_css %}{% endblock %}
 </head>
 <body class="bg-gray-50 font-linden">
@@ -111,7 +112,7 @@
                         <span class="text-xl font-bold text-primary">LUM Data Academy</span>
                     </a>
                 </div>
-
+                
                 <!-- Desktop Menu -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
@@ -130,7 +131,7 @@
                         {% endif %}
                     </div>
                 </div>
-
+                
                 <!-- Mobile menu button -->
                 <div class="md:hidden">
                     <button type="button" class="mobile-menu-button bg-transparent p-2 rounded-md text-gray-600 hover:text-primary transition-colors duration-200 z-50 relative">
@@ -143,7 +144,7 @@
                 </div>
             </div>
         </div>
-
+        
         <!-- Mobile Menu Slide-in -->
         <div class="mobile-menu fixed top-0 right-0 h-full w-1/2 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-50 md:hidden">
             <div class="flex flex-col h-full">
@@ -151,7 +152,7 @@
                 <div class="bg-primary text-white p-6">
                     <h3 class="text-lg font-bold">Menu</h3>
                 </div>
-
+                
                 <!-- Menu Items -->
                 <div class="flex-1 p-6 space-y-4">
                     <a href="{% url 'core:home' %}" class="mobile-nav-button {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
@@ -172,21 +173,21 @@
                     <a href="{% url 'core:contact' %}" class="mobile-nav-button {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
                         <i class="fas fa-envelope mr-3"></i>Contact
                     </a>
-
+                    
                     <!-- Authentication Links -->
                     <div class="border-t border-gray-200 pt-4 mt-6">
                         {% if user.is_authenticated %}
                             <a href="{% url 'accounts:dashboard' %}" class="mobile-nav-button">
                                 <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
                             </a>
-                            <a href="{% url 'accounts:logout' %}" class="mobile-nav-button logout-button">
+                            <a href="{% url 'accounts:logout' %}" class="mobile-nav-button bg-red-50 text-red-600 border-red-200">
                                 <i class="fas fa-sign-out-alt mr-3"></i>Logout
                             </a>
                         {% else %}
                             <a href="{% url 'accounts:login' %}" class="mobile-nav-button">
                                 <i class="fas fa-sign-in-alt mr-3"></i>Login
                             </a>
-                            <a href="{% url 'accounts:register' %}" class="mobile-nav-button register-button">
+                            <a href="{% url 'accounts:register' %}" class="mobile-nav-button bg-secondary text-white border-secondary shadow-lg">
                                 <i class="fas fa-user-plus mr-3"></i>Get Started
                             </a>
                         {% endif %}
@@ -212,7 +213,7 @@
                 {% endfor %}
             </div>
         {% endif %}
-
+        
         {% block content %}
         {% endblock %}
     </main>
@@ -240,7 +241,7 @@
                         </a>
                     </div>
                 </div>
-
+                
                 <!-- Quick Links -->
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
@@ -252,7 +253,7 @@
                         <li><a href="{% url 'core:testimonials' %}" class="text-gray-300 hover:text-white transition-colors duration-200">Testimonials</a></li>
                     </ul>
                 </div>
-
+                
                 <!-- Contact Info -->
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Contact</h3>
@@ -267,7 +268,7 @@
                         </a>
                     </div>
                 </div>
-
+                
                 <!-- Newsletter -->
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Stay Updated</h3>
@@ -281,7 +282,7 @@
                     </form>
                 </div>
             </div>
-
+            
             <div class="border-t border-gray-600 mt-8 pt-8 text-center text-sm text-gray-300">
                 <p>&copy; 2024 LUM Data Academy. All rights reserved.</p>
             </div>
@@ -302,7 +303,7 @@
 
     <!-- JavaScript Libraries -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
+    
     <!-- Custom JavaScript -->
     <script>
         // Initialize AOS
@@ -318,10 +319,10 @@
         const mobileMenu = document.querySelector('.mobile-menu');
         const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
         const hamburgerIcon = document.querySelector('.hamburger-icon');
-
+        
         function toggleMobileMenu() {
             const isOpen = !mobileMenu.classList.contains('translate-x-full');
-
+            
             if (isOpen) {
                 // Close menu
                 mobileMenu.classList.add('translate-x-full');
@@ -336,10 +337,10 @@
                 document.body.classList.add('overflow-hidden');
             }
         }
-
+        
         mobileMenuButton.addEventListener('click', toggleMobileMenu);
         mobileMenuOverlay.addEventListener('click', toggleMobileMenu);
-
+        
         // Close menu when clicking on menu items
         document.querySelectorAll('.mobile-nav-button').forEach(link => {
             link.addEventListener('click', () => {
@@ -359,7 +360,7 @@
 
         // Scroll to top functionality
         const scrollToTopBtn = document.getElementById('scrollToTop');
-
+        
         window.addEventListener('scroll', () => {
             if (window.scrollY > 500) {
                 scrollToTopBtn.classList.remove('opacity-0', 'invisible');
@@ -376,7 +377,7 @@
         document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('newsletter-email').value;
-
+            
             try {
                 const response = await fetch('{% url "core:newsletter_subscribe" %}', {
                     method: 'POST',
@@ -386,9 +387,9 @@
                     },
                     body: JSON.stringify({ email: email })
                 });
-
+                
                 const data = await response.json();
-
+                
                 // Show notification
                 const notification = document.createElement('div');
                 notification.className = `fixed top-20 right-4 z-50 px-6 py-4 rounded-lg shadow-lg animate-slide-in-right max-w-md ${data.success ? 'bg-green-500' : 'bg-red-500'} text-white`;
@@ -400,14 +401,14 @@
                         </button>
                     </div>
                 `;
-
+                
                 document.body.appendChild(notification);
-
+                
                 // Remove notification after 5 seconds
                 setTimeout(() => {
                     notification.remove();
                 }, 5000);
-
+                
                 if (data.success) {
                     document.getElementById('newsletter-email').value = '';
                 }
@@ -427,7 +428,7 @@
             });
         });
     </script>
-
+    
     <style>
         .nav-link {
             @apply text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative;
@@ -439,53 +440,27 @@
             content: '';
             @apply absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-secondary rounded-full;
         }
-
-        /* Mobile Navigation Button Styles with Neomorphism */
+        
+        /* Mobile Navigation Button Styles */
         .mobile-nav-button {
-            @apply w-full flex items-center px-5 py-4 text-gray-700 font-medium rounded-2xl transition-all duration-200 bg-gray-100 border-0;
-            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.15), -8px -8px 16px rgba(255, 255, 255, 0.7);
-            margin-bottom: 2px;
+            @apply w-full flex items-center px-4 py-3 text-gray-700 font-medium rounded-xl border border-gray-200 transition-all duration-200 bg-white shadow-sm;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1), -4px -4px 8px rgba(255, 255, 255, 0.8);
         }
         .mobile-nav-button:hover {
-            @apply text-primary;
-            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.15), -4px -4px 8px rgba(255, 255, 255, 0.7);
+            @apply text-primary bg-gray-50;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.8);
             transform: translateY(-1px);
         }
-        .mobile-nav-button:active {
-            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.15), inset -4px -4px 8px rgba(255, 255, 255, 0.7);
-            transform: translateY(1px);
-        }
         .mobile-nav-button.active {
-            @apply text-primary bg-primary/5;
-            box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.1), inset -4px -4px 8px rgba(255, 255, 255, 0.5);
+            @apply text-primary bg-primary/5 border-primary/20;
         }
-
-        /* Special styling for logout button */
-        .mobile-nav-button.logout-button {
-            @apply bg-red-50;
-            box-shadow: 8px 8px 16px rgba(220, 38, 38, 0.1), -8px -8px 16px rgba(255, 255, 255, 0.7);
-        }
-        .mobile-nav-button.logout-button:hover {
-            @apply text-red-600;
-            box-shadow: 4px 4px 8px rgba(220, 38, 38, 0.15), -4px -4px 8px rgba(255, 255, 255, 0.7);
-        }
-
-        /* Special styling for register button */
-        .mobile-nav-button.register-button {
-            @apply bg-secondary text-white;
-            box-shadow: 8px 8px 16px rgba(1, 187, 225, 0.3), -8px -8px 16px rgba(255, 255, 255, 0.1);
-        }
-        .mobile-nav-button.register-button:hover {
-            @apply bg-secondary/90;
-            box-shadow: 4px 4px 8px rgba(1, 187, 225, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.1);
-        }
-
+        
         /* Hamburger Animation */
         .hamburger-icon {
             @apply w-6 h-6 flex flex-col justify-center items-center relative;
         }
         .hamburger-line {
-            @apply w-6 h-0.5 bg-primary rounded-full transition-all duration-300 ease-in-out;
+            @apply w-6 h-0.5 bg-gray-600 rounded-full transition-all duration-300 ease-in-out;
         }
         .hamburger-line:nth-child(1) {
             @apply mb-1;
@@ -502,7 +477,7 @@
         .hamburger-icon.active .hamburger-line:nth-child(3) {
             transform: translateY(-6px) rotate(-45deg);
         }
-
+        
         /* Notification Banner */
         .notification-banner {
             height: 32px;
@@ -511,7 +486,7 @@
         .scrolling-text {
             animation: scroll-left 30s linear infinite;
         }
-
+        
         @keyframes scroll-left {
             0% {
                 transform: translateX(100%);
@@ -520,7 +495,7 @@
                 transform: translateX(-100%);
             }
         }
-
+        
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -536,7 +511,7 @@
             background: #065536;
         }
     </style>
-
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>
