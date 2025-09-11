@@ -71,7 +71,7 @@ class CustomUserCreationForm(UserCreationForm):
         })
 
         # Update help texts
-        self.fields['username'].help_text = 'Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'
+        self.fields['username'].help_text = 'Required. 25 characters or fewer. Letters, digits and _ only.'
         self.fields['password1'].help_text = 'Your password must contain at least 8 characters and cannot be too similar to your personal information.'
 
     def clean_email(self):
@@ -81,9 +81,21 @@ class CustomUserCreationForm(UserCreationForm):
         return email
 
     def clean_username(self):
+        import re
         username = self.cleaned_data.get('username')
+        
+        # Check length
+        if len(username) > 25:
+            raise ValidationError('Username must be 25 characters or fewer.')
+        
+        # Check character pattern
+        if not re.match(r'^[a-zA-Z0-9_]+$', username):
+            raise ValidationError('Username can only contain letters, digits, and underscores.')
+        
+        # Check if username already exists
         if User.objects.filter(username=username).exists():
             raise ValidationError('A user with this username already exists.')
+        
         return username
 
     def save(self, commit=True):
