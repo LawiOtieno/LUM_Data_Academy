@@ -89,7 +89,20 @@
 </head>
 <body class="bg-gray-50 font-linden">
     <!-- Navigation -->
-    <nav class="bg-white shadow-lg fixed w-full top-0 z-50 transition-all duration-300" id="navbar">
+    <!-- Notification Banner -->
+    <div class="notification-banner bg-gradient-to-r from-secondary to-primary text-white py-2 fixed w-full top-0 z-60 overflow-hidden">
+        <div class="scrolling-text whitespace-nowrap">
+            <span class="inline-block px-8">🎉 New Course Alert: Data Science Fundamentals - Enroll Now!</span>
+            <span class="inline-block px-8">💰 Limited Time: 30% OFF on Python for Data Analytics</span>
+            <span class="inline-block px-8">⭐ Featured: Machine Learning Bootcamp - Start Your AI Journey</span>
+            <span class="inline-block px-8">🔥 Hot Deal: Power BI Mastery Course - Special Discount</span>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay fixed inset-0 bg-black bg-opacity-50 z-40 hidden transition-opacity duration-300"></div>
+
+    <nav class="bg-white shadow-lg fixed w-full top-8 z-50 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
@@ -121,35 +134,71 @@
                 
                 <!-- Mobile menu button -->
                 <div class="md:hidden">
-                    <button type="button" class="mobile-menu-button bg-gray-100 p-2 rounded-md text-gray-600 hover:text-primary hover:bg-gray-200 transition-colors duration-200">
-                        <i class="fas fa-bars text-xl"></i>
+                    <button type="button" class="mobile-menu-button bg-transparent p-2 rounded-md text-gray-600 hover:text-primary transition-colors duration-200 z-50 relative">
+                        <div class="hamburger-icon">
+                            <span class="hamburger-line"></span>
+                            <span class="hamburger-line"></span>
+                            <span class="hamburger-line"></span>
+                        </div>
                     </button>
                 </div>
             </div>
         </div>
         
-        <!-- Mobile Menu -->
-        <div class="mobile-menu md:hidden hidden bg-white border-t border-gray-200">
-            <div class="px-2 pt-2 pb-3 space-y-1">
-                <a href="{% url 'core:home' %}" class="mobile-nav-link">Home</a>
-                <a href="{% url 'core:about' %}" class="mobile-nav-link">About</a>
-                <a href="{% url 'core:courses' %}" class="mobile-nav-link">Courses</a>
-                <a href="{% url 'core:events' %}" class="mobile-nav-link">Events</a>
-                <a href="{% url 'core:blog' %}" class="mobile-nav-link">Blog</a>
-                <a href="{% url 'core:contact' %}" class="mobile-nav-link">Contact</a>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'accounts:dashboard' %}" class="mobile-nav-link">Dashboard</a>
-                    <a href="{% url 'accounts:logout' %}" class="bg-gray-600 text-white block px-3 py-2 rounded-md text-base font-medium mx-2 mt-4 text-center">Logout</a>
-                {% else %}
-                    <a href="{% url 'accounts:login' %}" class="mobile-nav-link">Login</a>
-                    <a href="{% url 'accounts:register' %}" class="bg-secondary text-white block px-3 py-2 rounded-md text-base font-medium mx-2 mt-4 text-center">Get Started</a>
-                {% endif %}
+        <!-- Mobile Menu Slide-in -->
+        <div class="mobile-menu fixed top-0 right-0 h-full w-1/2 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-50 md:hidden">
+            <div class="flex flex-col h-full">
+                <!-- Menu Header -->
+                <div class="bg-primary text-white p-6">
+                    <h3 class="text-lg font-bold">Menu</h3>
+                </div>
+                
+                <!-- Menu Items -->
+                <div class="flex-1 p-6 space-y-4">
+                    <a href="{% url 'core:home' %}" class="mobile-nav-button {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                        <i class="fas fa-home mr-3"></i>Home
+                    </a>
+                    <a href="{% url 'core:about' %}" class="mobile-nav-button {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+                        <i class="fas fa-info-circle mr-3"></i>About
+                    </a>
+                    <a href="{% url 'core:courses' %}" class="mobile-nav-button {% if 'course' in request.resolver_match.url_name %}active{% endif %}">
+                        <i class="fas fa-graduation-cap mr-3"></i>Courses
+                    </a>
+                    <a href="{% url 'core:events' %}" class="mobile-nav-button {% if 'event' in request.resolver_match.url_name %}active{% endif %}">
+                        <i class="fas fa-calendar-alt mr-3"></i>Events
+                    </a>
+                    <a href="{% url 'core:blog' %}" class="mobile-nav-button {% if 'blog' in request.resolver_match.url_name %}active{% endif %}">
+                        <i class="fas fa-blog mr-3"></i>Blog
+                    </a>
+                    <a href="{% url 'core:contact' %}" class="mobile-nav-button {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+                        <i class="fas fa-envelope mr-3"></i>Contact
+                    </a>
+                    
+                    <!-- Authentication Links -->
+                    <div class="border-t border-gray-200 pt-4 mt-6">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'accounts:dashboard' %}" class="mobile-nav-button">
+                                <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                            </a>
+                            <a href="{% url 'accounts:logout' %}" class="mobile-nav-button bg-red-50 text-red-600 border-red-200">
+                                <i class="fas fa-sign-out-alt mr-3"></i>Logout
+                            </a>
+                        {% else %}
+                            <a href="{% url 'accounts:login' %}" class="mobile-nav-button">
+                                <i class="fas fa-sign-in-alt mr-3"></i>Login
+                            </a>
+                            <a href="{% url 'accounts:register' %}" class="mobile-nav-button bg-secondary text-white border-secondary shadow-lg">
+                                <i class="fas fa-user-plus mr-3"></i>Get Started
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="pt-16">
+    <main class="pt-24">
         {% if messages %}
             <div class="fixed top-20 right-4 z-40 space-y-2">
                 {% for message in messages %}
@@ -268,9 +317,35 @@
         // Mobile menu toggle
         const mobileMenuButton = document.querySelector('.mobile-menu-button');
         const mobileMenu = document.querySelector('.mobile-menu');
+        const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
+        const hamburgerIcon = document.querySelector('.hamburger-icon');
         
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+        function toggleMobileMenu() {
+            const isOpen = !mobileMenu.classList.contains('translate-x-full');
+            
+            if (isOpen) {
+                // Close menu
+                mobileMenu.classList.add('translate-x-full');
+                mobileMenuOverlay.classList.add('hidden');
+                hamburgerIcon.classList.remove('active');
+                document.body.classList.remove('overflow-hidden');
+            } else {
+                // Open menu
+                mobileMenu.classList.remove('translate-x-full');
+                mobileMenuOverlay.classList.remove('hidden');
+                hamburgerIcon.classList.add('active');
+                document.body.classList.add('overflow-hidden');
+            }
+        }
+        
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+        mobileMenuOverlay.addEventListener('click', toggleMobileMenu);
+        
+        // Close menu when clicking on menu items
+        document.querySelectorAll('.mobile-nav-button').forEach(link => {
+            link.addEventListener('click', () => {
+                setTimeout(toggleMobileMenu, 100);
+            });
         });
 
         // Navbar background on scroll
@@ -365,8 +440,60 @@
             content: '';
             @apply absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-secondary rounded-full;
         }
-        .mobile-nav-link {
-            @apply text-gray-700 hover:text-primary hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200;
+        
+        /* Mobile Navigation Button Styles */
+        .mobile-nav-button {
+            @apply w-full flex items-center px-4 py-3 text-gray-700 font-medium rounded-xl border border-gray-200 transition-all duration-200 bg-white shadow-sm;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1), -4px -4px 8px rgba(255, 255, 255, 0.8);
+        }
+        .mobile-nav-button:hover {
+            @apply text-primary bg-gray-50;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1), -2px -2px 4px rgba(255, 255, 255, 0.8);
+            transform: translateY(-1px);
+        }
+        .mobile-nav-button.active {
+            @apply text-primary bg-primary/5 border-primary/20;
+        }
+        
+        /* Hamburger Animation */
+        .hamburger-icon {
+            @apply w-6 h-6 flex flex-col justify-center items-center relative;
+        }
+        .hamburger-line {
+            @apply w-6 h-0.5 bg-gray-600 rounded-full transition-all duration-300 ease-in-out;
+        }
+        .hamburger-line:nth-child(1) {
+            @apply mb-1;
+        }
+        .hamburger-line:nth-child(3) {
+            @apply mt-1;
+        }
+        .hamburger-icon.active .hamburger-line:nth-child(1) {
+            transform: translateY(6px) rotate(45deg);
+        }
+        .hamburger-icon.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger-icon.active .hamburger-line:nth-child(3) {
+            transform: translateY(-6px) rotate(-45deg);
+        }
+        
+        /* Notification Banner */
+        .notification-banner {
+            height: 32px;
+            line-height: 32px;
+        }
+        .scrolling-text {
+            animation: scroll-left 30s linear infinite;
+        }
+        
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
         }
         
         /* Custom scrollbar */
