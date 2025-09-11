@@ -1,0 +1,171 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Blog - LUM Data Academy{% endblock %}
+
+{% block content %}
+<div class="min-h-screen pt-20">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary to-primary-dark text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">Blog & Insights</h1>
+            <p class="text-xl text-white/90 max-w-3xl mx-auto">
+                Stay updated with the latest trends in data science, AI, and technology careers in Africa
+            </p>
+        </div>
+    </section>
+
+    <!-- Blog Content -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {% if posts %}
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for post in posts %}
+                <article class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    {% if post.featured_image %}
+                    <div class="h-48 overflow-hidden">
+                        <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" 
+                             class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                    </div>
+                    {% else %}
+                    <div class="h-48 bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <svg class="w-12 h-12 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"></path>
+                            </svg>
+                            <p class="text-sm opacity-80">Blog Post</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 mb-3">
+                            <span>{{ post.author.get_full_name|default:post.author.username }}</span>
+                            <span class="mx-2">•</span>
+                            <span>{{ post.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        
+                        <h2 class="text-xl font-bold text-gray-900 mb-3">
+                            <a href="{% url 'core:blog_detail' post.slug %}" class="hover:text-primary transition-colors">
+                                {{ post.title }}
+                            </a>
+                        </h2>
+                        
+                        <div class="text-gray-600 mb-4 line-clamp-3">
+                            {{ post.excerpt|safe }}
+                        </div>
+
+                        <a href="{% url 'core:blog_detail' post.slug %}" 
+                           class="inline-flex items-center text-primary hover:text-primary-dark font-medium transition-colors">
+                            Read More
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if posts.has_other_pages %}
+            <div class="flex justify-center mt-12">
+                <nav class="flex space-x-2">
+                    {% if posts.has_previous %}
+                    <a href="?page={{ posts.previous_page_number }}" 
+                       class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        Previous
+                    </a>
+                    {% endif %}
+
+                    {% for num in posts.paginator.page_range %}
+                    {% if posts.number == num %}
+                    <span class="px-3 py-2 rounded-md bg-primary text-white">{{ num }}</span>
+                    {% else %}
+                    <a href="?page={{ num }}" 
+                       class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        {{ num }}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if posts.has_next %}
+                    <a href="?page={{ posts.next_page_number }}" 
+                       class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        Next
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
+
+            {% else %}
+            <!-- No Blog Posts -->
+            <div class="text-center py-16">
+                <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No blog posts yet</h3>
+                <p class="text-gray-600 mb-6">Stay tuned for exciting articles on data science, AI trends, and career insights!</p>
+                <a href="{% url 'core:contact' %}" class="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                    Subscribe to Updates
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Newsletter CTA -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Stay in the Loop</h2>
+            <p class="text-gray-600 mb-8">Get the latest insights and updates delivered to your inbox</p>
+            
+            <form id="newsletter-form-blog" class="max-w-md mx-auto flex gap-2">
+                <input type="email" 
+                       id="newsletter-email-blog"
+                       placeholder="Enter your email" 
+                       class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                       required>
+                <button type="submit" 
+                        class="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                    Subscribe
+                </button>
+            </form>
+            
+            <div id="newsletter-message-blog" class="mt-4 text-sm"></div>
+        </div>
+    </section>
+</div>
+
+<script>
+// Newsletter subscription for blog page
+document.getElementById('newsletter-form-blog').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('newsletter-email-blog').value;
+    const messageDiv = document.getElementById('newsletter-message-blog');
+    
+    try {
+        const response = await fetch('{% url "core:newsletter_subscribe" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ email: email })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            messageDiv.innerHTML = '<div class="text-green-600">' + data.message + '</div>';
+            document.getElementById('newsletter-email-blog').value = '';
+        } else {
+            messageDiv.innerHTML = '<div class="text-red-600">' + data.message + '</div>';
+        }
+    } catch (error) {
+        messageDiv.innerHTML = '<div class="text-red-600">Something went wrong. Please try again.</div>';
+        console.error('Newsletter subscription error:', error);
+    }
+});
+</script>
+{% endblock %}
