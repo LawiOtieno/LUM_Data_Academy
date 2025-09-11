@@ -39,4 +39,4 @@ externalPort = 3000
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["python", "manage.py", "runserver", "0.0.0.0:5000"]
+run = ["sh", "-c", "python manage.py collectstatic --noinput && gunicorn lumdataacademy.wsgi:application -b 0.0.0.0:$PORT"]
