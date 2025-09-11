@@ -84,11 +84,11 @@ class CourseAdmin(admin.ModelAdmin):
         models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
     }
 
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-        # Update total modules count
-        obj.total_modules = obj.modules.count()
-        obj.save()
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        # Update total modules count after inline formsets are saved
+        form.instance.total_modules = form.instance.modules.count()
+        form.instance.save(update_fields=['total_modules'])
 
 
 @admin.register(CourseModule)
