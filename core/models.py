@@ -115,6 +115,15 @@ class Course(models.Model):
         }
         return symbols.get(currency, 'KShs.')
     
+    def get_currency_rate(self, currency='KES'):
+        """Get currency conversion rate"""
+        if currency == 'KES':
+            return self.USD_TO_KES_RATE
+        elif currency == 'NGN':
+            return self.USD_TO_NGN_RATE
+        else:  # USD
+            return 1.0
+    
     # Template-friendly properties that use default KES currency
     @property
     def price_kes(self):

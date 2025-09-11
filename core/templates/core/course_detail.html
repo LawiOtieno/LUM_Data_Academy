@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load currency_filters %}
 
 {% block title %}{{ course.title }} - LUM Data Academy{% endblock %}
 
@@ -66,17 +67,17 @@
                             <div class="flex items-center">
                                 {% if course.discount_price %}
                                 <span class="text-3xl font-bold">
-                                    {{ course.get_currency_symbol:selected_currency }}{{ course.get_price_in_currency:selected_currency|floatformat:0 }}
+                                    {{ selected_currency|currency_symbol }}{{ course.get_display_price|currency_convert:selected_currency|floatformat:0 }}
                                 </span>
                                 <span class="text-lg text-white/60 line-through ml-2">
-                                    {{ course.get_currency_symbol:selected_currency }}{{ course.get_original_price_in_currency:selected_currency|floatformat:0 }}
+                                    {{ selected_currency|currency_symbol }}{{ course.price|currency_convert:selected_currency|floatformat:0 }}
                                 </span>
                                 <span class="bg-red-500 text-white px-2 py-1 rounded text-sm ml-2">
-                                    Save {{ course.get_currency_symbol:selected_currency }}{{ course.get_savings|floatformat:0 }}
+                                    Save {{ selected_currency|currency_symbol }}{{ course.get_savings|currency_convert:selected_currency|floatformat:0 }}
                                 </span>
                                 {% else %}
                                 <span class="text-3xl font-bold">
-                                    {{ course.get_currency_symbol:selected_currency }}{{ course.get_price_in_currency:selected_currency|floatformat:0 }}
+                                    {{ selected_currency|currency_symbol }}{{ course.price|currency_convert:selected_currency|floatformat:0 }}
                                 </span>
                                 {% endif %}
                             </div>
@@ -313,7 +314,7 @@
                                     <p class="text-sm text-gray-600 mb-2">{{ related.category.display_name }}</p>
                                     <div class="flex justify-between items-center">
                                         <span class="text-sm text-primary font-medium">
-                                            {{ related.get_currency_symbol:selected_currency }}{{ related.get_price_in_currency:selected_currency|floatformat:0 }}
+                                            {{ selected_currency|currency_symbol }}{{ related.get_display_price|currency_convert:selected_currency|floatformat:0 }}
                                         </span>
                                         <span class="text-xs text-gray-500">{{ related.duration }}</span>
                                     </div>
