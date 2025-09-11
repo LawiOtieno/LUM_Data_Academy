@@ -96,7 +96,7 @@
                             </div>
                         </div>
                         {% endif %}
-                        
+
                         <!-- Course Badges -->
                         <div class="absolute top-4 left-4 flex flex-col gap-2">
                             {% if course.is_featured %}
@@ -126,7 +126,7 @@
                                 {{ course.title }}
                             </a>
                         </h3>
-                        
+
                         <div class="prose prose-sm text-gray-600 mb-4 line-clamp-3">
                             {{ course.overview|safe|truncatewords:20 }}
                         </div>
