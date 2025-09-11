@@ -34,6 +34,8 @@ def about(request):
     except AboutPage.DoesNotExist:
         # Create default instance if it doesn't exist
         about_page = AboutPage.objects.create(
+            hero_title="About LUM Data Academy",
+            hero_subtitle="Equipping Africa with Future-Ready Data Skills",
             vision="Our vision is to equip Africa with future-ready data skills.",
             mission="To bridge the data skills gap across Africa through world-class training programs.",
             values="Excellence, Innovation, Accessibility, Impact",
