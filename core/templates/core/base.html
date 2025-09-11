@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LUM Data Academy - Equipping Africa with Future-Ready Data Skills{% endblock %}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Linden+Hill:ital,wght@0,400;1,400&family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#045334',
+                        'primary-light': '#065536',
+                        secondary: '#01bbe1',
+                        accent: '#dc2626',
+                        'bg-light': '#cccfd4',
+                    },
+                    fontFamily: {
+                        'linden': ['Linden Hill', 'serif'],
+                        'fira': ['Fira Code', 'monospace'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.6s ease-out',
+                        'fade-in': 'fadeIn 0.8s ease-out',
+                        'slide-in-left': 'slideInLeft 0.6s ease-out',
+                        'slide-in-right': 'slideInRight 0.6s ease-out',
+                        'bounce-in': 'bounceIn 1s ease-out',
+                        'pulse-slow': 'pulse 3s infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideInLeft: {
+                            '0%': { opacity: '0', transform: 'translateX(-30px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' }
+                        },
+                        slideInRight: {
+                            '0%': { opacity: '0', transform: 'translateX(30px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' }
+                        },
+                        bounceIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.3)' },
+                            '50%': { opacity: '1', transform: 'scale(1.05)' },
+                            '70%': { transform: 'scale(0.9)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Meta tags -->
+    <meta name="description" content="{% block description %}LUM Data Academy - Premier data science and analytics training institution in Africa. Learn Python, AI, Machine Learning, Power BI, and more with industry experts.{% endblock %}">
+    <meta name="keywords" content="data science training, python courses kenya, AI courses africa, machine learning bootcamp, power bi training, data analytics course">
+    <meta name="author" content="LUM Data Academy">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{% block og_title %}LUM Data Academy{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Equipping Africa with Future-Ready Data Skills{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{% load static %}{% static 'core/img/logo.jpg' %}{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="website">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 font-linden">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full top-0 z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="{% url 'core:home' %}" class="flex items-center space-x-3">
+                        <img src="{% load static %}{% static 'core/img/logo.jpg' %}" alt="LUM Data Academy" class="h-10 w-10 rounded-full object-cover">
+                        <span class="text-xl font-bold text-primary">LUM Data Academy</span>
+                    </a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="{% url 'core:home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+                        <a href="{% url 'core:about' %}" class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
+                        <a href="{% url 'core:courses' %}" class="nav-link {% if 'course' in request.resolver_match.url_name %}active{% endif %}">Courses</a>
+                        <a href="{% url 'core:events' %}" class="nav-link {% if 'event' in request.resolver_match.url_name %}active{% endif %}">Events</a>
+                        <a href="{% url 'core:blog' %}" class="nav-link {% if 'blog' in request.resolver_match.url_name %}active{% endif %}">Blog</a>
+                        <a href="{% url 'core:contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a>
+                        <a href="{% url 'core:admissions' %}" class="bg-secondary hover:bg-secondary/90 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105">Enrol Now</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" class="mobile-menu-button bg-gray-100 p-2 rounded-md text-gray-600 hover:text-primary hover:bg-gray-200 transition-colors duration-200">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu md:hidden hidden bg-white border-t border-gray-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="{% url 'core:home' %}" class="mobile-nav-link">Home</a>
+                <a href="{% url 'core:about' %}" class="mobile-nav-link">About</a>
+                <a href="{% url 'core:courses' %}" class="mobile-nav-link">Courses</a>
+                <a href="{% url 'core:events' %}" class="mobile-nav-link">Events</a>
+                <a href="{% url 'core:blog' %}" class="mobile-nav-link">Blog</a>
+                <a href="{% url 'core:contact' %}" class="mobile-nav-link">Contact</a>
+                <a href="{% url 'core:admissions' %}" class="bg-secondary text-white block px-3 py-2 rounded-md text-base font-medium mx-2 mt-4 text-center">Enrol Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        {% if messages %}
+            <div class="fixed top-20 right-4 z-40 space-y-2">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg animate-slide-in-right max-w-md">
+                        <div class="flex items-center justify-between">
+                            <span>{{ message }}</span>
+                            <button type="button" class="ml-4 text-white hover:text-gray-200" onclick="this.parentElement.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <img src="{% load static %}{% static 'core/img/logo.jpg' %}" alt="LUM Data Academy" class="h-10 w-10 rounded-full object-cover">
+                        <span class="text-xl font-bold">LUM Data Academy</span>
+                    </div>
+                    <p class="text-gray-300 text-sm">Equipping Africa with Future-Ready Data Skills</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/LumDataAnalytica" class="text-gray-300 hover:text-secondary transition-colors duration-200">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="https://www.instagram.com/lumdataanalytica" class="text-gray-300 hover:text-secondary transition-colors duration-200">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/lumdataanalytica" class="text-gray-300 hover:text-secondary transition-colors duration-200">
+                            <i class="fab fa-tiktok text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="{% url 'core:about' %}" class="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
+                        <li><a href="{% url 'core:courses' %}" class="text-gray-300 hover:text-white transition-colors duration-200">Courses</a></li>
+                        <li><a href="{% url 'core:admissions' %}" class="text-gray-300 hover:text-white transition-colors duration-200">Admissions</a></li>
+                        <li><a href="{% url 'core:student_resources' %}" class="text-gray-300 hover:text-white transition-colors duration-200">Student Resources</a></li>
+                        <li><a href="{% url 'core:testimonials' %}" class="text-gray-300 hover:text-white transition-colors duration-200">Testimonials</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li><i class="fas fa-envelope mr-2"></i> info@lumdataacademy.org</li>
+                        <li><i class="fab fa-whatsapp mr-2"></i> +254 768 998 305</li>
+                    </ul>
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-300 mb-2">David Joel - CEO & Co-founder</p>
+                        <a href="https://www.facebook.com/joel.oluoch.56" class="text-secondary hover:text-secondary/80 transition-colors duration-200 text-sm">
+                            <i class="fab fa-facebook mr-1"></i> Joel Oluoch
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Newsletter -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Stay Updated</h3>
+                    <form id="newsletter-form" class="space-y-3">
+                        <input type="email" id="newsletter-email" placeholder="Your email" required 
+                               class="w-full px-3 py-2 bg-primary-light border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors duration-200">
+                        <button type="submit" 
+                                class="w-full bg-secondary hover:bg-secondary/90 text-white py-2 rounded-lg transition-all duration-200 transform hover:scale-105">
+                            Subscribe
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-600 mt-8 pt-8 text-center text-sm text-gray-300">
+                <p>&copy; 2024 LUM Data Academy. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/254768998305" target="_blank" 
+       class="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-110 z-50">
+        <i class="fab fa-whatsapp text-2xl"></i>
+    </a>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" 
+            class="fixed bottom-6 left-6 bg-primary text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-primary-light transform hover:scale-110 z-40">
+        <i class="fas fa-chevron-up text-lg"></i>
+    </button>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 100
+        });
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.querySelector('.mobile-menu-button');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Navbar background on scroll
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('bg-white/95', 'backdrop-blur-sm');
+            } else {
+                navbar.classList.remove('bg-white/95', 'backdrop-blur-sm');
+            }
+        });
+
+        // Scroll to top functionality
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                scrollToTopBtn.classList.remove('opacity-0', 'invisible');
+            } else {
+                scrollToTopBtn.classList.add('opacity-0', 'invisible');
+            }
+        });
+
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Newsletter subscription
+        document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('newsletter-email').value;
+            
+            try {
+                const response = await fetch('{% url "core:newsletter_subscribe" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+                
+                const data = await response.json();
+                
+                // Show notification
+                const notification = document.createElement('div');
+                notification.className = `fixed top-20 right-4 z-50 px-6 py-4 rounded-lg shadow-lg animate-slide-in-right max-w-md ${data.success ? 'bg-green-500' : 'bg-red-500'} text-white`;
+                notification.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span>${data.message}</span>
+                        <button type="button" class="ml-4 text-white hover:text-gray-200" onclick="this.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Remove notification after 5 seconds
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+                
+                if (data.success) {
+                    document.getElementById('newsletter-email').value = '';
+                }
+            } catch (error) {
+                console.error('Newsletter subscription error:', error);
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+    
+    <style>
+        .nav-link {
+            @apply text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 relative;
+        }
+        .nav-link.active {
+            @apply text-primary;
+        }
+        .nav-link.active::after {
+            content: '';
+            @apply absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-secondary rounded-full;
+        }
+        .mobile-nav-link {
+            @apply text-gray-700 hover:text-primary hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #045334;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #065536;
+        }
+    </style>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

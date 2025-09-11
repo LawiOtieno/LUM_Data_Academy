@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-47#)460thu(5q@
 DEBUG = os.environ.get('DJANGO_DEBUG', '1') == '1'
 
 # For development, allow all hosts. For production, set ALLOWED_HOSTS environment variable
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',') if os.environ.get('ALLOWED_HOSTS') else ['*']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -121,6 +122,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # WhiteNoise configuration for production static files
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -129,6 +134,7 @@ if not DEBUG:
 CSRF_TRUSTED_ORIGINS = [
     'https://*.repl.co',
     'https://*.replit.app',
+    'https://*.replit.dev',
 ]
 
 # Security settings for production

@@ -1,0 +1,44 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Contact Us - LUM Data Academy{% endblock %}
+
+{% block content %}
+<div class="min-h-screen pt-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 class="text-4xl font-bold text-primary mb-8 text-center">Get In Touch</h1>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div>
+                <h3 class="text-2xl font-bold text-primary mb-6">Contact Information</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-envelope text-secondary mr-4"></i>
+                        <span>info@lumdataacademy.org</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fab fa-whatsapp text-secondary mr-4"></i>
+                        <span>+254 768 998 305</span>
+                    </div>
+                    <div class="mt-6">
+                        <p class="font-semibold">David Joel - CEO & Co-founder</p>
+                        <a href="https://www.facebook.com/joel.oluoch.56" class="text-secondary hover:underline">
+                            <i class="fab fa-facebook mr-2"></i>Joel Oluoch
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg hover:bg-primary-light transition-colors duration-300">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
