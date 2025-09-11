@@ -34,10 +34,6 @@ outputType = "webview"
 localPort = 5000
 externalPort = 80
 
-[[ports]]
-localPort = 41891
-externalPort = 3000
-
 [deployment]
 deploymentTarget = "autoscale"
 run = ["sh", "-c", "python manage.py collectstatic --noinput && gunicorn lumdataacademy.wsgi:application -b 0.0.0.0:$PORT"]
