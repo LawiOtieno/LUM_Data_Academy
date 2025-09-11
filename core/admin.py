@@ -4,7 +4,7 @@ from django_ckeditor_5.widgets import CKEditor5Widget
 from .models import (
     CourseCategory, Course, CourseModule, CodeExample, 
     Exercise, CapstoneProject, Testimonial, Event, 
-    BlogPost, ContactSubmission, Newsletter
+    BlogPost, ContactSubmission, Newsletter, AboutPage
 )
 
 
@@ -259,3 +259,39 @@ class NewsletterAdmin(admin.ModelAdmin):
     list_editable = ('is_active',)
     readonly_fields = ('subscribed_at',)
     ordering = ('-subscribed_at',)
+
+
+@admin.register(AboutPage)
+class AboutPageAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        # Only allow one instance
+        return not AboutPage.objects.exists()
+    
+    def has_delete_permission(self, request, obj=None):
+        # Don't allow deletion of the single instance
+        return False
+    
+    fieldsets = (
+        ('Page Hero', {
+            'fields': ('hero_title', 'hero_subtitle')
+        }),
+        ('Vision & Mission', {
+            'fields': ('vision', 'mission', 'values')
+        }),
+        ('Academy Story', {
+            'fields': ('story',)
+        }),
+        ('Partners & Collaborators', {
+            'fields': ('partners',)
+        }),
+        ('Last Updated', {
+            'fields': ('updated_at',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    readonly_fields = ('updated_at',)
+    
+    formfield_overrides = {
+        models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
+    }

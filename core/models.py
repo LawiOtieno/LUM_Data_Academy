@@ -88,7 +88,7 @@ class Course(models.Model):
 class Testimonial(models.Model):
     name = models.CharField(max_length=100)
     role = models.CharField(max_length=100, help_text="e.g., Data Analyst at Company X")
-    content = models.TextField()
+    content = CKEditor5Field(config_name='extends', help_text="Testimonial content")
     image = models.ImageField(upload_to='testimonial_images/', blank=True, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='testimonials', null=True, blank=True)
     is_featured = models.BooleanField(default=False)
@@ -104,7 +104,7 @@ class Testimonial(models.Model):
 class Event(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True)
-    description = models.TextField()
+    description = CKEditor5Field(config_name='extends', help_text="Event description and details")
     event_date = models.DateTimeField()
     duration = models.CharField(max_length=50, help_text="e.g., 2 hours")
     is_online = models.BooleanField(default=True)
@@ -130,8 +130,8 @@ class Event(models.Model):
 class BlogPost(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True)
-    content = models.TextField()
-    excerpt = models.TextField(max_length=300)
+    content = CKEditor5Field(config_name='extends', help_text="Main blog post content")
+    excerpt = CKEditor5Field(config_name='default', help_text="Brief excerpt or summary (max 300 characters)")
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     featured_image = models.ImageField(upload_to='blog_images/', blank=True, null=True)
     is_published = models.BooleanField(default=False)
@@ -289,3 +289,27 @@ class CapstoneProject(models.Model):
     
     def __str__(self):
         return f"{self.course.title} - Capstone: {self.title}"
+
+
+class AboutPage(models.Model):
+    """Single instance model for About page content"""
+    vision = CKEditor5Field(config_name='extends', help_text="Academy's vision statement")
+    mission = CKEditor5Field(config_name='extends', help_text="Academy's mission statement")
+    values = CKEditor5Field(config_name='extends', help_text="Core values and principles")
+    story = CKEditor5Field(config_name='extends', help_text="Journey and credibility of LUM Data Academy")
+    partners = CKEditor5Field(config_name='extends', blank=True, help_text="Partners and collaborators information")
+    hero_title = models.CharField(max_length=200, default="About LUM Data Academy")
+    hero_subtitle = models.CharField(max_length=300, default="Equipping Africa with Future-Ready Data Skills", blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'About Page'
+        verbose_name_plural = 'About Page'
+    
+    def __str__(self):
+        return "About Page Content"
+    
+    def save(self, *args, **kwargs):
+        # Ensure only one instance exists
+        self.pk = 1
+        super().save(*args, **kwargs)

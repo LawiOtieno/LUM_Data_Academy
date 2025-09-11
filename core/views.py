@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-from .models import Course, CourseCategory, Testimonial, Event, BlogPost, ContactSubmission, Newsletter
+from .models import Course, CourseCategory, Testimonial, Event, BlogPost, ContactSubmission, Newsletter, AboutPage
 from .forms import ContactForm, NewsletterForm
 
 
@@ -29,7 +29,18 @@ def home(request):
 
 def about(request):
     """About us page"""
-    return render(request, 'core/about.html')
+    try:
+        about_page = AboutPage.objects.get(pk=1)
+    except AboutPage.DoesNotExist:
+        # Create default instance if it doesn't exist
+        about_page = AboutPage.objects.create(
+            vision="Our vision is to equip Africa with future-ready data skills.",
+            mission="To bridge the data skills gap across Africa through world-class training programs.",
+            values="Excellence, Innovation, Accessibility, Impact",
+            story="Founded with the vision of transforming careers through practical, industry-relevant education."
+        )
+    
+    return render(request, 'core/about.html', {'about': about_page})
 
 
 def courses(request):
