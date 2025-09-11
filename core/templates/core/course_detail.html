@@ -1,0 +1,308 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ course.title }} - LUM Data Academy{% endblock %}
+
+{% block content %}
+<div class="min-h-screen pt-20">
+    <!-- Course Hero Section -->
+    <section class="bg-gradient-to-br from-primary to-primary-dark text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <span class="bg-white/20 text-white px-3 py-1 rounded-full text-sm font-medium">
+                            {{ course.category.display_name }}
+                        </span>
+                        {% if course.is_featured %}
+                        <span class="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-medium ml-2">
+                            ⭐ Featured
+                        </span>
+                        {% endif %}
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6">{{ course.title }}</h1>
+                    <div class="prose prose-lg text-white/90 mb-8">
+                        {{ course.overview|safe }}
+                    </div>
+                    
+                    <!-- Course Stats -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">{{ course.total_modules }}</div>
+                            <div class="text-sm text-white/80">Modules</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">{{ course.estimated_hours }}</div>
+                            <div class="text-sm text-white/80">Hours</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">{{ course.modules.count }}</div>
+                            <div class="text-sm text-white/80">Lessons</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">{{ course.capstone_projects.count }}</div>
+                            <div class="text-sm text-white/80">Projects</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pricing -->
+                    <div class="flex items-center justify-between bg-white/10 rounded-lg p-6">
+                        <div>
+                            <div class="text-sm text-white/80 mb-1">Course Price</div>
+                            <div class="flex items-center">
+                                {% if course.discount_price %}
+                                <span class="text-3xl font-bold">${{ course.discount_price }}</span>
+                                <span class="text-lg text-white/60 line-through ml-2">${{ course.price }}</span>
+                                <span class="bg-red-500 text-white px-2 py-1 rounded text-sm ml-2">
+                                    Save ${{ course.get_savings|floatformat:0 }}
+                                </span>
+                                {% else %}
+                                <span class="text-3xl font-bold">${{ course.price }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <button class="bg-yellow-500 hover:bg-yellow-600 text-black px-8 py-3 rounded-lg font-semibold transition-colors">
+                            Enroll Now
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Course Video/Image -->
+                <div class="relative">
+                    {% if course.video_intro_url %}
+                    <div class="aspect-video rounded-lg overflow-hidden shadow-2xl">
+                        <iframe class="w-full h-full" src="{{ course.video_intro_url }}" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    {% elif course.image %}
+                    <img src="{{ course.image.url }}" alt="{{ course.title }}" class="w-full aspect-video object-cover rounded-lg shadow-2xl">
+                    {% else %}
+                    <div class="w-full aspect-video bg-white/10 rounded-lg flex items-center justify-center">
+                        <div class="text-center text-white/60">
+                            <svg class="w-16 h-16 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 6a2 2 0 012-2h6l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>
+                            </svg>
+                            <p>Course Preview</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Course Content -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-3 gap-12">
+                <!-- Main Content -->
+                <div class="lg:col-span-2">
+                    <!-- Course Description -->
+                    <div class="mb-12">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">About This Course</h2>
+                        <div class="prose prose-lg max-w-none">
+                            {{ course.description|safe }}
+                        </div>
+                    </div>
+
+                    <!-- Learning Outcomes -->
+                    <div class="mb-12">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">What You'll Learn</h2>
+                        <div class="prose prose-lg max-w-none">
+                            {{ course.learning_outcomes|safe }}
+                        </div>
+                    </div>
+
+                    <!-- Course Modules -->
+                    <div class="mb-12">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Course Modules</h2>
+                        <div class="space-y-6">
+                            {% for module in course.modules.all %}
+                            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="text-xl font-semibold text-gray-900">
+                                            Module {{ module.order }}: {{ module.title }}
+                                        </h3>
+                                        <div class="flex items-center text-sm text-gray-500">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            {{ module.duration_hours }}h
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="px-6 py-4">
+                                    <div class="prose max-w-none text-gray-600 mb-4">
+                                        {{ module.description|safe }}
+                                    </div>
+                                    
+                                    {% if module.learning_objectives %}
+                                    <div class="mb-4">
+                                        <h4 class="font-semibold text-gray-900 mb-2">Learning Objectives:</h4>
+                                        <div class="prose max-w-none text-gray-600">
+                                            {{ module.learning_objectives|safe }}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+
+                                    <!-- Module Content Summary -->
+                                    <div class="grid md:grid-cols-2 gap-4 mt-4">
+                                        {% if module.code_examples.exists %}
+                                        <div class="bg-blue-50 p-4 rounded-lg">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z"></path>
+                                                </svg>
+                                                <span class="font-medium text-blue-900">Code Examples</span>
+                                            </div>
+                                            <p class="text-sm text-blue-700">{{ module.code_examples.count }} hands-on coding examples</p>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if module.exercises.exists %}
+                                        <div class="bg-green-50 p-4 rounded-lg">
+                                            <div class="flex items-center mb-2">
+                                                <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path>
+                                                </svg>
+                                                <span class="font-medium text-green-900">Exercises</span>
+                                            </div>
+                                            <p class="text-sm text-green-700">{{ module.exercises.count }} practice exercises</p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Capstone Projects -->
+                    {% if course.capstone_projects.exists %}
+                    <div class="mb-12">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Capstone Projects</h2>
+                        <div class="space-y-6">
+                            {% for project in course.capstone_projects.all %}
+                            <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-xl font-semibold text-gray-900">{{ project.title }}</h3>
+                                    <div class="flex items-center">
+                                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                                            {{ project.difficulty_level|title }}
+                                        </span>
+                                        {% if project.is_group_project %}
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm ml-2">
+                                            Group Project
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="prose max-w-none text-gray-600 mb-4">
+                                    {{ project.description|safe }}
+                                </div>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Estimated: {{ project.estimated_hours }} hours
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Course Syllabus -->
+                    {% if course.course_syllabus %}
+                    <div class="mb-12">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">Detailed Syllabus</h2>
+                        <div class="prose prose-lg max-w-none">
+                            {{ course.course_syllabus|safe }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Sidebar -->
+                <div class="lg:col-span-1">
+                    <!-- Course Info Card -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-lg mb-8 sticky top-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Course Information</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Duration:</span>
+                                <span class="font-medium">{{ course.duration }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Schedule:</span>
+                                <span class="font-medium">{{ course.schedule }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Level:</span>
+                                <span class="font-medium">{{ course.category.display_name }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Estimated Hours:</span>
+                                <span class="font-medium">{{ course.estimated_hours }}h</span>
+                            </div>
+                        </div>
+
+                        <hr class="my-6">
+
+                        <!-- Tools & Software -->
+                        <div class="mb-6">
+                            <h4 class="font-semibold text-gray-900 mb-2">Tools & Software</h4>
+                            <p class="text-sm text-gray-600">{{ course.tools_software }}</p>
+                        </div>
+
+                        <!-- Prerequisites -->
+                        {% if course.prerequisites %}
+                        <div class="mb-6">
+                            <h4 class="font-semibold text-gray-900 mb-2">Prerequisites</h4>
+                            <div class="text-sm text-gray-600 prose prose-sm max-w-none">
+                                {{ course.prerequisites|safe }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <button class="w-full bg-primary hover:bg-primary-dark text-white py-3 px-6 rounded-lg font-semibold transition-colors">
+                            Enroll in Course
+                        </button>
+                        
+                        {% if course.course_pdf %}
+                        <a href="{{ course.course_pdf.url }}" target="_blank" 
+                           class="w-full mt-3 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-6 rounded-lg font-medium transition-colors flex items-center justify-center">
+                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z"></path>
+                            </svg>
+                            Download PDF
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Related Courses -->
+                    {% if related_courses %}
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Related Courses</h3>
+                        <div class="space-y-4">
+                            {% for related in related_courses %}
+                            <a href="{% url 'core:course_detail' related.slug %}" class="block">
+                                <div class="bg-white rounded-lg p-4 hover:shadow-md transition-shadow">
+                                    <h4 class="font-medium text-gray-900 mb-1">{{ related.title }}</h4>
+                                    <p class="text-sm text-gray-600 mb-2">{{ related.category.display_name }}</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-primary font-medium">${{ related.discount_price|default:related.price }}</span>
+                                        <span class="text-xs text-gray-500">{{ related.duration }}</span>
+                                    </div>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

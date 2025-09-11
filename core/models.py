@@ -69,6 +69,18 @@ class Course(models.Model):
     def has_discount(self):
         return self.discount_price is not None
     
+    def get_savings(self):
+        """Calculate the savings amount if there's a discount price"""
+        if self.discount_price:
+            return self.price - self.discount_price
+        return 0
+    
+    def get_discount_percentage(self):
+        """Calculate the discount percentage if there's a discount price"""
+        if self.discount_price and self.price > 0:
+            return int(((self.price - self.discount_price) / self.price) * 100)
+        return 0
+    
     def __str__(self):
         return self.title
 

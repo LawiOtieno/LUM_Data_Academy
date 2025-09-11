@@ -1,13 +1,210 @@
-
 {% extends 'core/base.html' %}
 
 {% block title %}Courses - LUM Data Academy{% endblock %}
 
 {% block content %}
 <div class="min-h-screen pt-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 class="text-4xl font-bold text-primary mb-8 text-center">Our Courses</h1>
-        <p class="text-center text-gray-600 mb-12">Coming soon - Exciting courses being prepared!</p>
-    </div>
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary to-primary-dark text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">Our Courses</h1>
+            <p class="text-xl text-white/90 max-w-3xl mx-auto">
+                Equip yourself with future-ready data skills through our comprehensive courses designed for the African professional
+            </p>
+        </div>
+    </section>
+
+    <!-- Course Filters -->
+    <section class="py-8 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-2">
+                    <a href="{% url 'core:courses' %}" 
+                       class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if not current_category %}bg-primary text-white{% else %}bg-white text-gray-700 hover:bg-gray-100{% endif %}">
+                        All Courses
+                    </a>
+                    {% for category in categories %}
+                    <a href="{% url 'core:courses' %}?category={{ category.name }}" 
+                       class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if current_category == category.name %}bg-primary text-white{% else %}bg-white text-gray-700 hover:bg-gray-100{% endif %}">
+                        {{ category.display_name }}
+                    </a>
+                    {% endfor %}
+                </div>
+
+                <!-- Search -->
+                <form method="GET" class="flex items-center">
+                    {% if current_category %}
+                    <input type="hidden" name="category" value="{{ current_category }}">
+                    {% endif %}
+                    <div class="relative">
+                        <input type="text" name="search" placeholder="Search courses..." 
+                               value="{{ search_query }}"
+                               class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Grid -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {% if courses %}
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for course in courses %}
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <!-- Course Image -->
+                    <div class="relative h-48 bg-gradient-to-br from-primary to-primary-dark">
+                        {% if course.image %}
+                        <img src="{{ course.image.url }}" alt="{{ course.title }}" class="w-full h-full object-cover">
+                        {% else %}
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <svg class="w-12 h-12 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <p class="text-sm opacity-80">{{ course.category.display_name }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Course Badges -->
+                        <div class="absolute top-4 left-4 flex flex-col gap-2">
+                            {% if course.is_featured %}
+                            <span class="bg-yellow-500 text-black px-2 py-1 rounded-full text-xs font-bold">
+                                ⭐ Featured
+                            </span>
+                            {% endif %}
+                            {% if course.discount_price %}
+                            <span class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                                Sale
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Category -->
+                        <div class="absolute top-4 right-4">
+                            <span class="bg-white/20 backdrop-blur text-white px-3 py-1 rounded-full text-xs font-medium">
+                                {{ course.category.display_name }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Course Content -->
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                            <a href="{% url 'core:course_detail' course.slug %}" class="hover:text-primary transition-colors">
+                                {{ course.title }}
+                            </a>
+                        </h3>
+                        
+                        <div class="prose prose-sm text-gray-600 mb-4 line-clamp-3">
+                            {{ course.overview|safe|truncatewords:20 }}
+                        </div>
+
+                        <!-- Course Stats -->
+                        <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253z"></path>
+                                </svg>
+                                {{ course.total_modules }} modules
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                {{ course.estimated_hours }}h
+                            </div>
+                        </div>
+
+                        <!-- Duration and Schedule -->
+                        <div class="text-sm text-gray-600 mb-4">
+                            <p><strong>Duration:</strong> {{ course.duration }}</p>
+                            <p><strong>Schedule:</strong> {{ course.schedule }}</p>
+                        </div>
+
+                        <!-- Tools -->
+                        <div class="mb-4">
+                            <p class="text-sm font-medium text-gray-900 mb-1">Tools & Software:</p>
+                            <p class="text-sm text-gray-600">{{ course.tools_software|truncatewords:8 }}</p>
+                        </div>
+
+                        <!-- Pricing and CTA -->
+                        <div class="flex items-center justify-between">
+                            <div>
+                                {% if course.discount_price %}
+                                <div class="flex items-center">
+                                    <span class="text-2xl font-bold text-primary">${{ course.discount_price }}</span>
+                                    <span class="text-lg text-gray-500 line-through ml-2">${{ course.price }}</span>
+                                </div>
+                                <div class="text-sm text-green-600 font-medium">
+                                    Save ${{ course.get_savings|floatformat:0 }}!
+                                </div>
+                                {% else %}
+                                <span class="text-2xl font-bold text-primary">${{ course.price }}</span>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'core:course_detail' course.slug %}" 
+                               class="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                                Learn More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if courses.has_other_pages %}
+            <div class="flex justify-center mt-12">
+                <nav class="flex space-x-2">
+                    {% if courses.has_previous %}
+                    <a href="?page={{ courses.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                       class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        Previous
+                    </a>
+                    {% endif %}
+
+                    {% for num in courses.paginator.page_range %}
+                    {% if courses.number == num %}
+                    <span class="px-3 py-2 rounded-md bg-primary text-white">{{ num }}</span>
+                    {% else %}
+                    <a href="?page={{ num }}{% if current_category %}&category={{ current_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                       class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        {{ num }}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if courses.has_next %}
+                    <a href="?page={{ courses.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" 
+                       class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        Next
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
+
+            {% else %}
+            <!-- No Courses Found -->
+            <div class="text-center py-16">
+                <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.513.645-6.394 1.757A2.477 2.477 0 014 18.524V19a2 2 0 002 2h12a2 2 0 002-2v-.476a2.477 2.477 0 01-1.606-1.767C16.513 15.645 14.34 15 12 15z"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No courses found</h3>
+                <p class="text-gray-600 mb-6">Try adjusting your search criteria or browse different categories.</p>
+                <a href="{% url 'core:courses' %}" class="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                    View All Courses
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
 </div>
 {% endblock %}
