@@ -1,0 +1,216 @@
+
+/* Mobile Admin Styling - Responsive Design for Gen-Z/Alpha/Beta */
+
+@media (max-width: 1024px) {
+    .content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 20px 15px !important;
+    }
+    
+    #nav-sidebar {
+        transform: translateX(-100%) !important;
+        width: 100% !important;
+        max-width: 320px !important;
+    }
+    
+    #nav-sidebar.show {
+        transform: translateX(0) !important;
+    }
+    
+    .mobile-menu-toggle {
+        display: block !important;
+    }
+    
+    #header {
+        padding: 0 15px !important;
+    }
+    
+    #branding {
+        font-size: 18px !important;
+    }
+    
+    #user-tools {
+        gap: 10px !important;
+    }
+    
+    #user-tools a {
+        padding: 6px 12px !important;
+        font-size: 14px !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .dashboard-stats {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    .stat-card {
+        padding: 20px !important;
+    }
+    
+    .stat-card .number {
+        font-size: 28px !important;
+    }
+    
+    .quick-actions {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+    
+    .quick-action {
+        padding: 15px 10px !important;
+    }
+    
+    .quick-action .icon {
+        font-size: 24px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .welcome-message {
+        padding: 20px !important;
+    }
+    
+    .welcome-message h2 {
+        font-size: 22px !important;
+    }
+    
+    .content h1 {
+        font-size: 22px !important;
+    }
+    
+    .module h2 {
+        font-size: 16px !important;
+        padding: 15px !important;
+    }
+    
+    .results table {
+        font-size: 14px !important;
+    }
+    
+    .results thead th,
+    .results tbody td {
+        padding: 8px 10px !important;
+    }
+    
+    .button, input[type="submit"], .submit-row input {
+        padding: 10px 20px !important;
+        font-size: 14px !important;
+    }
+    
+    .theme-toggle {
+        bottom: 20px !important;
+        right: 20px !important;
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 20px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .quick-actions {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .activity-item {
+        padding: 12px 15px !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    
+    .activity-item .icon {
+        margin-bottom: 8px !important;
+    }
+    
+    .activity-item .time {
+        margin-left: 0 !important;
+        margin-top: 5px !important;
+    }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+    .nav-link,
+    .quick-action,
+    .button,
+    input[type="submit"] {
+        min-height: 44px !important;
+        min-width: 44px !important;
+    }
+    
+    #nav-sidebar .module td a {
+        padding: 15px 20px !important;
+    }
+    
+    .results tbody tr {
+        min-height: 44px !important;
+    }
+    
+    .results tbody td {
+        padding: 12px !important;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    #header {
+        height: 50px !important;
+    }
+    
+    .main {
+        margin-top: 50px !important;
+    }
+    
+    #nav-sidebar {
+        top: 50px !important;
+        height: calc(100vh - 50px) !important;
+    }
+    
+    .welcome-message {
+        padding: 15px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .welcome-message h2 {
+        font-size: 18px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .dashboard-stats {
+        margin-bottom: 20px !important;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .theme-toggle,
+    .button,
+    input[type="submit"] {
+        border: 0.5px solid transparent !important;
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .nav-link,
+    .quick-action,
+    .button {
+        border: 2px solid currentColor !important;
+    }
+    
+    .stat-card,
+    .module {
+        border: 2px solid #333 !important;
+    }
+}

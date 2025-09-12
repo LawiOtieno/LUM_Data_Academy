@@ -1,0 +1,96 @@
+
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | LUM Data Academy Admin{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/custom_admin.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/mobile_admin.css' %}">
+    <script src="{% static 'admin/js/custom_admin.js' %}" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif !important;
+            background: #f8f9fa !important;
+        }
+        
+        /* Dark theme styles */
+        body.dark-theme {
+            background: #1a1a1a !important;
+            color: #e0e0e0 !important;
+        }
+        
+        body.dark-theme .content {
+            background: #1a1a1a !important;
+            color: #e0e0e0 !important;
+        }
+        
+        body.dark-theme .module {
+            background: #2d2d2d !important;
+            color: #e0e0e0 !important;
+        }
+        
+        body.dark-theme .results table {
+            background: #2d2d2d !important;
+            color: #e0e0e0 !important;
+        }
+        
+        body.dark-theme .results thead th {
+            background: #3d3d3d !important;
+            color: #e0e0e0 !important;
+        }
+        
+        body.dark-theme .results tbody tr:hover {
+            background: #3d3d3d !important;
+        }
+        
+        body.dark-theme .breadcrumbs {
+            background: #2d2d2d !important;
+            color: #e0e0e0 !important;
+        }
+        
+        body.dark-theme .form-row input,
+        body.dark-theme .form-row select,
+        body.dark-theme .form-row textarea {
+            background: #3d3d3d !important;
+            color: #e0e0e0 !important;
+            border-color: #555 !important;
+        }
+        
+        body.dark-theme .paginator {
+            background: #2d2d2d !important;
+            color: #e0e0e0 !important;
+        }
+        
+        body.dark-theme .paginator a {
+            background: #3d3d3d !important;
+            color: #e0e0e0 !important;
+        }
+    </style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        LUM Data Academy Admin
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}
+    <div class="nav-header">
+        🎓 Content Management System
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <div style="text-align: center; padding: 20px; color: #6c757d; font-size: 14px; margin-top: 40px;">
+        <p>© {{ "now"|date:"Y" }} LUM Data Academy. Built with ❤️ for the next generation of data professionals.</p>
+        <p>Admin Panel v2.0 | Designed for Gen-Z, Gen-Alpha & Gen-Beta Administrators</p>
+    </div>
+{% endblock %}
