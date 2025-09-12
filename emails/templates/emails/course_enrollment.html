@@ -1,0 +1,89 @@
+{% extends "emails/layouts/base.html" %}
+
+{% block title %}Course Enrollment Confirmed - {{ course.title }}{% endblock %}
+
+{% block greeting_name %}{{ user.get_full_name|default:user.username }}{% endblock %}
+
+{% block email_content %}
+<p>🎉 <strong>Congratulations!</strong> Your enrollment in <strong>{{ course.title }}</strong> has been confirmed!</p>
+
+<div class="alert alert-success">
+    <p><strong>✅ Enrollment Status:</strong> Confirmed and Active</p>
+    <p><strong>📅 Start Date:</strong> {{ course.start_date|default:"To be announced" }}</p>
+    <p><strong>⏱️ Duration:</strong> {{ course.duration|default:course.estimated_hours }} {{ course.estimated_hours|yesno:"hours,weeks" }}</p>
+</div>
+
+<h3 style="color: #045334; margin-top: 30px;">📚 Course Overview</h3>
+<div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h4 style="color: #045334; margin-top: 0;">{{ course.title }}</h4>
+    {% if course.description %}
+    <p>{{ course.description|truncatewords:50 }}</p>
+    {% endif %}
+    
+    {% if course.price %}
+    <p style="font-size: 18px; color: #dc2626; font-weight: bold;">
+        💰 Course Fee: KSh {{ course.price|floatformat:0 }}
+    </p>
+    {% endif %}
+    
+    {% if enrollment_details.payment_plan %}
+    <div class="alert alert-info">
+        <p><strong>💳 Payment Plan:</strong> {{ enrollment_details.payment_plan }}</p>
+        {% if enrollment_details.next_payment_date %}
+        <p><strong>📅 Next Payment Due:</strong> {{ enrollment_details.next_payment_date }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<h3 style="color: #045334;">🎯 What to Expect</h3>
+<ul style="margin: 20px 0; padding-left: 20px; line-height: 1.8;">
+    <li><strong>📖 Comprehensive Learning Materials:</strong> Structured lessons, practical exercises, and real-world projects</li>
+    <li><strong>👨‍🏫 Expert Instruction:</strong> Learn from industry professionals with years of experience</li>
+    <li><strong>🤝 Community Support:</strong> Connect with fellow students and get help when needed</li>
+    <li><strong>🏆 Certificate of Completion:</strong> Earn a recognized certificate upon successful completion</li>
+    <li><strong>💼 Career Support:</strong> Job placement assistance and career guidance</li>
+</ul>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="/courses/{{ course.slug }}/" class="btn" style="color: #ffffff !important; text-decoration: none;">
+        📚 Access Course Materials
+    </a>
+</div>
+
+<h3 style="color: #045334;">📋 Pre-Course Checklist</h3>
+<div style="background-color: #e7f6fc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <ul style="margin: 0; padding-left: 20px;">
+        <li>✅ Join our WhatsApp group for course updates</li>
+        <li>✅ Download required software (links provided in course materials)</li>
+        <li>✅ Complete your student profile</li>
+        <li>✅ Review the course syllabus and schedule</li>
+        <li>✅ Prepare your learning environment</li>
+    </ul>
+</div>
+
+{% if course.course_syllabus %}
+<div class="alert alert-info">
+    <p><strong>📄 Course Syllabus:</strong> <a href="{{ course.course_syllabus.url }}" style="color: #045334;">Download PDF</a></p>
+</div>
+{% endif %}
+
+<h3 style="color: #045334;">📞 Support & Contact</h3>
+<p>Have questions about your enrollment or need technical support?</p>
+<ul style="margin: 15px 0; padding-left: 20px;">
+    <li><strong>📧 Email:</strong> info@lumdataacademy.org</li>
+    <li><strong>💬 WhatsApp:</strong> +254 768 998 305</li>
+    <li><strong>🌐 Student Portal:</strong> Access your dashboard for all course information</li>
+</ul>
+
+<div class="alert alert-success">
+    <p><strong>🚀 Ready to Start?</strong><br>
+    Log in to your student dashboard to begin your learning journey. All course materials, schedules, and assignments are waiting for you!</p>
+</div>
+
+<p>We're excited to have you in this course and look forward to supporting you throughout your learning journey!</p>
+
+<p>Best regards,<br>
+<strong>The LUM Data Academy Team</strong><br>
+<em>Your partners in data excellence</em></p>
+{% endblock %}

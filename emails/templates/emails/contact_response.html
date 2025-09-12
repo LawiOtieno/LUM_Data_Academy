@@ -1,0 +1,77 @@
+{% extends "emails/layouts/base.html" %}
+
+{% block title %}Thank you for contacting LUM Data Academy{% endblock %}
+
+{% block greeting_name %}{{ name }}{% endblock %}
+
+{% block email_content %}
+<p>Thank you for reaching out to <strong>LUM Data Academy</strong>! We've received your message and greatly appreciate you taking the time to contact us.</p>
+
+<div class="alert alert-success">
+    <p><strong>✅ Message Received Successfully</strong><br>
+    Our team will review your inquiry and respond within 24 hours during business days.</p>
+</div>
+
+<h3 style="color: #045334;">📝 Your Message</h3>
+<div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #01bbe1;">
+    <p style="font-style: italic; margin: 0;">"{{ original_message }}"</p>
+</div>
+
+<h3 style="color: #045334;">⏰ What Happens Next?</h3>
+<ul style="margin: 20px 0; padding-left: 20px; line-height: 1.8;">
+    <li><strong>Review:</strong> Our team will carefully review your message</li>
+    <li><strong>Research:</strong> We'll gather any necessary information to provide you with the best answer</li>
+    <li><strong>Response:</strong> You'll receive a detailed response within 24 hours</li>
+    <li><strong>Follow-up:</strong> If needed, we'll schedule a call or provide additional resources</li>
+</ul>
+
+<div class="alert alert-info">
+    <p><strong>💡 Quick Answers While You Wait:</strong></p>
+    <ul style="margin: 10px 0; padding-left: 20px;">
+        <li><strong>📚 Course Information:</strong> Visit our <a href="/courses/" style="color: #045334;">courses page</a> for detailed program information</li>
+        <li><strong>💰 Pricing & Payment Plans:</strong> Check our <a href="/admissions/" style="color: #045334;">admissions page</a> for fee structures</li>
+        <li><strong>📅 Class Schedules:</strong> View current and upcoming class schedules on your dashboard</li>
+        <li><strong>❓ FAQs:</strong> Find quick answers in our frequently asked questions section</li>
+    </ul>
+</div>
+
+<h3 style="color: #045334;">🚀 Explore While You Wait</h3>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+    <div style="background-color: #e7f6fc; padding: 15px; border-radius: 6px; text-align: center;">
+        <strong>📖 Free Resources</strong><br>
+        <small>Access our blog for data science tips and insights</small>
+    </div>
+    <div style="background-color: #e7f6fc; padding: 15px; border-radius: 6px; text-align: center;">
+        <strong>🎯 Course Previews</strong><br>
+        <small>Check out sample lessons and course materials</small>
+    </div>
+    <div style="background-color: #e7f6fc; padding: 15px; border-radius: 6px; text-align: center;">
+        <strong>🌟 Success Stories</strong><br>
+        <small>Read testimonials from our graduates</small>
+    </div>
+    <div style="background-color: #e7f6fc; padding: 15px; border-radius: 6px; text-align: center;">
+        <strong>📱 Join Community</strong><br>
+        <small>Connect with us on social media</small>
+    </div>
+</div>
+
+<h3 style="color: #045334;">📞 Need Immediate Assistance?</h3>
+<p>For urgent inquiries, you can reach us directly through:</p>
+<ul style="margin: 15px 0; padding-left: 20px;">
+    <li><strong>💬 WhatsApp:</strong> <a href="https://wa.me/254768998305" style="color: #045334;">+254 768 998 305</a> (Available during business hours)</li>
+    <li><strong>📧 Direct Email:</strong> info@lumdataacademy.org</li>
+    <li><strong>💼 Career Inquiries:</strong> careers@lumdataacademy.org</li>
+</ul>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="/" class="btn" style="color: #ffffff !important; text-decoration: none;">
+        🏠 Visit Our Website
+    </a>
+</div>
+
+<p>Thank you for your interest in LUM Data Academy. We're committed to helping you achieve your data science goals and look forward to connecting with you soon!</p>
+
+<p>Best regards,<br>
+<strong>The LUM Data Academy Team</strong><br>
+<em>Equipping Africa with Future-Ready Data Skills</em></p>
+{% endblock %}

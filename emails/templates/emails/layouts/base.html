@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LUM Data Academy{% endblock %}</title>
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+    <style>
+        /* Reset styles */
+        body, table, td, p, a, li, blockquote {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        
+        table, td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+        
+        img {
+            -ms-interpolation-mode: bicubic;
+            border: 0;
+            outline: none;
+            text-decoration: none;
+        }
+        
+        /* LUM Data Academy Brand Colors */
+        :root {
+            --primary-color: #045334;
+            --primary-light: #065536;
+            --secondary-color: #01bbe1;
+            --accent-color: #dc2626;
+            --bg-light: #cccfd4;
+            --text-dark: #333333;
+            --text-light: #666666;
+        }
+        
+        /* Base styles */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            font-family: 'Linden Hill', Georgia, serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333333;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Header styles */
+        .email-header {
+            background: linear-gradient(135deg, #045334 0%, #065536 100%);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #ffffff;
+            margin-bottom: 15px;
+        }
+        
+        .brand-name {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+            text-decoration: none;
+        }
+        
+        .tagline {
+            color: #01bbe1;
+            font-size: 14px;
+            margin: 5px 0 0 0;
+            font-style: italic;
+        }
+        
+        /* Content styles */
+        .email-body {
+            padding: 40px 30px;
+        }
+        
+        .greeting {
+            font-size: 18px;
+            color: #045334;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .content {
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+        
+        .content p {
+            margin-bottom: 16px;
+        }
+        
+        /* Button styles */
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 20px 0;
+            background-color: #045334;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: #065536;
+        }
+        
+        .btn-secondary {
+            background-color: #01bbe1;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #0196b5;
+        }
+        
+        /* Alert styles */
+        .alert {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        
+        .alert-info {
+            background-color: #e7f6fc;
+            border-left-color: #01bbe1;
+            color: #0c4a6e;
+        }
+        
+        .alert-warning {
+            background-color: #fef3cd;
+            border-left-color: #f59e0b;
+            color: #92400e;
+        }
+        
+        .alert-success {
+            background-color: #d1fae5;
+            border-left-color: #10b981;
+            color: #065f46;
+        }
+        
+        /* Footer styles */
+        .email-footer {
+            background-color: #f8f9fa;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .footer-content {
+            color: #666666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .social-links {
+            margin: 20px 0;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #045334;
+            text-decoration: none;
+            font-size: 20px;
+        }
+        
+        .contact-info {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .contact-info p {
+            margin: 5px 0;
+            color: #666666;
+            font-size: 13px;
+        }
+        
+        /* Responsive styles */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                margin: 0 !important;
+            }
+            
+            .email-body {
+                padding: 20px !important;
+            }
+            
+            .email-header {
+                padding: 20px !important;
+            }
+            
+            .brand-name {
+                font-size: 20px !important;
+            }
+            
+            .btn {
+                display: block !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+        }
+        
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .email-container {
+                background-color: #1f2937 !important;
+            }
+            
+            .content {
+                color: #e5e7eb !important;
+            }
+            
+            .email-footer {
+                background-color: #111827 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="email-header">
+            <img src="https://via.placeholder.com/80x80/045334/ffffff?text=LUM" alt="LUM Data Academy Logo" class="logo">
+            <h1 class="brand-name">LUM Data Academy</h1>
+            <p class="tagline">Equipping Africa with Future-Ready Data Skills</p>
+        </div>
+        
+        <!-- Body -->
+        <div class="email-body">
+            {% block content %}
+            <div class="greeting">Hello {% block greeting_name %}{% endblock %}!</div>
+            <div class="content">
+                {% block email_content %}
+                <!-- Email content goes here -->
+                {% endblock %}
+            </div>
+            {% endblock %}
+        </div>
+        
+        <!-- Footer -->
+        <div class="email-footer">
+            <div class="footer-content">
+                <p><strong>LUM Data Academy</strong></p>
+                <p>Equipping Africa with Future-Ready Data Skills</p>
+                
+                <div class="social-links">
+                    <a href="https://www.facebook.com/LumDataAnalytica" title="Facebook">📘</a>
+                    <a href="https://www.instagram.com/lumdataanalytica" title="Instagram">📷</a>
+                    <a href="https://www.tiktok.com/lumdataanalytica" title="TikTok">🎵</a>
+                    <a href="https://wa.me/254768998305" title="WhatsApp">💬</a>
+                </div>
+                
+                <div class="contact-info">
+                    <p><strong>Contact Information</strong></p>
+                    <p>📧 Email: info@lumdataacademy.org</p>
+                    <p>💼 Careers: careers@lumdataacademy.org</p>
+                    <p>📱 WhatsApp: +254 768 998 305</p>
+                    <p>🌐 Website: lumdataacademy.org</p>
+                </div>
+                
+                <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                    <small>
+                        You received this email because you have an account with LUM Data Academy.<br>
+                        If you no longer wish to receive these emails, you can 
+                        <a href="#" style="color: #045334;">unsubscribe here</a>.
+                    </small>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+{% extends "emails/layouts/base.html" %}
+
+{% block title %}Welcome to LUM Data Academy!{% endblock %}
+
+{% block greeting_name %}{{ user.get_full_name|default:user.username }}{% endblock %}
+
+{% block email_content %}
+<p>🎉 <strong>Congratulations!</strong> Your email has been successfully verified and your LUM Data Academy account is now active!</p>
+
+<p>Welcome to our vibrant community of data enthusiasts, where we're committed to <em>Equipping Africa with Future-Ready Data Skills</em>.</p>
+
+<div class="alert alert-success">
+    <p><strong>🚀 Your account is ready!</strong> You can now access all our platform features and start your data science journey.</p>
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{{ login_url }}" class="btn" style="color: #ffffff !important; text-decoration: none;">
+        🎯 Access My Dashboard
+    </a>
+</div>
+
+<h3 style="color: #045334; margin-top: 30px;">🎓 What's Next?</h3>
+
+<div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h4 style="color: #045334; margin-top: 0;">📚 Explore Our Course Offerings:</h4>
+    <ul style="margin: 15px 0; padding-left: 20px; line-height: 1.8;">
+        <li><strong>🐍 Beginner Courses:</strong> Python for Data Analytics, Excel Fundamentals, AI Basics</li>
+        <li><strong>📊 Intermediate Programs:</strong> Data Science, Machine Learning, Business Intelligence</li>
+        <li><strong>☁️ Advanced Specializations:</strong> Cloud + AI, Advanced Analytics, Research Methods</li>
+        <li><strong>🎯 Masterclasses:</strong> Agentic AI, Industry-Specific Applications</li>
+    </ul>
+</div>
+
+<h4 style="color: #045334;">🌟 Platform Features You Can Access:</h4>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+    <div style="background-color: #e7f6fc; padding: 15px; border-radius: 6px; border-left: 4px solid #01bbe1;">
+        <strong>📖 Learning Resources</strong><br>
+        <small>Course materials, tutorials, and downloadable PDFs</small>
+    </div>
+    <div style="background-color: #e7f6fc; padding: 15px; border-radius: 6px; border-left: 4px solid #01bbe1;">
+        <strong>💬 Community Access</strong><br>
+        <small>Connect with fellow learners and instructors</small>
+    </div>
+    <div style="background-color: #e7f6fc; padding: 15px; border-radius: 6px; border-left: 4px solid #01bbe1;">
+        <strong>📈 Progress Tracking</strong><br>
+        <small>Monitor your learning journey and achievements</small>
+    </div>
+    <div style="background-color: #e7f6fc; padding: 15px; border-radius: 6px; border-left: 4px solid #01bbe1;">
+        <strong>🎯 Career Support</strong><br>
+        <small>Job placement assistance and career guidance</small>
+    </div>
+</div>
+
+<h4 style="color: #045334;">💡 Quick Start Tips:</h4>
+<ol style="margin: 15px 0; padding-left: 20px; line-height: 1.8;">
+    <li><strong>Complete your profile</strong> to get personalized course recommendations</li>
+    <li><strong>Browse our course catalog</strong> and find programs that match your goals</li>
+    <li><strong>Join our WhatsApp community</strong> for instant updates and discussions</li>
+    <li><strong>Follow us on social media</strong> for tips, success stories, and industry insights</li>
+</ol>
+
+<div class="alert alert-info">
+    <p><strong>🤝 Need Help Getting Started?</strong></p>
+    <p>Our support team is here to help! Reach out via WhatsApp at <strong>+254 768 998 305</strong> or email us at <strong>info@lumdataacademy.org</strong></p>
+</div>
+
+<p>We're thrilled to have you as part of the LUM Data Academy family. Together, we'll unlock your potential and shape the future of data science in Africa!</p>
+
+<p>Ready to transform your career with data skills? Let's get started! 🚀</p>
+
+<p>Warmest welcome,<br>
+<strong>The LUM Data Academy Team</strong><br>
+<em>David Joel - CEO & Co-founder</em></p>
+{% endblock %}

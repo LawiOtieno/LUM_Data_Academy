@@ -1,0 +1,102 @@
+{% extends "emails/layouts/base.html" %}
+
+{% block title %}Welcome to LUM Data Academy Newsletter!{% endblock %}
+
+{% block greeting_name %}{{ name }}{% endblock %}
+
+{% block email_content %}
+<p>🎉 <strong>Welcome to the LUM Data Academy Newsletter!</strong></p>
+
+<p>Thank you for subscribing to our newsletter. You've just taken an important step towards staying updated with the latest in data science, AI, and technology trends across Africa!</p>
+
+<div class="alert alert-success">
+    <p><strong>✅ Subscription Confirmed!</strong><br>
+    You're now part of our exclusive community of data enthusiasts.</p>
+</div>
+
+<h3 style="color: #045334;">📧 What to Expect in Your Inbox</h3>
+
+<div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin: 20px 0;">
+    <div style="background-color: #e7f6fc; padding: 20px; border-radius: 8px; border-left: 4px solid #01bbe1;">
+        <h4 style="color: #045334; margin-top: 0;">📚 Weekly Learning Insights</h4>
+        <p style="margin: 0;">Expert tips, tutorials, and best practices in data science and AI</p>
+    </div>
+    
+    <div style="background-color: #e7f6fc; padding: 20px; border-radius: 8px; border-left: 4px solid #01bbe1;">
+        <h4 style="color: #045334; margin-top: 0;">🎯 Course Updates & Announcements</h4>
+        <p style="margin: 0;">New course launches, enrollment periods, and special offers</p>
+    </div>
+    
+    <div style="background-color: #e7f6fc; padding: 20px; border-radius: 8px; border-left: 4px solid #01bbe1;">
+        <h4 style="color: #045334; margin-top: 0;">🌟 Success Stories & Case Studies</h4>
+        <p style="margin: 0;">Inspiring stories from our graduates and real-world applications</p>
+    </div>
+    
+    <div style="background-color: #e7f6fc; padding: 20px; border-radius: 8px; border-left: 4px solid #01bbe1;">
+        <h4 style="color: #045334; margin-top: 0;">🚀 Industry Trends & Opportunities</h4>
+        <p style="margin: 0;">Latest developments in data science and career opportunities</p>
+    </div>
+    
+    <div style="background-color: #e7f6fc; padding: 20px; border-radius: 8px; border-left: 4px solid #01bbe1;">
+        <h4 style="color: #045334; margin-top: 0;">🎪 Events & Masterclasses</h4>
+        <p style="margin: 0;">Exclusive invitations to webinars, workshops, and networking events</p>
+    </div>
+</div>
+
+<h3 style="color: #045334;">🎁 Subscriber Exclusives</h3>
+<p>As a newsletter subscriber, you'll get access to:</p>
+<ul style="margin: 20px 0; padding-left: 20px; line-height: 1.8;">
+    <li><strong>🎟️ Early Access:</strong> Be the first to know about new courses and enroll before general announcement</li>
+    <li><strong>💰 Special Discounts:</strong> Exclusive pricing and payment plan options for newsletter subscribers</li>
+    <li><strong>📖 Free Resources:</strong> Downloadable guides, cheat sheets, and bonus materials</li>
+    <li><strong>🎯 Personalized Recommendations:</strong> Course suggestions based on your interests and career goals</li>
+    <li><strong>🏆 VIP Invitations:</strong> Priority access to exclusive events and masterclasses</li>
+</ul>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="/courses/" class="btn" style="color: #ffffff !important; text-decoration: none;">
+        🎓 Explore Our Courses
+    </a>
+</div>
+
+<h3 style="color: #045334;">🤝 Join Our Community</h3>
+<p>Don't just be a subscriber - become part of our active learning community!</p>
+
+<div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <h4 style="color: #045334; margin-top: 0;">Connect With Us:</h4>
+    <ul style="margin: 10px 0; padding-left: 20px;">
+        <li><strong>💬 WhatsApp Community:</strong> <a href="https://wa.me/254768998305" style="color: #045334;">+254 768 998 305</a></li>
+        <li><strong>📘 Facebook:</strong> <a href="https://www.facebook.com/LumDataAnalytica" style="color: #045334;">LumDataAnalytica</a></li>
+        <li><strong>📷 Instagram:</strong> <a href="https://www.instagram.com/lumdataanalytica" style="color: #045334;">@lumdataanalytica</a></li>
+        <li><strong>🎵 TikTok:</strong> <a href="https://www.tiktok.com/lumdataanalytica" style="color: #045334;">@lumdataanalytica</a></li>
+    </ul>
+</div>
+
+<div class="alert alert-info">
+    <p><strong>📧 Newsletter Frequency:</strong> We send our newsletter weekly, typically on Wednesdays. You can update your preferences or unsubscribe at any time using the links in our emails.</p>
+</div>
+
+<h3 style="color: #045334;">💡 Get Started Today</h3>
+<p>While you wait for your first newsletter, why not explore what we have to offer?</p>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0;">
+    <div style="text-align: center;">
+        <a href="/blog/" class="btn btn-secondary" style="color: #ffffff !important; text-decoration: none; font-size: 14px; padding: 12px 20px;">
+            📝 Read Our Blog
+        </a>
+    </div>
+    <div style="text-align: center;">
+        <a href="/about/" class="btn btn-secondary" style="color: #ffffff !important; text-decoration: none; font-size: 14px; padding: 12px 20px;">
+            🌟 Learn About Us
+        </a>
+    </div>
+</div>
+
+<p>Thank you for joining our mission to equip Africa with future-ready data skills. Together, we're building a brighter, data-driven future!</p>
+
+<p>Welcome aboard! 🚀</p>
+
+<p>Best regards,<br>
+<strong>The LUM Data Academy Team</strong><br>
+<em>David Joel - CEO & Co-founder</em></p>
+{% endblock %}

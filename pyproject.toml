@@ -9,4 +9,7 @@ dependencies = [
     "gunicorn>=23.0.0",
     "pillow>=11.3.0",
     "whitenoise>=6.10.0",
+    "django-anymail>=13.1",
+    "django-templated-email>=3.1.1",
+    "html2text>=2025.4.15",
 ]

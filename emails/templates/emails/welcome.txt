@@ -1,0 +1,50 @@
+LUM Data Academy - Welcome!
+
+Hello {{ user.get_full_name|default:user.username }}!
+
+🎉 Congratulations! Your email has been successfully verified and your LUM Data Academy account is now active!
+
+Welcome to our vibrant community of data enthusiasts, where we're committed to Equipping Africa with Future-Ready Data Skills.
+
+YOUR ACCOUNT IS READY!
+You can now access all our platform features and start your data science journey.
+
+Access your dashboard: {{ login_url }}
+
+WHAT'S NEXT?
+
+📚 Explore Our Course Offerings:
+- Beginner Courses: Python for Data Analytics, Excel Fundamentals, AI Basics  
+- Intermediate Programs: Data Science, Machine Learning, Business Intelligence
+- Advanced Specializations: Cloud + AI, Advanced Analytics, Research Methods
+- Masterclasses: Agentic AI, Industry-Specific Applications
+
+🌟 Platform Features You Can Access:
+- Learning Resources: Course materials, tutorials, and downloadable PDFs
+- Community Access: Connect with fellow learners and instructors  
+- Progress Tracking: Monitor your learning journey and achievements
+- Career Support: Job placement assistance and career guidance
+
+💡 Quick Start Tips:
+1. Complete your profile to get personalized course recommendations
+2. Browse our course catalog and find programs that match your goals
+3. Join our WhatsApp community for instant updates and discussions
+4. Follow us on social media for tips, success stories, and industry insights
+
+NEED HELP GETTING STARTED?
+Our support team is here to help! Reach out via WhatsApp at +254 768 998 305 or email us at info@lumdataacademy.org
+
+We're thrilled to have you as part of the LUM Data Academy family. Together, we'll unlock your potential and shape the future of data science in Africa!
+
+Ready to transform your career with data skills? Let's get started! 🚀
+
+Warmest welcome,
+The LUM Data Academy Team
+David Joel - CEO & Co-founder
+
+---
+LUM Data Academy
+Equipping Africa with Future-Ready Data Skills
+Website: lumdataacademy.org
+Email: info@lumdataacademy.org
+WhatsApp: +254 768 998 305

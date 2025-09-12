@@ -41,8 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
     'django_ckeditor_5',
+    'anymail',
+    'templated_email',
     'core',
     'accounts',
+    'emails',
 ]
 
 MIDDLEWARE = [
@@ -277,6 +280,23 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = 'noreply@lumdataacademy.org'
+
+# Django Templated Email settings
+TEMPLATED_EMAIL_BACKEND = 'templated_email.backends.vanilla_django'
+TEMPLATED_EMAIL_TEMPLATE_DIR = 'emails/'
+TEMPLATED_EMAIL_FILE_EXTENSION = 'html'
+
+# For production, add Anymail configuration
+# ANYMAIL = {
+#     "MAILGUN_API_KEY": os.environ.get("MAILGUN_API_KEY"),
+#     "MAILGUN_SENDER_DOMAIN": os.environ.get("MAILGUN_SENDER_DOMAIN"),
+# }
+# EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+
+# Admin email addresses for notifications
+ADMINS = [
+    ('LUM Data Academy Admin', 'info@lumdataacademy.org'),
+]
 
 # Login URLs
 LOGIN_URL = '/accounts/login/'
