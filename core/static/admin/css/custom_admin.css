@@ -1,4 +1,3 @@
-
 /* Custom Django Admin Styling - Modern Gen-Z/Alpha/Beta Design */
 
 /* Reset and Base Styles */
@@ -498,6 +497,8 @@
     border-radius: 0 !important;
     border: none !important;
     background: white !important;
+    max-height: 400px; /* Reduced height */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .results thead th {
@@ -637,20 +638,20 @@
     #nav-sidebar-right {
         transform: translateX(100%) !important;
     }
-    
+
     .content {
         margin-right: 0 !important;
         width: calc(100% - 80px) !important;
     }
-    
+
     .content.left-expanded {
         width: calc(100% - 300px) !important;
     }
-    
+
     .sidebar-toggle.right {
         right: -25px !important;
     }
-    
+
     .sidebar-toggle.right.expanded {
         right: 265px !important;
     }
@@ -660,41 +661,41 @@
     #nav-sidebar {
         transform: translateX(-100%) !important;
     }
-    
+
     #nav-sidebar-right {
         transform: translateX(100%) !important;
     }
-    
+
     #nav-sidebar.show {
         transform: translateX(0) !important;
     }
-    
+
     .content {
         margin-left: 0 !important;
         margin-right: 0 !important;
         width: 100% !important;
     }
-    
+
     #header {
         padding: 0 15px !important;
     }
-    
+
     .content {
         padding: 20px 15px !important;
     }
-    
+
     .sidebar-toggle.left {
         left: -25px !important;
     }
-    
+
     .sidebar-toggle.left.expanded {
         left: 265px !important;
     }
-    
+
     .sidebar-toggle.right {
         right: -25px !important;
     }
-    
+
     .sidebar-toggle.right.expanded {
         right: 265px !important;
     }
@@ -829,3 +830,32 @@
     background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
     box-shadow: 0 4px 15px rgba(243, 156, 18, 0.2) !important;
 }
+
+body.dark-theme .paginator {
+            background: #2d2d2d !important;
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-theme .results tbody td {
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-theme .results tbody td a {
+            color: #60a5fa !important;
+        }
+
+        body.dark-theme .results tbody td a:hover {
+            color: #93c5fd !important;
+        }
+
+        body.dark-theme .activity-item .content strong {
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-theme .activity-item .content small {
+            color: #cbd5e0 !important;
+        }
+
+        body.dark-theme .activity-item .time {
+            color: #9ca3af !important;
+        }
