@@ -268,6 +268,102 @@ class EmailService:
             subject=f'[LUM Data Academy] {subject}'
         )
 
+    @staticmethod
+    def send_enrollment_confirmation_email(user: User, course, enrollment) -> Tuple[bool, str]:
+        """Send enrollment confirmation email with payment instructions"""
+        try:
+            subject = f'Course Enrollment Confirmed - {course.title} | LUM Data Academy'
+            
+            # Build enrollment status URL
+            enrollment_status_url = getattr(settings, 'SITE_URL', 'https://lumdataacademy.org')
+            enrollment_status_url += f'/enrollment/{enrollment.id}/'
+            
+            email_context = {
+                'user': user,
+                'course': course,
+                'enrollment': enrollment,
+                'site_name': 'LUM Data Academy',
+                'site_url': getattr(settings, 'SITE_URL', 'https://lumdataacademy.org'),
+                'enrollment_status_url': enrollment_status_url,
+                'current_year': timezone.now().year,
+            }
+            
+            return EmailService._send_templated_email(
+                template_name='enrollment_confirmation',
+                recipient_list=[user.email],
+                context=email_context,
+                subject=subject,
+                from_email=settings.DEFAULT_FROM_EMAIL
+            )
+        except Exception as e:
+            logger.error(f"Failed to send enrollment confirmation email to {user.email}: {str(e)}")
+            return False, str(e)
+
+    @staticmethod
+    def send_course_access_email(user: User, course, enrollment) -> Tuple[bool, str]:
+        """Send course access activated email"""
+        try:
+            subject = f'🎉 Course Access Activated - {course.title} | LUM Data Academy'
+            
+            # Build course access URLs
+            site_url = getattr(settings, 'SITE_URL', 'https://lumdataacademy.org')
+            course_materials_url = f"{site_url}/course/{course.slug}/"
+            my_enrollments_url = f"{site_url}/my-enrollments/"
+            
+            email_context = {
+                'user': user,
+                'course': course,
+                'enrollment': enrollment,
+                'site_name': 'LUM Data Academy',
+                'site_url': site_url,
+                'course_materials_url': course_materials_url,
+                'my_enrollments_url': my_enrollments_url,
+                'current_year': timezone.now().year,
+            }
+            
+            return EmailService._send_templated_email(
+                template_name='course_access',
+                recipient_list=[user.email],
+                context=email_context,
+                subject=subject,
+                from_email=settings.DEFAULT_FROM_EMAIL
+            )
+        except Exception as e:
+            logger.error(f"Failed to send course access email to {user.email}: {str(e)}")
+            return False, str(e)
+
+    @staticmethod
+    def send_payment_reminder_email(user: User, enrollment, installment) -> Tuple[bool, str]:
+        """Send payment reminder email for installments"""
+        try:
+            subject = f'Payment Reminder - {enrollment.course.title} | LUM Data Academy'
+            
+            # Build enrollment status URL
+            enrollment_status_url = getattr(settings, 'SITE_URL', 'https://lumdataacademy.org')
+            enrollment_status_url += f'/enrollment/{enrollment.id}/'
+            
+            email_context = {
+                'user': user,
+                'enrollment': enrollment,
+                'installment': installment,
+                'course': enrollment.course,
+                'site_name': 'LUM Data Academy',
+                'site_url': getattr(settings, 'SITE_URL', 'https://lumdataacademy.org'),
+                'enrollment_status_url': enrollment_status_url,
+                'current_year': timezone.now().year,
+            }
+            
+            return EmailService._send_templated_email(
+                template_name='payment_reminder',
+                recipient_list=[user.email],
+                context=email_context,
+                subject=subject,
+                from_email=settings.DEFAULT_FROM_EMAIL
+            )
+        except Exception as e:
+            logger.error(f"Failed to send payment reminder email to {user.email}: {str(e)}")
+            return False, str(e)
+
 
 # Legacy compatibility functions for existing code
 def send_verification_email(user: User, request) -> Tuple[bool, str]:

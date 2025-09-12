@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Access Activated - LUM Data Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Linden+Hill:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Linden Hill', serif; background-color: #f8fafc; color: #334155;">
+    <!-- Header -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); padding: 32px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px;">
+                    <tr>
+                        <td align="center" style="padding: 0 20px;">
+                            <h1 style="color: white; font-size: 32px; font-weight: bold; margin: 0; text-align: center;">
+                                🎉 Welcome to Your Course!
+                            </h1>
+                            <p style="color: rgba(255,255,255,0.9); font-size: 18px; margin: 16px 0 0 0; text-align: center;">
+                                Your course access has been successfully activated
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Main Content -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding: 40px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <tr>
+                        <td style="padding: 40px;">
+                            <!-- Greeting -->
+                            <div style="margin-bottom: 32px;">
+                                <h2 style="color: #045334; font-size: 24px; font-weight: bold; margin: 0 0 16px 0;">
+                                    Congratulations {{ user.first_name|default:user.username }}! 🎓
+                                </h2>
+                                <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0;">
+                                    Your enrollment for <strong>{{ course.title }}</strong> has been successfully activated! 
+                                    You now have full access to all course materials, resources, and community features.
+                                </p>
+                            </div>
+
+                            <!-- Course Information -->
+                            <div style="background: #f0fdf4; border-left: 4px solid #22c55e; border-radius: 8px; padding: 24px; margin-bottom: 32px;">
+                                <h3 style="color: #16a34a; font-size: 20px; font-weight: bold; margin: 0 0 16px 0;">
+                                    📚 Your Activated Course
+                                </h3>
+                                <table width="100%" style="border-collapse: collapse;">
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #22c55e; font-weight: bold; width: 30%;">Course:</td>
+                                        <td style="padding: 8px 0; color: #334155; font-weight: bold;">{{ course.title }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #22c55e; font-weight: bold;">Duration:</td>
+                                        <td style="padding: 8px 0; color: #334155;">{{ course.duration }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #22c55e; font-weight: bold;">Modules:</td>
+                                        <td style="padding: 8px 0; color: #334155;">{{ course.total_modules }} modules</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #22c55e; font-weight: bold;">Est. Hours:</td>
+                                        <td style="padding: 8px 0; color: #334155;">{{ course.estimated_hours }} hours</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #22c55e; font-weight: bold;">Activated:</td>
+                                        <td style="padding: 8px 0; color: #334155;">{{ enrollment.activated_at|date:"F j, Y g:i A" }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!-- What's Included -->
+                            <div style="margin-bottom: 32px;">
+                                <h3 style="color: #045334; font-size: 20px; font-weight: bold; margin: 0 0 16px 0;">
+                                    ✨ What's Included in Your Course
+                                </h3>
+                                <div style="background: #f8fafc; border-radius: 8px; padding: 20px;">
+                                    <div style="display: flex; margin-bottom: 12px;">
+                                        <span style="color: #22c55e; margin-right: 8px;">✓</span>
+                                        <span style="color: #334155;">Full access to all {{ course.total_modules }} course modules</span>
+                                    </div>
+                                    <div style="display: flex; margin-bottom: 12px;">
+                                        <span style="color: #22c55e; margin-right: 8px;">✓</span>
+                                        <span style="color: #334155;">Downloadable resources and datasets</span>
+                                    </div>
+                                    <div style="display: flex; margin-bottom: 12px;">
+                                        <span style="color: #22c55e; margin-right: 8px;">✓</span>
+                                        <span style="color: #334155;">Hands-on exercises and code examples</span>
+                                    </div>
+                                    <div style="display: flex; margin-bottom: 12px;">
+                                        <span style="color: #22c55e; margin-right: 8px;">✓</span>
+                                        <span style="color: #334155;">Capstone projects for real-world experience</span>
+                                    </div>
+                                    <div style="display: flex; margin-bottom: 12px;">
+                                        <span style="color: #22c55e; margin-right: 8px;">✓</span>
+                                        <span style="color: #334155;">Certificate of completion</span>
+                                    </div>
+                                    <div style="display: flex; margin-bottom: 12px;">
+                                        <span style="color: #22c55e; margin-right: 8px;">✓</span>
+                                        <span style="color: #334155;">Lifetime access to course materials</span>
+                                    </div>
+                                    <div style="display: flex; margin-bottom: 0;">
+                                        <span style="color: #22c55e; margin-right: 8px;">✓</span>
+                                        <span style="color: #334155;">Career support and job placement assistance</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Getting Started -->
+                            <div style="margin-bottom: 32px;">
+                                <h3 style="color: #045334; font-size: 20px; font-weight: bold; margin: 0 0 16px 0;">
+                                    🚀 Getting Started
+                                </h3>
+                                <ol style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0; padding-left: 20px;">
+                                    <li style="margin-bottom: 12px;">
+                                        <strong style="color: #334155;">Access your course:</strong> Click the button below to start learning
+                                    </li>
+                                    <li style="margin-bottom: 12px;">
+                                        <strong style="color: #334155;">Join our community:</strong> Connect with fellow students and instructors
+                                    </li>
+                                    <li style="margin-bottom: 12px;">
+                                        <strong style="color: #334155;">Download materials:</strong> Get your course PDFs and datasets
+                                    </li>
+                                    <li style="margin-bottom: 12px;">
+                                        <strong style="color: #334155;">Set your schedule:</strong> Plan your learning journey ({{ course.duration }})
+                                    </li>
+                                    <li style="margin-bottom: 0;">
+                                        <strong style="color: #334155;">Start Module 1:</strong> Begin with the fundamentals and build your skills
+                                    </li>
+                                </ol>
+                            </div>
+
+                            <!-- CTA Buttons -->
+                            <div style="text-align: center; margin-bottom: 32px;">
+                                <a href="{{ course_materials_url }}" 
+                                   style="display: inline-block; background: #22c55e; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin: 8px;">
+                                    📚 Access Course Materials
+                                </a>
+                                <a href="{{ my_enrollments_url }}" 
+                                   style="display: inline-block; background: #045334; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin: 8px;">
+                                    📊 View Dashboard
+                                </a>
+                            </div>
+
+                            <!-- Learning Tips -->
+                            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 20px; margin-bottom: 32px;">
+                                <h4 style="color: #92400e; font-size: 18px; font-weight: bold; margin: 0 0 12px 0;">
+                                    💡 Pro Learning Tips
+                                </h4>
+                                <ul style="color: #92400e; font-size: 14px; margin: 0; padding-left: 16px;">
+                                    <li style="margin-bottom: 8px;">Set aside dedicated study time each week</li>
+                                    <li style="margin-bottom: 8px;">Practice with the provided exercises and datasets</li>
+                                    <li style="margin-bottom: 8px;">Join our community discussions and ask questions</li>
+                                    <li style="margin-bottom: 0;">Complete the capstone project to showcase your skills</li>
+                                </ul>
+                            </div>
+
+                            <!-- Support -->
+                            <div style="background: #f1f5f9; border-radius: 8px; padding: 20px; text-align: center;">
+                                <h4 style="color: #334155; font-size: 16px; font-weight: bold; margin: 0 0 8px 0;">
+                                    Need Help or Have Questions?
+                                </h4>
+                                <p style="color: #64748b; font-size: 14px; margin: 0 0 8px 0;">
+                                    Our support team is here to help you succeed:
+                                </p>
+                                <p style="color: #045334; font-weight: bold; margin: 0;">
+                                    📧 info@lumdataacademy.org | 💬 Student Support Portal
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Footer -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="background: #1e293b; padding: 32px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px;">
+                    <tr>
+                        <td style="padding: 0 20px; text-align: center;">
+                            <h3 style="color: white; font-size: 20px; font-weight: bold; margin: 0 0 16px 0;">
+                                LUM Data Academy
+                            </h3>
+                            <p style="color: #94a3b8; font-size: 14px; line-height: 1.6; margin: 0 0 16px 0;">
+                                Equipping Africa with Future-Ready Data Skills<br>
+                                Professional Data Science & Analytics Training
+                            </p>
+                            <div style="margin-bottom: 16px;">
+                                <a href="https://lumdataacademy.org" style="color: #01bbe1; text-decoration: none; margin: 0 8px;">Website</a>
+                                <a href="mailto:info@lumdataacademy.org" style="color: #01bbe1; text-decoration: none; margin: 0 8px;">Email</a>
+                            </div>
+                            <p style="color: #64748b; font-size: 12px; margin: 0;">
+                                © 2025 LUM Data Academy. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

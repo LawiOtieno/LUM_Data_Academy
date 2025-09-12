@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Enrollment Confirmation - LUM Data Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Linden+Hill:wght@400;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Linden Hill', serif; background-color: #f8fafc; color: #334155;">
+    <!-- Header -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #045334 0%, #01bbe1 100%); padding: 32px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px;">
+                    <tr>
+                        <td align="center" style="padding: 0 20px;">
+                            <h1 style="color: white; font-size: 28px; font-weight: bold; margin: 0; text-align: center;">
+                                🎓 Course Enrollment Confirmed!
+                            </h1>
+                            <p style="color: rgba(255,255,255,0.9); font-size: 16px; margin: 12px 0 0 0; text-align: center;">
+                                Welcome to LUM Data Academy - Your learning journey begins now
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Main Content -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="padding: 40px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <tr>
+                        <td style="padding: 40px;">
+                            <!-- Greeting -->
+                            <div style="margin-bottom: 32px;">
+                                <h2 style="color: #045334; font-size: 24px; font-weight: bold; margin: 0 0 16px 0;">
+                                    Hello {{ user.first_name|default:user.username }},
+                                </h2>
+                                <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0;">
+                                    Congratulations! You have successfully enrolled in <strong>{{ course.title }}</strong>. 
+                                    Your enrollment has been created and we've generated your unique activation code.
+                                </p>
+                            </div>
+
+                            <!-- Course Information -->
+                            <div style="background: #f8fafc; border-radius: 8px; padding: 24px; margin-bottom: 32px;">
+                                <h3 style="color: #045334; font-size: 20px; font-weight: bold; margin: 0 0 16px 0;">
+                                    📚 Course Details
+                                </h3>
+                                <table width="100%" style="border-collapse: collapse;">
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #64748b; font-weight: bold; width: 30%;">Course:</td>
+                                        <td style="padding: 8px 0; color: #334155;">{{ course.title }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #64748b; font-weight: bold;">Duration:</td>
+                                        <td style="padding: 8px 0; color: #334155;">{{ course.duration }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #64748b; font-weight: bold;">Category:</td>
+                                        <td style="padding: 8px 0; color: #334155;">{{ course.category.display_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #64748b; font-weight: bold;">Total Amount:</td>
+                                        <td style="padding: 8px 0; color: #334155; font-weight: bold;">
+                                            {{ enrollment.currency }} {{ enrollment.total_amount|floatformat:0 }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #64748b; font-weight: bold;">Payment Plan:</td>
+                                        <td style="padding: 8px 0; color: #334155;">{{ enrollment.get_installments_display }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!-- Payment Instructions -->
+                            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 24px; margin-bottom: 32px;">
+                                <h3 style="color: #92400e; font-size: 20px; font-weight: bold; margin: 0 0 16px 0;">
+                                    💰 Payment Instructions
+                                </h3>
+                                {% if enrollment.payment_method == 'mpesa' %}
+                                <div style="background: #22c55e; color: white; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                                    <h4 style="margin: 0 0 8px 0; font-size: 18px;">M-Pesa PayBill Payment</h4>
+                                    <div style="font-family: 'Fira Code', monospace; font-size: 14px;">
+                                        <div><strong>Business Number:</strong> 444174</div>
+                                        <div><strong>Account Number:</strong> 002013</div>
+                                        <div><strong>Amount:</strong> KShs {{ enrollment.get_next_installment_amount|floatformat:0 }}</div>
+                                    </div>
+                                </div>
+                                <div style="color: #92400e; font-size: 14px;">
+                                    <strong>Steps:</strong><br>
+                                    1. Go to M-Pesa on your phone<br>
+                                    2. Select "Lipa na M-Pesa"<br>
+                                    3. Select "Pay Bill"<br>
+                                    4. Enter Business Number: <strong>444174</strong><br>
+                                    5. Enter Account Number: <strong>002013</strong><br>
+                                    6. Enter Amount: <strong>KShs {{ enrollment.get_next_installment_amount|floatformat:0 }}</strong><br>
+                                    7. Enter your PIN and Send
+                                </div>
+                                {% elif enrollment.payment_method == 'paypal' %}
+                                <div style="background: #0070ba; color: white; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+                                    <h4 style="margin: 0 0 8px 0; font-size: 18px;">PayPal Payment</h4>
+                                    <div style="font-family: 'Fira Code', monospace; font-size: 14px;">
+                                        <div><strong>Send to:</strong> lum.analytica@gmail.com</div>
+                                        <div><strong>Amount:</strong> ${{ enrollment.get_next_installment_amount|floatformat:2 }}</div>
+                                        <div><strong>Reference:</strong> {{ enrollment.id }}</div>
+                                    </div>
+                                </div>
+                                <div style="color: #92400e; font-size: 14px;">
+                                    <strong>Instructions:</strong><br>
+                                    1. Log in to your PayPal account<br>
+                                    2. Send payment to: <strong>lum.analytica@gmail.com</strong><br>
+                                    3. Amount: <strong>${{ enrollment.get_next_installment_amount|floatformat:2 }}</strong><br>
+                                    4. Include reference: <strong>{{ enrollment.id }}</strong> in the note<br>
+                                    5. Send payment
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Activation Code -->
+                            <div style="background: #dbeafe; border: 2px dashed #3b82f6; border-radius: 8px; padding: 24px; margin-bottom: 32px; text-align: center;">
+                                <h3 style="color: #1e40af; font-size: 20px; font-weight: bold; margin: 0 0 16px 0;">
+                                    🔑 Your Activation Code
+                                </h3>
+                                <div style="background: white; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                                    <div style="font-family: 'Fira Code', monospace; font-size: 24px; font-weight: bold; color: #1e40af; letter-spacing: 2px;">
+                                        {{ enrollment.activation_code }}
+                                    </div>
+                                </div>
+                                <p style="color: #1e40af; font-size: 14px; margin: 0;">
+                                    <strong>Important:</strong> Save this code! You'll need it to activate your course access after payment confirmation.
+                                </p>
+                            </div>
+
+                            <!-- Next Steps -->
+                            <div style="margin-bottom: 32px;">
+                                <h3 style="color: #045334; font-size: 20px; font-weight: bold; margin: 0 0 16px 0;">
+                                    📋 Next Steps
+                                </h3>
+                                <ol style="color: #64748b; font-size: 16px; line-height: 1.6; margin: 0; padding-left: 20px;">
+                                    <li style="margin-bottom: 8px;">Complete your payment using the instructions above</li>
+                                    <li style="margin-bottom: 8px;">Wait for payment confirmation (usually within 24 hours)</li>
+                                    <li style="margin-bottom: 8px;">Use your activation code to access course materials</li>
+                                    <li style="margin-bottom: 8px;">Begin your learning journey!</li>
+                                </ol>
+                            </div>
+
+                            <!-- CTA Button -->
+                            <div style="text-align: center; margin-bottom: 32px;">
+                                <a href="{{ enrollment_status_url }}" 
+                                   style="display: inline-block; background: #045334; color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                                    Check Payment Status
+                                </a>
+                            </div>
+
+                            <!-- Support -->
+                            <div style="background: #f1f5f9; border-radius: 8px; padding: 20px; text-align: center;">
+                                <p style="color: #64748b; font-size: 14px; margin: 0 0 8px 0;">
+                                    Need help? Contact our support team:
+                                </p>
+                                <p style="color: #045334; font-weight: bold; margin: 0;">
+                                    📧 info@lumdataacademy.org | 📱 WhatsApp Support
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Footer -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="background: #1e293b; padding: 32px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px;">
+                    <tr>
+                        <td style="padding: 0 20px; text-align: center;">
+                            <h3 style="color: white; font-size: 20px; font-weight: bold; margin: 0 0 16px 0;">
+                                LUM Data Academy
+                            </h3>
+                            <p style="color: #94a3b8; font-size: 14px; line-height: 1.6; margin: 0 0 16px 0;">
+                                Equipping Africa with Future-Ready Data Skills<br>
+                                Professional Data Science & Analytics Training
+                            </p>
+                            <div style="margin-bottom: 16px;">
+                                <a href="https://lumdataacademy.org" style="color: #01bbe1; text-decoration: none; margin: 0 8px;">Website</a>
+                                <a href="mailto:info@lumdataacademy.org" style="color: #01bbe1; text-decoration: none; margin: 0 8px;">Email</a>
+                            </div>
+                            <p style="color: #64748b; font-size: 12px; margin: 0;">
+                                © 2025 LUM Data Academy. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
