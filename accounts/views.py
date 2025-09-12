@@ -19,7 +19,7 @@ from .utils import (
     send_verification_email, send_password_reset_email, clean_expired_tokens
 )
 from .forms import (
-    CustomUserCreationForm, UserProfileForm, 
+    UnifiedRegistrationForm, CustomUserCreationForm, UserProfileForm, 
     PasswordResetRequestForm, PasswordResetForm
 )
 
@@ -48,7 +48,7 @@ def register(request):
     captcha = generate_math_captcha(request.session.session_key)
     
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
+        form = UnifiedRegistrationForm(request.POST)
         captcha_answer = request.POST.get('captcha_answer', '')
         
         # Verify captcha first
@@ -87,7 +87,7 @@ def register(request):
             # Generate new captcha if form is invalid
             captcha = generate_math_captcha(request.session.session_key)
     else:
-        form = CustomUserCreationForm()
+        form = UnifiedRegistrationForm()
     
     context = {
         'form': form,
