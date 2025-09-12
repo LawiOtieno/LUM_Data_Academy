@@ -4,6 +4,10 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.text import slugify
 from django_ckeditor_5.fields import CKEditor5Field
+import uuid
+import string
+import random
+from django.utils import timezone
 
 
 class CourseCategory(models.Model):
@@ -379,3 +383,189 @@ class AboutPage(models.Model):
         # Ensure only one instance exists
         self.pk = 1
         super().save(*args, **kwargs)
+
+
+class Enrollment(models.Model):
+    """Course enrollment with payment tracking and activation codes"""
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', 'Payment Pending'),
+        ('partial', 'Partial Payment'),
+        ('completed', 'Payment Completed'),
+        ('verified', 'Payment Verified'),
+    ]
+    
+    ENROLLMENT_STATUS_CHOICES = [
+        ('inactive', 'Inactive'),
+        ('active', 'Active'),
+        ('completed', 'Completed'),
+        ('suspended', 'Suspended'),
+    ]
+    
+    PAYMENT_METHOD_CHOICES = [
+        ('mpesa', 'M-Pesa'),
+        ('paypal', 'PayPal'),
+        ('bank', 'Bank Transfer'),
+        ('other', 'Other'),
+    ]
+    
+    INSTALLMENT_CHOICES = [
+        (1, 'Full Payment'),
+        (2, '2 Installments'),
+        (3, '3 Installments'),
+    ]
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='enrollments')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
+    
+    # Payment Information
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=3, default='KES')
+    installments = models.PositiveIntegerField(choices=INSTALLMENT_CHOICES, default=1)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    
+    # Status and Activation
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='pending')
+    enrollment_status = models.CharField(max_length=20, choices=ENROLLMENT_STATUS_CHOICES, default='inactive')
+    activation_code = models.CharField(max_length=19, unique=True, blank=True)  # XXXX-XXXX-XXXX-XXXX format
+    is_activated = models.BooleanField(default=False)
+    activated_at = models.DateTimeField(null=True, blank=True)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+    
+    # Admin notes
+    admin_notes = models.TextField(blank=True, help_text="Internal notes for administrators")
+    
+    class Meta:
+        ordering = ['-created_at']
+        unique_together = ['user', 'course']
+    
+    def save(self, *args, **kwargs):
+        if not self.activation_code:
+            self.activation_code = self.generate_activation_code()
+        super().save(*args, **kwargs)
+    
+    def generate_activation_code(self):
+        """Generate a unique activation code in XXXX-XXXX-XXXX-XXXX format"""
+        while True:
+            # Generate 4 groups of 4 alphanumeric characters
+            groups = []
+            for _ in range(4):
+                group = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+                groups.append(group)
+            code = '-'.join(groups)
+            
+            # Ensure uniqueness
+            if not Enrollment.objects.filter(activation_code=code).exists():
+                return code
+    
+    def activate_enrollment(self):
+        """Activate the enrollment"""
+        self.is_activated = True
+        self.enrollment_status = 'active'
+        self.activated_at = timezone.now()
+        self.save()
+    
+    def get_remaining_balance(self):
+        """Calculate remaining payment balance"""
+        return self.total_amount - self.amount_paid
+    
+    def get_payment_progress_percentage(self):
+        """Calculate payment progress as percentage"""
+        if self.total_amount > 0:
+            return int((self.amount_paid / self.total_amount) * 100)
+        return 0
+    
+    def get_installment_amount(self):
+        """Calculate amount per installment"""
+        return self.total_amount / self.installments
+    
+    def get_next_installment_amount(self):
+        """Get the amount for next installment"""
+        remaining = self.get_remaining_balance()
+        installment_amount = self.get_installment_amount()
+        return min(remaining, installment_amount)
+    
+    def get_payment_instructions(self):
+        """Get payment instructions based on payment method"""
+        if self.payment_method == 'mpesa':
+            return {
+                'method': 'M-Pesa PayBill',
+                'paybill': '444174',
+                'account': '002013',
+                'amount': self.get_next_installment_amount(),
+                'instructions': f'Go to M-Pesa > Lipa na M-Pesa > Pay Bill\nEnter Business Number: 444174\nEnter Account Number: 002013\nEnter Amount: KShs {self.get_next_installment_amount():,.0f}\nEnter your PIN and Send'
+            }
+        elif self.payment_method == 'paypal':
+            return {
+                'method': 'PayPal',
+                'email': 'lum.analytica@gmail.com',
+                'amount': self.get_next_installment_amount(),
+                'instructions': f'Send payment to: lum.analytica@gmail.com\nAmount: ${self.get_next_installment_amount():.2f}\nInclude your enrollment ID: {self.id} in the payment note'
+            }
+        return None
+    
+    def __str__(self):
+        return f"{self.user.get_full_name() or self.user.username} - {self.course.title}"
+
+
+class PaymentInstallment(models.Model):
+    """Track individual installment payments"""
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('paid', 'Paid'),
+        ('verified', 'Verified'),
+        ('overdue', 'Overdue'),
+    ]
+    
+    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, related_name='payment_installments')
+    installment_number = models.PositiveIntegerField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    due_date = models.DateField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    
+    # Payment confirmation details
+    payment_reference = models.CharField(max_length=100, blank=True, help_text="Transaction reference number")
+    payment_date = models.DateTimeField(null=True, blank=True)
+    verified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='verified_payments')
+    verified_at = models.DateTimeField(null=True, blank=True)
+    
+    # Admin notes
+    admin_notes = models.TextField(blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['installment_number']
+        unique_together = ['enrollment', 'installment_number']
+    
+    def mark_as_paid(self, payment_reference='', verified_by=None):
+        """Mark installment as paid and verified"""
+        self.status = 'verified' if verified_by else 'paid'
+        self.payment_reference = payment_reference
+        self.payment_date = timezone.now()
+        if verified_by:
+            self.verified_by = verified_by
+            self.verified_at = timezone.now()
+        self.save()
+        
+        # Update enrollment payment status
+        self.enrollment.amount_paid += self.amount
+        if self.enrollment.amount_paid >= self.enrollment.total_amount:
+            self.enrollment.payment_status = 'completed'
+        elif self.enrollment.amount_paid > 0:
+            self.enrollment.payment_status = 'partial'
+        self.enrollment.save()
+    
+    def is_overdue(self):
+        """Check if installment is overdue"""
+        from django.utils import timezone
+        return self.due_date < timezone.now().date() and self.status == 'pending'
+    
+    def __str__(self):
+        return f"{self.enrollment} - Installment {self.installment_number}"
