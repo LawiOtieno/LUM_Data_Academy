@@ -4,7 +4,8 @@ from django_ckeditor_5.widgets import CKEditor5Widget
 from .models import (
     CourseCategory, Course, CourseModule, CodeExample, 
     Exercise, CapstoneProject, Testimonial, Event, 
-    BlogPost, ContactSubmission, Newsletter, AboutPage
+    BlogPost, ContactSubmission, Newsletter, AboutPage,
+    Enrollment, PaymentInstallment
 )
 
 
@@ -84,6 +85,179 @@ class CourseAdmin(admin.ModelAdmin):
         models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
     }
 
+
+class PaymentInstallmentInline(admin.TabularInline):
+    model = PaymentInstallment
+    extra = 0
+    fields = ('installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    readonly_fields = ('installment_number', 'amount', 'due_date')
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Enrollment)
+class EnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course', 'payment_status', 'is_activated', 'payment_method', 'installments', 'amount_paid', 'created_at')
+    list_filter = ('payment_status', 'is_activated', 'payment_method', 'installments', 'created_at')
+    search_fields = ('user__username', 'user__email', 'course__title', 'activation_code')
+    readonly_fields = ('activation_code', 'created_at', 'updated_at', 'activated_at')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Enrollment Information', {
+            'fields': ('user', 'course', 'activation_code', 'is_activated', 'activated_at')
+        }),
+        ('Payment Details', {
+            'fields': ('payment_method', 'currency', 'total_amount', 'amount_paid', 
+                      'payment_status', 'installments')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    inlines = [PaymentInstallmentInline]
+    
+    def save_model(self, request, obj, form, change):
+        # Auto-generate activation code if not present
+        if not obj.activation_code:
+            import uuid
+            obj.activation_code = str(uuid.uuid4()).replace('-', '').upper()[:16]
+            # Format as XXXX-XXXX-XXXX-XXXX
+            obj.activation_code = '-'.join([
+                obj.activation_code[i:i+4] for i in range(0, 16, 4)
+            ])
+        super().save_model(request, obj, form, change)
+    
+    actions = ['activate_enrollment', 'mark_payment_complete', 'send_activation_email']
+    
+    def activate_enrollment(self, request, queryset):
+        """Custom admin action to activate enrollments"""
+        from django.utils import timezone
+        updated = 0
+        for enrollment in queryset.filter(payment_status='completed', is_activated=False):
+            enrollment.is_activated = True
+            enrollment.activated_at = timezone.now()
+            enrollment.save()
+            updated += 1
+            
+            # Send course access email
+            try:
+                from emails.services import EmailService
+                EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+            except Exception as e:
+                pass  # Continue even if email fails
+                
+        self.message_user(request, f'Successfully activated {updated} enrollments.')
+    activate_enrollment.short_description = "Activate selected enrollments"
+    
+    def mark_payment_complete(self, request, queryset):
+        """Mark payments as complete"""
+        updated = queryset.filter(payment_status__in=['pending', 'partial']).update(
+            payment_status='completed',
+            amount_paid=models.F('total_amount')
+        )
+        self.message_user(request, f'Marked {updated} payments as complete.')
+    mark_payment_complete.short_description = "Mark payments as complete"
+    
+    def send_activation_email(self, request, queryset):
+        """Send activation emails to students"""
+        sent = 0
+        for enrollment in queryset:
+            try:
+                from emails.services import EmailService
+                if enrollment.payment_status == 'completed' and not enrollment.is_activated:
+                    # Send activation email with code
+                    EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+                else:
+                    # Send enrollment confirmation with payment instructions
+                    EmailService.send_enrollment_confirmation_email(enrollment.user, enrollment.course, enrollment)
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent activation emails to {sent} students.')
+    send_activation_email.short_description = "Send activation emails"
+
+
+@admin.register(PaymentInstallment)
+class PaymentInstallmentAdmin(admin.ModelAdmin):
+    list_display = ('enrollment', 'installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    list_filter = ('status', 'due_date', 'payment_date', 'created_at')
+    search_fields = ('enrollment__user__username', 'enrollment__course__title', 'payment_reference')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('enrollment', 'installment_number')
+    
+    fieldsets = (
+        ('Installment Information', {
+            'fields': ('enrollment', 'installment_number', 'amount', 'due_date')
+        }),
+        ('Payment Status', {
+            'fields': ('status', 'payment_date', 'payment_reference', 'payment_notes')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('enrollment__user', 'enrollment__course')
+    
+    actions = ['mark_as_paid', 'mark_as_verified', 'send_reminder_email']
+    
+    def mark_as_paid(self, request, queryset):
+        """Mark installments as paid"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='pending'):
+            installment.status = 'paid'
+            installment.payment_date = timezone.now()
+            installment.save()
+            updated += 1
+        self.message_user(request, f'Marked {updated} installments as paid.')
+    mark_as_paid.short_description = "Mark as paid"
+    
+    def mark_as_verified(self, request, queryset):
+        """Mark installments as verified"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='paid'):
+            installment.status = 'verified'
+            installment.save()
+            
+            # Update enrollment paid amount
+            enrollment = installment.enrollment
+            enrollment.amount_paid += installment.amount
+            if enrollment.amount_paid >= enrollment.total_amount:
+                enrollment.payment_status = 'completed'
+            else:
+                enrollment.payment_status = 'partial'
+            enrollment.save()
+            updated += 1
+            
+        self.message_user(request, f'Verified {updated} installments.')
+    mark_as_verified.short_description = "Mark as verified"
+    
+    def send_reminder_email(self, request, queryset):
+        """Send payment reminder emails"""
+        sent = 0
+        for installment in queryset.filter(status='pending'):
+            try:
+                from emails.services import EmailService
+                EmailService.send_payment_reminder_email(
+                    installment.enrollment.user, 
+                    installment.enrollment, 
+                    installment
+                )
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent reminder emails for {sent} installments.')
+    send_reminder_email.short_description = "Send payment reminders"
+
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
         # Update total modules count after inline formsets are saved
@@ -118,6 +292,179 @@ class CourseModuleAdmin(admin.ModelAdmin):
     }
 
 
+class PaymentInstallmentInline(admin.TabularInline):
+    model = PaymentInstallment
+    extra = 0
+    fields = ('installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    readonly_fields = ('installment_number', 'amount', 'due_date')
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Enrollment)
+class EnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course', 'payment_status', 'is_activated', 'payment_method', 'installments', 'amount_paid', 'created_at')
+    list_filter = ('payment_status', 'is_activated', 'payment_method', 'installments', 'created_at')
+    search_fields = ('user__username', 'user__email', 'course__title', 'activation_code')
+    readonly_fields = ('activation_code', 'created_at', 'updated_at', 'activated_at')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Enrollment Information', {
+            'fields': ('user', 'course', 'activation_code', 'is_activated', 'activated_at')
+        }),
+        ('Payment Details', {
+            'fields': ('payment_method', 'currency', 'total_amount', 'amount_paid', 
+                      'payment_status', 'installments')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    inlines = [PaymentInstallmentInline]
+    
+    def save_model(self, request, obj, form, change):
+        # Auto-generate activation code if not present
+        if not obj.activation_code:
+            import uuid
+            obj.activation_code = str(uuid.uuid4()).replace('-', '').upper()[:16]
+            # Format as XXXX-XXXX-XXXX-XXXX
+            obj.activation_code = '-'.join([
+                obj.activation_code[i:i+4] for i in range(0, 16, 4)
+            ])
+        super().save_model(request, obj, form, change)
+    
+    actions = ['activate_enrollment', 'mark_payment_complete', 'send_activation_email']
+    
+    def activate_enrollment(self, request, queryset):
+        """Custom admin action to activate enrollments"""
+        from django.utils import timezone
+        updated = 0
+        for enrollment in queryset.filter(payment_status='completed', is_activated=False):
+            enrollment.is_activated = True
+            enrollment.activated_at = timezone.now()
+            enrollment.save()
+            updated += 1
+            
+            # Send course access email
+            try:
+                from emails.services import EmailService
+                EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+            except Exception as e:
+                pass  # Continue even if email fails
+                
+        self.message_user(request, f'Successfully activated {updated} enrollments.')
+    activate_enrollment.short_description = "Activate selected enrollments"
+    
+    def mark_payment_complete(self, request, queryset):
+        """Mark payments as complete"""
+        updated = queryset.filter(payment_status__in=['pending', 'partial']).update(
+            payment_status='completed',
+            amount_paid=models.F('total_amount')
+        )
+        self.message_user(request, f'Marked {updated} payments as complete.')
+    mark_payment_complete.short_description = "Mark payments as complete"
+    
+    def send_activation_email(self, request, queryset):
+        """Send activation emails to students"""
+        sent = 0
+        for enrollment in queryset:
+            try:
+                from emails.services import EmailService
+                if enrollment.payment_status == 'completed' and not enrollment.is_activated:
+                    # Send activation email with code
+                    EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+                else:
+                    # Send enrollment confirmation with payment instructions
+                    EmailService.send_enrollment_confirmation_email(enrollment.user, enrollment.course, enrollment)
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent activation emails to {sent} students.')
+    send_activation_email.short_description = "Send activation emails"
+
+
+@admin.register(PaymentInstallment)
+class PaymentInstallmentAdmin(admin.ModelAdmin):
+    list_display = ('enrollment', 'installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    list_filter = ('status', 'due_date', 'payment_date', 'created_at')
+    search_fields = ('enrollment__user__username', 'enrollment__course__title', 'payment_reference')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('enrollment', 'installment_number')
+    
+    fieldsets = (
+        ('Installment Information', {
+            'fields': ('enrollment', 'installment_number', 'amount', 'due_date')
+        }),
+        ('Payment Status', {
+            'fields': ('status', 'payment_date', 'payment_reference', 'payment_notes')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('enrollment__user', 'enrollment__course')
+    
+    actions = ['mark_as_paid', 'mark_as_verified', 'send_reminder_email']
+    
+    def mark_as_paid(self, request, queryset):
+        """Mark installments as paid"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='pending'):
+            installment.status = 'paid'
+            installment.payment_date = timezone.now()
+            installment.save()
+            updated += 1
+        self.message_user(request, f'Marked {updated} installments as paid.')
+    mark_as_paid.short_description = "Mark as paid"
+    
+    def mark_as_verified(self, request, queryset):
+        """Mark installments as verified"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='paid'):
+            installment.status = 'verified'
+            installment.save()
+            
+            # Update enrollment paid amount
+            enrollment = installment.enrollment
+            enrollment.amount_paid += installment.amount
+            if enrollment.amount_paid >= enrollment.total_amount:
+                enrollment.payment_status = 'completed'
+            else:
+                enrollment.payment_status = 'partial'
+            enrollment.save()
+            updated += 1
+            
+        self.message_user(request, f'Verified {updated} installments.')
+    mark_as_verified.short_description = "Mark as verified"
+    
+    def send_reminder_email(self, request, queryset):
+        """Send payment reminder emails"""
+        sent = 0
+        for installment in queryset.filter(status='pending'):
+            try:
+                from emails.services import EmailService
+                EmailService.send_payment_reminder_email(
+                    installment.enrollment.user, 
+                    installment.enrollment, 
+                    installment
+                )
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent reminder emails for {sent} installments.')
+    send_reminder_email.short_description = "Send payment reminders"
+
+
 @admin.register(CodeExample)
 class CodeExampleAdmin(admin.ModelAdmin):
     list_display = ('title', 'module', 'language', 'difficulty_level', 'order', 'is_interactive')
@@ -143,6 +490,179 @@ class CodeExampleAdmin(admin.ModelAdmin):
     }
 
 
+class PaymentInstallmentInline(admin.TabularInline):
+    model = PaymentInstallment
+    extra = 0
+    fields = ('installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    readonly_fields = ('installment_number', 'amount', 'due_date')
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Enrollment)
+class EnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course', 'payment_status', 'is_activated', 'payment_method', 'installments', 'amount_paid', 'created_at')
+    list_filter = ('payment_status', 'is_activated', 'payment_method', 'installments', 'created_at')
+    search_fields = ('user__username', 'user__email', 'course__title', 'activation_code')
+    readonly_fields = ('activation_code', 'created_at', 'updated_at', 'activated_at')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Enrollment Information', {
+            'fields': ('user', 'course', 'activation_code', 'is_activated', 'activated_at')
+        }),
+        ('Payment Details', {
+            'fields': ('payment_method', 'currency', 'total_amount', 'amount_paid', 
+                      'payment_status', 'installments')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    inlines = [PaymentInstallmentInline]
+    
+    def save_model(self, request, obj, form, change):
+        # Auto-generate activation code if not present
+        if not obj.activation_code:
+            import uuid
+            obj.activation_code = str(uuid.uuid4()).replace('-', '').upper()[:16]
+            # Format as XXXX-XXXX-XXXX-XXXX
+            obj.activation_code = '-'.join([
+                obj.activation_code[i:i+4] for i in range(0, 16, 4)
+            ])
+        super().save_model(request, obj, form, change)
+    
+    actions = ['activate_enrollment', 'mark_payment_complete', 'send_activation_email']
+    
+    def activate_enrollment(self, request, queryset):
+        """Custom admin action to activate enrollments"""
+        from django.utils import timezone
+        updated = 0
+        for enrollment in queryset.filter(payment_status='completed', is_activated=False):
+            enrollment.is_activated = True
+            enrollment.activated_at = timezone.now()
+            enrollment.save()
+            updated += 1
+            
+            # Send course access email
+            try:
+                from emails.services import EmailService
+                EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+            except Exception as e:
+                pass  # Continue even if email fails
+                
+        self.message_user(request, f'Successfully activated {updated} enrollments.')
+    activate_enrollment.short_description = "Activate selected enrollments"
+    
+    def mark_payment_complete(self, request, queryset):
+        """Mark payments as complete"""
+        updated = queryset.filter(payment_status__in=['pending', 'partial']).update(
+            payment_status='completed',
+            amount_paid=models.F('total_amount')
+        )
+        self.message_user(request, f'Marked {updated} payments as complete.')
+    mark_payment_complete.short_description = "Mark payments as complete"
+    
+    def send_activation_email(self, request, queryset):
+        """Send activation emails to students"""
+        sent = 0
+        for enrollment in queryset:
+            try:
+                from emails.services import EmailService
+                if enrollment.payment_status == 'completed' and not enrollment.is_activated:
+                    # Send activation email with code
+                    EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+                else:
+                    # Send enrollment confirmation with payment instructions
+                    EmailService.send_enrollment_confirmation_email(enrollment.user, enrollment.course, enrollment)
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent activation emails to {sent} students.')
+    send_activation_email.short_description = "Send activation emails"
+
+
+@admin.register(PaymentInstallment)
+class PaymentInstallmentAdmin(admin.ModelAdmin):
+    list_display = ('enrollment', 'installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    list_filter = ('status', 'due_date', 'payment_date', 'created_at')
+    search_fields = ('enrollment__user__username', 'enrollment__course__title', 'payment_reference')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('enrollment', 'installment_number')
+    
+    fieldsets = (
+        ('Installment Information', {
+            'fields': ('enrollment', 'installment_number', 'amount', 'due_date')
+        }),
+        ('Payment Status', {
+            'fields': ('status', 'payment_date', 'payment_reference', 'payment_notes')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('enrollment__user', 'enrollment__course')
+    
+    actions = ['mark_as_paid', 'mark_as_verified', 'send_reminder_email']
+    
+    def mark_as_paid(self, request, queryset):
+        """Mark installments as paid"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='pending'):
+            installment.status = 'paid'
+            installment.payment_date = timezone.now()
+            installment.save()
+            updated += 1
+        self.message_user(request, f'Marked {updated} installments as paid.')
+    mark_as_paid.short_description = "Mark as paid"
+    
+    def mark_as_verified(self, request, queryset):
+        """Mark installments as verified"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='paid'):
+            installment.status = 'verified'
+            installment.save()
+            
+            # Update enrollment paid amount
+            enrollment = installment.enrollment
+            enrollment.amount_paid += installment.amount
+            if enrollment.amount_paid >= enrollment.total_amount:
+                enrollment.payment_status = 'completed'
+            else:
+                enrollment.payment_status = 'partial'
+            enrollment.save()
+            updated += 1
+            
+        self.message_user(request, f'Verified {updated} installments.')
+    mark_as_verified.short_description = "Mark as verified"
+    
+    def send_reminder_email(self, request, queryset):
+        """Send payment reminder emails"""
+        sent = 0
+        for installment in queryset.filter(status='pending'):
+            try:
+                from emails.services import EmailService
+                EmailService.send_payment_reminder_email(
+                    installment.enrollment.user, 
+                    installment.enrollment, 
+                    installment
+                )
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent reminder emails for {sent} installments.')
+    send_reminder_email.short_description = "Send payment reminders"
+
+
 @admin.register(Exercise)
 class ExerciseAdmin(admin.ModelAdmin):
     list_display = ('title', 'module', 'difficulty_level', 'estimated_time_minutes', 'order', 'is_graded', 'points')
@@ -166,6 +686,179 @@ class ExerciseAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
     }
+
+
+class PaymentInstallmentInline(admin.TabularInline):
+    model = PaymentInstallment
+    extra = 0
+    fields = ('installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    readonly_fields = ('installment_number', 'amount', 'due_date')
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Enrollment)
+class EnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course', 'payment_status', 'is_activated', 'payment_method', 'installments', 'amount_paid', 'created_at')
+    list_filter = ('payment_status', 'is_activated', 'payment_method', 'installments', 'created_at')
+    search_fields = ('user__username', 'user__email', 'course__title', 'activation_code')
+    readonly_fields = ('activation_code', 'created_at', 'updated_at', 'activated_at')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Enrollment Information', {
+            'fields': ('user', 'course', 'activation_code', 'is_activated', 'activated_at')
+        }),
+        ('Payment Details', {
+            'fields': ('payment_method', 'currency', 'total_amount', 'amount_paid', 
+                      'payment_status', 'installments')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    inlines = [PaymentInstallmentInline]
+    
+    def save_model(self, request, obj, form, change):
+        # Auto-generate activation code if not present
+        if not obj.activation_code:
+            import uuid
+            obj.activation_code = str(uuid.uuid4()).replace('-', '').upper()[:16]
+            # Format as XXXX-XXXX-XXXX-XXXX
+            obj.activation_code = '-'.join([
+                obj.activation_code[i:i+4] for i in range(0, 16, 4)
+            ])
+        super().save_model(request, obj, form, change)
+    
+    actions = ['activate_enrollment', 'mark_payment_complete', 'send_activation_email']
+    
+    def activate_enrollment(self, request, queryset):
+        """Custom admin action to activate enrollments"""
+        from django.utils import timezone
+        updated = 0
+        for enrollment in queryset.filter(payment_status='completed', is_activated=False):
+            enrollment.is_activated = True
+            enrollment.activated_at = timezone.now()
+            enrollment.save()
+            updated += 1
+            
+            # Send course access email
+            try:
+                from emails.services import EmailService
+                EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+            except Exception as e:
+                pass  # Continue even if email fails
+                
+        self.message_user(request, f'Successfully activated {updated} enrollments.')
+    activate_enrollment.short_description = "Activate selected enrollments"
+    
+    def mark_payment_complete(self, request, queryset):
+        """Mark payments as complete"""
+        updated = queryset.filter(payment_status__in=['pending', 'partial']).update(
+            payment_status='completed',
+            amount_paid=models.F('total_amount')
+        )
+        self.message_user(request, f'Marked {updated} payments as complete.')
+    mark_payment_complete.short_description = "Mark payments as complete"
+    
+    def send_activation_email(self, request, queryset):
+        """Send activation emails to students"""
+        sent = 0
+        for enrollment in queryset:
+            try:
+                from emails.services import EmailService
+                if enrollment.payment_status == 'completed' and not enrollment.is_activated:
+                    # Send activation email with code
+                    EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+                else:
+                    # Send enrollment confirmation with payment instructions
+                    EmailService.send_enrollment_confirmation_email(enrollment.user, enrollment.course, enrollment)
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent activation emails to {sent} students.')
+    send_activation_email.short_description = "Send activation emails"
+
+
+@admin.register(PaymentInstallment)
+class PaymentInstallmentAdmin(admin.ModelAdmin):
+    list_display = ('enrollment', 'installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    list_filter = ('status', 'due_date', 'payment_date', 'created_at')
+    search_fields = ('enrollment__user__username', 'enrollment__course__title', 'payment_reference')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('enrollment', 'installment_number')
+    
+    fieldsets = (
+        ('Installment Information', {
+            'fields': ('enrollment', 'installment_number', 'amount', 'due_date')
+        }),
+        ('Payment Status', {
+            'fields': ('status', 'payment_date', 'payment_reference', 'payment_notes')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('enrollment__user', 'enrollment__course')
+    
+    actions = ['mark_as_paid', 'mark_as_verified', 'send_reminder_email']
+    
+    def mark_as_paid(self, request, queryset):
+        """Mark installments as paid"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='pending'):
+            installment.status = 'paid'
+            installment.payment_date = timezone.now()
+            installment.save()
+            updated += 1
+        self.message_user(request, f'Marked {updated} installments as paid.')
+    mark_as_paid.short_description = "Mark as paid"
+    
+    def mark_as_verified(self, request, queryset):
+        """Mark installments as verified"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='paid'):
+            installment.status = 'verified'
+            installment.save()
+            
+            # Update enrollment paid amount
+            enrollment = installment.enrollment
+            enrollment.amount_paid += installment.amount
+            if enrollment.amount_paid >= enrollment.total_amount:
+                enrollment.payment_status = 'completed'
+            else:
+                enrollment.payment_status = 'partial'
+            enrollment.save()
+            updated += 1
+            
+        self.message_user(request, f'Verified {updated} installments.')
+    mark_as_verified.short_description = "Mark as verified"
+    
+    def send_reminder_email(self, request, queryset):
+        """Send payment reminder emails"""
+        sent = 0
+        for installment in queryset.filter(status='pending'):
+            try:
+                from emails.services import EmailService
+                EmailService.send_payment_reminder_email(
+                    installment.enrollment.user, 
+                    installment.enrollment, 
+                    installment
+                )
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent reminder emails for {sent} installments.')
+    send_reminder_email.short_description = "Send payment reminders"
 
 
 @admin.register(CapstoneProject)
@@ -196,6 +889,179 @@ class CapstoneProjectAdmin(admin.ModelAdmin):
     }
 
 
+class PaymentInstallmentInline(admin.TabularInline):
+    model = PaymentInstallment
+    extra = 0
+    fields = ('installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    readonly_fields = ('installment_number', 'amount', 'due_date')
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Enrollment)
+class EnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course', 'payment_status', 'is_activated', 'payment_method', 'installments', 'amount_paid', 'created_at')
+    list_filter = ('payment_status', 'is_activated', 'payment_method', 'installments', 'created_at')
+    search_fields = ('user__username', 'user__email', 'course__title', 'activation_code')
+    readonly_fields = ('activation_code', 'created_at', 'updated_at', 'activated_at')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Enrollment Information', {
+            'fields': ('user', 'course', 'activation_code', 'is_activated', 'activated_at')
+        }),
+        ('Payment Details', {
+            'fields': ('payment_method', 'currency', 'total_amount', 'amount_paid', 
+                      'payment_status', 'installments')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    inlines = [PaymentInstallmentInline]
+    
+    def save_model(self, request, obj, form, change):
+        # Auto-generate activation code if not present
+        if not obj.activation_code:
+            import uuid
+            obj.activation_code = str(uuid.uuid4()).replace('-', '').upper()[:16]
+            # Format as XXXX-XXXX-XXXX-XXXX
+            obj.activation_code = '-'.join([
+                obj.activation_code[i:i+4] for i in range(0, 16, 4)
+            ])
+        super().save_model(request, obj, form, change)
+    
+    actions = ['activate_enrollment', 'mark_payment_complete', 'send_activation_email']
+    
+    def activate_enrollment(self, request, queryset):
+        """Custom admin action to activate enrollments"""
+        from django.utils import timezone
+        updated = 0
+        for enrollment in queryset.filter(payment_status='completed', is_activated=False):
+            enrollment.is_activated = True
+            enrollment.activated_at = timezone.now()
+            enrollment.save()
+            updated += 1
+            
+            # Send course access email
+            try:
+                from emails.services import EmailService
+                EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+            except Exception as e:
+                pass  # Continue even if email fails
+                
+        self.message_user(request, f'Successfully activated {updated} enrollments.')
+    activate_enrollment.short_description = "Activate selected enrollments"
+    
+    def mark_payment_complete(self, request, queryset):
+        """Mark payments as complete"""
+        updated = queryset.filter(payment_status__in=['pending', 'partial']).update(
+            payment_status='completed',
+            amount_paid=models.F('total_amount')
+        )
+        self.message_user(request, f'Marked {updated} payments as complete.')
+    mark_payment_complete.short_description = "Mark payments as complete"
+    
+    def send_activation_email(self, request, queryset):
+        """Send activation emails to students"""
+        sent = 0
+        for enrollment in queryset:
+            try:
+                from emails.services import EmailService
+                if enrollment.payment_status == 'completed' and not enrollment.is_activated:
+                    # Send activation email with code
+                    EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+                else:
+                    # Send enrollment confirmation with payment instructions
+                    EmailService.send_enrollment_confirmation_email(enrollment.user, enrollment.course, enrollment)
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent activation emails to {sent} students.')
+    send_activation_email.short_description = "Send activation emails"
+
+
+@admin.register(PaymentInstallment)
+class PaymentInstallmentAdmin(admin.ModelAdmin):
+    list_display = ('enrollment', 'installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    list_filter = ('status', 'due_date', 'payment_date', 'created_at')
+    search_fields = ('enrollment__user__username', 'enrollment__course__title', 'payment_reference')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('enrollment', 'installment_number')
+    
+    fieldsets = (
+        ('Installment Information', {
+            'fields': ('enrollment', 'installment_number', 'amount', 'due_date')
+        }),
+        ('Payment Status', {
+            'fields': ('status', 'payment_date', 'payment_reference', 'payment_notes')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('enrollment__user', 'enrollment__course')
+    
+    actions = ['mark_as_paid', 'mark_as_verified', 'send_reminder_email']
+    
+    def mark_as_paid(self, request, queryset):
+        """Mark installments as paid"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='pending'):
+            installment.status = 'paid'
+            installment.payment_date = timezone.now()
+            installment.save()
+            updated += 1
+        self.message_user(request, f'Marked {updated} installments as paid.')
+    mark_as_paid.short_description = "Mark as paid"
+    
+    def mark_as_verified(self, request, queryset):
+        """Mark installments as verified"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='paid'):
+            installment.status = 'verified'
+            installment.save()
+            
+            # Update enrollment paid amount
+            enrollment = installment.enrollment
+            enrollment.amount_paid += installment.amount
+            if enrollment.amount_paid >= enrollment.total_amount:
+                enrollment.payment_status = 'completed'
+            else:
+                enrollment.payment_status = 'partial'
+            enrollment.save()
+            updated += 1
+            
+        self.message_user(request, f'Verified {updated} installments.')
+    mark_as_verified.short_description = "Mark as verified"
+    
+    def send_reminder_email(self, request, queryset):
+        """Send payment reminder emails"""
+        sent = 0
+        for installment in queryset.filter(status='pending'):
+            try:
+                from emails.services import EmailService
+                EmailService.send_payment_reminder_email(
+                    installment.enrollment.user, 
+                    installment.enrollment, 
+                    installment
+                )
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent reminder emails for {sent} installments.')
+    send_reminder_email.short_description = "Send payment reminders"
+
+
 @admin.register(Testimonial)
 class TestimonialAdmin(admin.ModelAdmin):
     list_display = ('name', 'role', 'course', 'is_featured', 'created_at')
@@ -223,6 +1089,179 @@ class EventAdmin(admin.ModelAdmin):
     }
 
 
+class PaymentInstallmentInline(admin.TabularInline):
+    model = PaymentInstallment
+    extra = 0
+    fields = ('installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    readonly_fields = ('installment_number', 'amount', 'due_date')
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Enrollment)
+class EnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course', 'payment_status', 'is_activated', 'payment_method', 'installments', 'amount_paid', 'created_at')
+    list_filter = ('payment_status', 'is_activated', 'payment_method', 'installments', 'created_at')
+    search_fields = ('user__username', 'user__email', 'course__title', 'activation_code')
+    readonly_fields = ('activation_code', 'created_at', 'updated_at', 'activated_at')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Enrollment Information', {
+            'fields': ('user', 'course', 'activation_code', 'is_activated', 'activated_at')
+        }),
+        ('Payment Details', {
+            'fields': ('payment_method', 'currency', 'total_amount', 'amount_paid', 
+                      'payment_status', 'installments')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    inlines = [PaymentInstallmentInline]
+    
+    def save_model(self, request, obj, form, change):
+        # Auto-generate activation code if not present
+        if not obj.activation_code:
+            import uuid
+            obj.activation_code = str(uuid.uuid4()).replace('-', '').upper()[:16]
+            # Format as XXXX-XXXX-XXXX-XXXX
+            obj.activation_code = '-'.join([
+                obj.activation_code[i:i+4] for i in range(0, 16, 4)
+            ])
+        super().save_model(request, obj, form, change)
+    
+    actions = ['activate_enrollment', 'mark_payment_complete', 'send_activation_email']
+    
+    def activate_enrollment(self, request, queryset):
+        """Custom admin action to activate enrollments"""
+        from django.utils import timezone
+        updated = 0
+        for enrollment in queryset.filter(payment_status='completed', is_activated=False):
+            enrollment.is_activated = True
+            enrollment.activated_at = timezone.now()
+            enrollment.save()
+            updated += 1
+            
+            # Send course access email
+            try:
+                from emails.services import EmailService
+                EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+            except Exception as e:
+                pass  # Continue even if email fails
+                
+        self.message_user(request, f'Successfully activated {updated} enrollments.')
+    activate_enrollment.short_description = "Activate selected enrollments"
+    
+    def mark_payment_complete(self, request, queryset):
+        """Mark payments as complete"""
+        updated = queryset.filter(payment_status__in=['pending', 'partial']).update(
+            payment_status='completed',
+            amount_paid=models.F('total_amount')
+        )
+        self.message_user(request, f'Marked {updated} payments as complete.')
+    mark_payment_complete.short_description = "Mark payments as complete"
+    
+    def send_activation_email(self, request, queryset):
+        """Send activation emails to students"""
+        sent = 0
+        for enrollment in queryset:
+            try:
+                from emails.services import EmailService
+                if enrollment.payment_status == 'completed' and not enrollment.is_activated:
+                    # Send activation email with code
+                    EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+                else:
+                    # Send enrollment confirmation with payment instructions
+                    EmailService.send_enrollment_confirmation_email(enrollment.user, enrollment.course, enrollment)
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent activation emails to {sent} students.')
+    send_activation_email.short_description = "Send activation emails"
+
+
+@admin.register(PaymentInstallment)
+class PaymentInstallmentAdmin(admin.ModelAdmin):
+    list_display = ('enrollment', 'installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    list_filter = ('status', 'due_date', 'payment_date', 'created_at')
+    search_fields = ('enrollment__user__username', 'enrollment__course__title', 'payment_reference')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('enrollment', 'installment_number')
+    
+    fieldsets = (
+        ('Installment Information', {
+            'fields': ('enrollment', 'installment_number', 'amount', 'due_date')
+        }),
+        ('Payment Status', {
+            'fields': ('status', 'payment_date', 'payment_reference', 'payment_notes')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('enrollment__user', 'enrollment__course')
+    
+    actions = ['mark_as_paid', 'mark_as_verified', 'send_reminder_email']
+    
+    def mark_as_paid(self, request, queryset):
+        """Mark installments as paid"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='pending'):
+            installment.status = 'paid'
+            installment.payment_date = timezone.now()
+            installment.save()
+            updated += 1
+        self.message_user(request, f'Marked {updated} installments as paid.')
+    mark_as_paid.short_description = "Mark as paid"
+    
+    def mark_as_verified(self, request, queryset):
+        """Mark installments as verified"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='paid'):
+            installment.status = 'verified'
+            installment.save()
+            
+            # Update enrollment paid amount
+            enrollment = installment.enrollment
+            enrollment.amount_paid += installment.amount
+            if enrollment.amount_paid >= enrollment.total_amount:
+                enrollment.payment_status = 'completed'
+            else:
+                enrollment.payment_status = 'partial'
+            enrollment.save()
+            updated += 1
+            
+        self.message_user(request, f'Verified {updated} installments.')
+    mark_as_verified.short_description = "Mark as verified"
+    
+    def send_reminder_email(self, request, queryset):
+        """Send payment reminder emails"""
+        sent = 0
+        for installment in queryset.filter(status='pending'):
+            try:
+                from emails.services import EmailService
+                EmailService.send_payment_reminder_email(
+                    installment.enrollment.user, 
+                    installment.enrollment, 
+                    installment
+                )
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent reminder emails for {sent} installments.')
+    send_reminder_email.short_description = "Send payment reminders"
+
+
 @admin.register(BlogPost)
 class BlogPostAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'is_published', 'created_at')
@@ -235,6 +1274,179 @@ class BlogPostAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
     }
+
+
+class PaymentInstallmentInline(admin.TabularInline):
+    model = PaymentInstallment
+    extra = 0
+    fields = ('installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    readonly_fields = ('installment_number', 'amount', 'due_date')
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Enrollment)
+class EnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course', 'payment_status', 'is_activated', 'payment_method', 'installments', 'amount_paid', 'created_at')
+    list_filter = ('payment_status', 'is_activated', 'payment_method', 'installments', 'created_at')
+    search_fields = ('user__username', 'user__email', 'course__title', 'activation_code')
+    readonly_fields = ('activation_code', 'created_at', 'updated_at', 'activated_at')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Enrollment Information', {
+            'fields': ('user', 'course', 'activation_code', 'is_activated', 'activated_at')
+        }),
+        ('Payment Details', {
+            'fields': ('payment_method', 'currency', 'total_amount', 'amount_paid', 
+                      'payment_status', 'installments')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    inlines = [PaymentInstallmentInline]
+    
+    def save_model(self, request, obj, form, change):
+        # Auto-generate activation code if not present
+        if not obj.activation_code:
+            import uuid
+            obj.activation_code = str(uuid.uuid4()).replace('-', '').upper()[:16]
+            # Format as XXXX-XXXX-XXXX-XXXX
+            obj.activation_code = '-'.join([
+                obj.activation_code[i:i+4] for i in range(0, 16, 4)
+            ])
+        super().save_model(request, obj, form, change)
+    
+    actions = ['activate_enrollment', 'mark_payment_complete', 'send_activation_email']
+    
+    def activate_enrollment(self, request, queryset):
+        """Custom admin action to activate enrollments"""
+        from django.utils import timezone
+        updated = 0
+        for enrollment in queryset.filter(payment_status='completed', is_activated=False):
+            enrollment.is_activated = True
+            enrollment.activated_at = timezone.now()
+            enrollment.save()
+            updated += 1
+            
+            # Send course access email
+            try:
+                from emails.services import EmailService
+                EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+            except Exception as e:
+                pass  # Continue even if email fails
+                
+        self.message_user(request, f'Successfully activated {updated} enrollments.')
+    activate_enrollment.short_description = "Activate selected enrollments"
+    
+    def mark_payment_complete(self, request, queryset):
+        """Mark payments as complete"""
+        updated = queryset.filter(payment_status__in=['pending', 'partial']).update(
+            payment_status='completed',
+            amount_paid=models.F('total_amount')
+        )
+        self.message_user(request, f'Marked {updated} payments as complete.')
+    mark_payment_complete.short_description = "Mark payments as complete"
+    
+    def send_activation_email(self, request, queryset):
+        """Send activation emails to students"""
+        sent = 0
+        for enrollment in queryset:
+            try:
+                from emails.services import EmailService
+                if enrollment.payment_status == 'completed' and not enrollment.is_activated:
+                    # Send activation email with code
+                    EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+                else:
+                    # Send enrollment confirmation with payment instructions
+                    EmailService.send_enrollment_confirmation_email(enrollment.user, enrollment.course, enrollment)
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent activation emails to {sent} students.')
+    send_activation_email.short_description = "Send activation emails"
+
+
+@admin.register(PaymentInstallment)
+class PaymentInstallmentAdmin(admin.ModelAdmin):
+    list_display = ('enrollment', 'installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    list_filter = ('status', 'due_date', 'payment_date', 'created_at')
+    search_fields = ('enrollment__user__username', 'enrollment__course__title', 'payment_reference')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('enrollment', 'installment_number')
+    
+    fieldsets = (
+        ('Installment Information', {
+            'fields': ('enrollment', 'installment_number', 'amount', 'due_date')
+        }),
+        ('Payment Status', {
+            'fields': ('status', 'payment_date', 'payment_reference', 'payment_notes')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('enrollment__user', 'enrollment__course')
+    
+    actions = ['mark_as_paid', 'mark_as_verified', 'send_reminder_email']
+    
+    def mark_as_paid(self, request, queryset):
+        """Mark installments as paid"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='pending'):
+            installment.status = 'paid'
+            installment.payment_date = timezone.now()
+            installment.save()
+            updated += 1
+        self.message_user(request, f'Marked {updated} installments as paid.')
+    mark_as_paid.short_description = "Mark as paid"
+    
+    def mark_as_verified(self, request, queryset):
+        """Mark installments as verified"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='paid'):
+            installment.status = 'verified'
+            installment.save()
+            
+            # Update enrollment paid amount
+            enrollment = installment.enrollment
+            enrollment.amount_paid += installment.amount
+            if enrollment.amount_paid >= enrollment.total_amount:
+                enrollment.payment_status = 'completed'
+            else:
+                enrollment.payment_status = 'partial'
+            enrollment.save()
+            updated += 1
+            
+        self.message_user(request, f'Verified {updated} installments.')
+    mark_as_verified.short_description = "Mark as verified"
+    
+    def send_reminder_email(self, request, queryset):
+        """Send payment reminder emails"""
+        sent = 0
+        for installment in queryset.filter(status='pending'):
+            try:
+                from emails.services import EmailService
+                EmailService.send_payment_reminder_email(
+                    installment.enrollment.user, 
+                    installment.enrollment, 
+                    installment
+                )
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent reminder emails for {sent} installments.')
+    send_reminder_email.short_description = "Send payment reminders"
 
 
 @admin.register(ContactSubmission)
@@ -295,3 +1507,176 @@ class AboutPageAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
     }
+
+
+class PaymentInstallmentInline(admin.TabularInline):
+    model = PaymentInstallment
+    extra = 0
+    fields = ('installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    readonly_fields = ('installment_number', 'amount', 'due_date')
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Enrollment)
+class EnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('user', 'course', 'payment_status', 'is_activated', 'payment_method', 'installments', 'amount_paid', 'created_at')
+    list_filter = ('payment_status', 'is_activated', 'payment_method', 'installments', 'created_at')
+    search_fields = ('user__username', 'user__email', 'course__title', 'activation_code')
+    readonly_fields = ('activation_code', 'created_at', 'updated_at', 'activated_at')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Enrollment Information', {
+            'fields': ('user', 'course', 'activation_code', 'is_activated', 'activated_at')
+        }),
+        ('Payment Details', {
+            'fields': ('payment_method', 'currency', 'total_amount', 'amount_paid', 
+                      'payment_status', 'installments')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    inlines = [PaymentInstallmentInline]
+    
+    def save_model(self, request, obj, form, change):
+        # Auto-generate activation code if not present
+        if not obj.activation_code:
+            import uuid
+            obj.activation_code = str(uuid.uuid4()).replace('-', '').upper()[:16]
+            # Format as XXXX-XXXX-XXXX-XXXX
+            obj.activation_code = '-'.join([
+                obj.activation_code[i:i+4] for i in range(0, 16, 4)
+            ])
+        super().save_model(request, obj, form, change)
+    
+    actions = ['activate_enrollment', 'mark_payment_complete', 'send_activation_email']
+    
+    def activate_enrollment(self, request, queryset):
+        """Custom admin action to activate enrollments"""
+        from django.utils import timezone
+        updated = 0
+        for enrollment in queryset.filter(payment_status='completed', is_activated=False):
+            enrollment.is_activated = True
+            enrollment.activated_at = timezone.now()
+            enrollment.save()
+            updated += 1
+            
+            # Send course access email
+            try:
+                from emails.services import EmailService
+                EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+            except Exception as e:
+                pass  # Continue even if email fails
+                
+        self.message_user(request, f'Successfully activated {updated} enrollments.')
+    activate_enrollment.short_description = "Activate selected enrollments"
+    
+    def mark_payment_complete(self, request, queryset):
+        """Mark payments as complete"""
+        updated = queryset.filter(payment_status__in=['pending', 'partial']).update(
+            payment_status='completed',
+            amount_paid=models.F('total_amount')
+        )
+        self.message_user(request, f'Marked {updated} payments as complete.')
+    mark_payment_complete.short_description = "Mark payments as complete"
+    
+    def send_activation_email(self, request, queryset):
+        """Send activation emails to students"""
+        sent = 0
+        for enrollment in queryset:
+            try:
+                from emails.services import EmailService
+                if enrollment.payment_status == 'completed' and not enrollment.is_activated:
+                    # Send activation email with code
+                    EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
+                else:
+                    # Send enrollment confirmation with payment instructions
+                    EmailService.send_enrollment_confirmation_email(enrollment.user, enrollment.course, enrollment)
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent activation emails to {sent} students.')
+    send_activation_email.short_description = "Send activation emails"
+
+
+@admin.register(PaymentInstallment)
+class PaymentInstallmentAdmin(admin.ModelAdmin):
+    list_display = ('enrollment', 'installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
+    list_filter = ('status', 'due_date', 'payment_date', 'created_at')
+    search_fields = ('enrollment__user__username', 'enrollment__course__title', 'payment_reference')
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('enrollment', 'installment_number')
+    
+    fieldsets = (
+        ('Installment Information', {
+            'fields': ('enrollment', 'installment_number', 'amount', 'due_date')
+        }),
+        ('Payment Status', {
+            'fields': ('status', 'payment_date', 'payment_reference', 'payment_notes')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('enrollment__user', 'enrollment__course')
+    
+    actions = ['mark_as_paid', 'mark_as_verified', 'send_reminder_email']
+    
+    def mark_as_paid(self, request, queryset):
+        """Mark installments as paid"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='pending'):
+            installment.status = 'paid'
+            installment.payment_date = timezone.now()
+            installment.save()
+            updated += 1
+        self.message_user(request, f'Marked {updated} installments as paid.')
+    mark_as_paid.short_description = "Mark as paid"
+    
+    def mark_as_verified(self, request, queryset):
+        """Mark installments as verified"""
+        from django.utils import timezone
+        updated = 0
+        for installment in queryset.filter(status='paid'):
+            installment.status = 'verified'
+            installment.save()
+            
+            # Update enrollment paid amount
+            enrollment = installment.enrollment
+            enrollment.amount_paid += installment.amount
+            if enrollment.amount_paid >= enrollment.total_amount:
+                enrollment.payment_status = 'completed'
+            else:
+                enrollment.payment_status = 'partial'
+            enrollment.save()
+            updated += 1
+            
+        self.message_user(request, f'Verified {updated} installments.')
+    mark_as_verified.short_description = "Mark as verified"
+    
+    def send_reminder_email(self, request, queryset):
+        """Send payment reminder emails"""
+        sent = 0
+        for installment in queryset.filter(status='pending'):
+            try:
+                from emails.services import EmailService
+                EmailService.send_payment_reminder_email(
+                    installment.enrollment.user, 
+                    installment.enrollment, 
+                    installment
+                )
+                sent += 1
+            except Exception as e:
+                pass  # Continue even if email fails
+        self.message_user(request, f'Sent reminder emails for {sent} installments.')
+    send_reminder_email.short_description = "Send payment reminders"
