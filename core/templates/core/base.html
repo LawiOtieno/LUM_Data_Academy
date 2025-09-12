@@ -1,25 +1,24 @@
-
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}LUM Data Academy - Equipping Africa with Future-Ready Data Skills{% endblock %}</title>
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Linden+Hill:ital,wght@0,400;1,400&family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- AOS Animation Library -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
+
     <!-- Custom Tailwind Config -->
     <script>
         tailwind.config = {
@@ -72,19 +71,19 @@
             }
         }
     </script>
-    
+
     <!-- Meta tags -->
     <meta name="description" content="{% block description %}LUM Data Academy - Premier data science and analytics training institution in Africa. Learn Python, AI, Machine Learning, Power BI, and more with industry experts.{% endblock %}">
     <meta name="keywords" content="data science training, python courses kenya, AI courses africa, machine learning bootcamp, power bi training, data analytics course">
     <meta name="author" content="LUM Data Academy">
-    
+
     <!-- Open Graph -->
     <meta property="og:title" content="{% block og_title %}LUM Data Academy{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Equipping Africa with Future-Ready Data Skills{% endblock %}">
     <meta property="og:image" content="{% block og_image %}{% load static %}{% static 'core/img/logo.jpg' %}{% endblock %}">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
     <meta property="og:type" content="website">
-    
+
     {% block extra_css %}{% endblock %}
 </head>
 <body class="bg-gray-50 font-linden">
@@ -110,7 +109,7 @@
                         <span class="text-xl font-bold text-primary">LUM Data Academy</span>
                     </a>
                 </div>
-                
+
                 <!-- Desktop Menu -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
@@ -129,7 +128,7 @@
                         {% endif %}
                     </div>
                 </div>
-                
+
                 <!-- Mobile menu button -->
                 <div class="md:hidden">
                     <button type="button" class="mobile-menu-button bg-gray-100 hover:bg-gray-200 p-2 rounded-md text-gray-700 hover:text-primary transition-colors duration-200">
@@ -140,7 +139,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Mobile Menu -->
         <div class="mobile-menu md:hidden hidden bg-white border-t border-gray-200 shadow-lg">
             <div class="px-2 py-3 space-y-1">
@@ -162,7 +161,7 @@
                 <a href="{% url 'core:contact' %}" class="block w-full text-left px-2 py-1 text-gray-700 hover:bg-gray-100 hover:text-primary rounded-lg transition-colors duration-200 {% if request.resolver_match.url_name == 'contact' %}bg-primary text-white{% endif %}">
                     Contact
                 </a>
-                
+
                 <!-- Authentication Links -->
                 <div class="border-t border-gray-200 pt-4 mt-4 space-y-1">
                     {% if user.is_authenticated %}
@@ -201,7 +200,7 @@
                 {% endfor %}
             </div>
         {% endif %}
-        
+
         {% block content %}
         {% endblock %}
     </main>
@@ -209,68 +208,61 @@
     <!-- Footer -->
     <footer class="bg-primary text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Company Info -->
-                <div class="space-y-4">
-                    <div class="flex items-center space-x-3">
-                        <img src="{% load static %}{% static 'core/img/logo.jpg' %}" alt="LUM Data Academy" class="h-10 w-10 rounded-full object-cover">
-                        <span class="text-xl font-bold">LUM Data Academy</span>
-                    </div>
-                    <p class="text-gray-300 text-sm">Equipping Africa with Future-Ready Data Skills</p>
-                    <div class="flex space-x-4">
-                        <a href="https://www.facebook.com/LumDataAnalytica" class="text-gray-300 hover:text-secondary transition-colors duration-200">
-                            <i class="fab fa-facebook text-xl"></i>
-                        </a>
-                        <a href="https://www.instagram.com/lumdataanalytica" class="text-gray-300 hover:text-secondary transition-colors duration-200">
-                            <i class="fab fa-instagram text-xl"></i>
-                        </a>
-                        <a href="https://www.tiktok.com/lumdataanalytica" class="text-gray-300 hover:text-secondary transition-colors duration-200">
-                            <i class="fab fa-tiktok text-xl"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Quick Links -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="{% url 'core:about' %}" class="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
-                        <li><a href="{% url 'core:courses' %}" class="text-gray-300 hover:text-white transition-colors duration-200">Courses</a></li>
-                        <li><a href="{% url 'core:admissions' %}" class="text-gray-300 hover:text-white transition-colors duration-200">Admissions</a></li>
-                        <li><a href="{% url 'core:student_resources' %}" class="text-gray-300 hover:text-white transition-colors duration-200">Student Resources</a></li>
-                        <li><a href="{% url 'core:testimonials' %}" class="text-gray-300 hover:text-white transition-colors duration-200">Testimonials</a></li>
-                    </ul>
-                </div>
-                
-                <!-- Contact Info -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
-                    <ul class="space-y-2 text-sm text-gray-300">
-                        <li><i class="fas fa-envelope mr-2"></i> info@lumdataacademy.org</li>
-                        <li><i class="fab fa-whatsapp mr-2"></i> +254 768 998 305</li>
-                    </ul>
-                    <div class="mt-4">
-                        <p class="text-sm text-gray-300 mb-2">David Joel - CEO & Co-founder</p>
-                        <a href="https://www.facebook.com/joel.oluoch.56" class="text-secondary hover:text-secondary/80 transition-colors duration-200 text-sm">
-                            <i class="fab fa-facebook mr-1"></i> Joel Oluoch
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Newsletter -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Stay Updated</h3>
-                    <form id="newsletter-form" class="space-y-1">
-                        <input type="email" id="newsletter-email" placeholder="Your email" required 
-                               class="w-full px-2 py-1 bg-primary-light border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors duration-200">
-                        <button type="submit" 
-                                class="w-full bg-secondary hover:bg-secondary/90 text-white py-2 rounded-lg transition-all duration-200 transform hover:scale-105">
-                            Subscribe
-                        </button>
-                    </form>
-                </div>
+            <!-- Footer Links -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+            <div>
+                <h4 class="text-white font-bold text-lg mb-4">Academy</h4>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'core:about' %}" class="text-white/80 hover:text-white transition-colors">About Us</a></li>
+                    <li><a href="{% url 'core:courses' %}" class="text-white/80 hover:text-white transition-colors">Courses</a></li>
+                    <li><a href="{% url 'core:events' %}" class="text-white/80 hover:text-white transition-colors">Events</a></li>
+                    <li><a href="{% url 'core:blog' %}" class="text-white/80 hover:text-white transition-colors">Blog</a></li>
+                    <li><a href="{% url 'core:careers' %}" class="text-white/80 hover:text-white transition-colors">Careers</a></li>
+                </ul>
             </div>
-            
+
+            <div>
+                <h4 class="text-white font-bold text-lg mb-4">Students</h4>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'core:admissions' %}" class="text-white/80 hover:text-white transition-colors">Admissions</a></li>
+                    <li><a href="{% url 'core:student_resources' %}" class="text-white/80 hover:text-white transition-colors">Student Resources</a></li>
+                    <li><a href="{% url 'core:testimonials' %}" class="text-white/80 hover:text-white transition-colors">Testimonials</a></li>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'core:my_enrollments' %}" class="text-white/80 hover:text-white transition-colors">My Enrollments</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-lg mb-4">Support</h4>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'core:contact' %}" class="text-white/80 hover:text-white transition-colors">Contact Us</a></li>
+                    <li><a href="{% url 'core:faqs' %}" class="text-white/80 hover:text-white transition-colors">FAQs</a></li>
+                    <li><a href="{% url 'core:surveys' %}" class="text-white/80 hover:text-white transition-colors">Surveys</a></li>
+                    <li><a href="#" class="text-white/80 hover:text-white transition-colors">Help Center</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-lg mb-4">Legal</h4>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'core:terms_of_service' %}" class="text-white/80 hover:text-white transition-colors">Terms of Service</a></li>
+                    <li><a href="{% url 'core:privacy_policy' %}" class="text-white/80 hover:text-white transition-colors">Privacy Policy</a></li>
+                    <li><a href="{% url 'core:payment_policy' %}" class="text-white/80 hover:text-white transition-colors">Payment Policy</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-lg mb-4">Connect</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-white/80 hover:text-white transition-colors flex items-center"><i class="fab fa-linkedin mr-2"></i>LinkedIn</a></li>
+                    <li><a href="#" class="text-white/80 hover:text-white transition-colors flex items-center"><i class="fab fa-twitter mr-2"></i>Twitter</a></li>
+                    <li><a href="#" class="text-white/80 hover:text-white transition-colors flex items-center"><i class="fab fa-facebook mr-2"></i>Facebook</a></li>
+                    <li><a href="#" class="text-white/80 hover:text-white transition-colors flex items-center"><i class="fab fa-instagram mr-2"></i>Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+
             <div class="border-t border-gray-600 mt-8 pt-8 text-center text-sm text-gray-300">
                 <p>&copy; {% now "Y" %} LUM Data Academy. All rights reserved. Built by <a href="https://wa.me/254706943651?text=Hello%20*CyberTechOcean*%0AI%20would%20like%20you%20to%20develop%20for%20me%20a%20Website%20(the%20same%20way%20you%20did%20to%20*LUM%20Data%20Academy*)." class="hover:text-primary transition-colors">CTO</a>.</p>
             </div>
@@ -278,20 +270,20 @@
     </footer>
 
     <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/254768998305" target="_blank" 
+    <a href="https://wa.me/254768998305" target="_blank"
        class="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 transform hover:scale-110 z-50">
         <i class="fab fa-whatsapp text-2xl"></i>
     </a>
 
     <!-- Scroll to Top Button -->
-    <button id="scrollToTop" 
+    <button id="scrollToTop"
             class="fixed bottom-6 left-6 bg-gradient-to-br from-primary to-yellow-500 text-white p-3 rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-primary-light transform hover:scale-110 z-40">
         <i class="fas fa-chevron-up text-lg"></i>
     </button>
 
     <!-- JavaScript Libraries -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
+
     <!-- Custom JavaScript -->
     <script>
         // Initialize AOS
@@ -305,10 +297,10 @@
         // Mobile menu toggle
         const mobileMenuButton = document.querySelector('.mobile-menu-button');
         const mobileMenu = document.querySelector('.mobile-menu');
-        
+
         function toggleMobileMenu() {
             const isHidden = mobileMenu.classList.contains('hidden');
-            
+
             if (isHidden) {
                 // Show menu
                 mobileMenu.classList.remove('hidden');
@@ -317,16 +309,16 @@
                 mobileMenu.classList.add('hidden');
             }
         }
-        
+
         mobileMenuButton.addEventListener('click', toggleMobileMenu);
-        
+
         // Close menu when clicking on menu items
         document.querySelectorAll('.mobile-menu a').forEach(link => {
             link.addEventListener('click', () => {
                 mobileMenu.classList.add('hidden');
             });
         });
-        
+
         // Close menu when clicking outside
         document.addEventListener('click', (e) => {
             if (!mobileMenuButton.contains(e.target) && !mobileMenu.contains(e.target)) {
@@ -346,7 +338,7 @@
 
         // Scroll to top functionality
         const scrollToTopBtn = document.getElementById('scrollToTop');
-        
+
         window.addEventListener('scroll', () => {
             if (window.scrollY > 500) {
                 scrollToTopBtn.classList.remove('opacity-0', 'invisible');
@@ -363,7 +355,7 @@
         document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('newsletter-email').value;
-            
+
             try {
                 const response = await fetch('{% url "core:newsletter_subscribe" %}', {
                     method: 'POST',
@@ -373,9 +365,9 @@
                     },
                     body: JSON.stringify({ email: email })
                 });
-                
+
                 const data = await response.json();
-                
+
                 // Show notification
                 const notification = document.createElement('div');
                 notification.className = `fixed top-20 right-4 z-50 px-6 py-4 rounded-lg shadow-lg animate-slide-in-right max-w-md ${data.success ? 'bg-green-500' : 'bg-red-500'} text-white`;
@@ -387,14 +379,14 @@
                         </button>
                     </div>
                 `;
-                
+
                 document.body.appendChild(notification);
-                
+
                 // Remove notification after 5 seconds
                 setTimeout(() => {
                     notification.remove();
                 }, 5000);
-                
+
                 if (data.success) {
                     document.getElementById('newsletter-email').value = '';
                 }
@@ -414,7 +406,7 @@
             });
         });
     </script>
-    
+
     <style>
         .nav-link {
             @apply text-gray-700 hover:text-primary px-2 py-1 rounded-md text-sm font-medium transition-colors duration-200 relative;
@@ -426,7 +418,7 @@
             content: '';
             @apply absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-0.5 bg-secondary rounded-full;
         }
-        
+
         /* Mobile Navigation Button Styles */
         .mobile-nav-button {
             @apply w-full flex items-center px-2 py-1 text-gray-700 font-medium rounded-xl border border-gray-200 transition-all duration-200 bg-white shadow-sm;
@@ -440,7 +432,7 @@
         .mobile-nav-button.active {
             @apply text-primary bg-primary/5 border-primary/20;
         }
-        
+
         /* Hamburger Animation */
         .hamburger-icon {
             @apply w-6 h-6 flex flex-col justify-center items-center relative;
@@ -463,7 +455,7 @@
         .hamburger-icon.active .hamburger-line:nth-child(3) {
             transform: translateY(-6px) rotate(-45deg);
         }
-        
+
         /* Notification Banner */
         .notification-banner {
             height: 32px;
@@ -472,7 +464,7 @@
         .scrolling-text {
             animation: scroll-left 30s linear infinite;
         }
-        
+
         @keyframes scroll-left {
             0% {
                 transform: translateX(100%);
@@ -481,7 +473,7 @@
                 transform: translateX(-100%);
             }
         }
-        
+
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -497,7 +489,7 @@
             background: #065536;
         }
     </style>
-    
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

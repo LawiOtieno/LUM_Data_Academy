@@ -1,0 +1,286 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}{{ survey.title }} - LUM Data Academy{% endblock %}
+
+{% block content %}
+<div class="min-h-screen pt-20">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary to-primary-dark text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-6">
+                    <a href="{% url 'core:surveys' %}" class="inline-flex items-center text-white/80 hover:text-white transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back to Surveys
+                    </a>
+                </div>
+                
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">{{ survey.title }}</h1>
+                
+                <div class="flex flex-wrap items-center gap-6 text-white/90 mb-6">
+                    <span class="flex items-center">
+                        <i class="fas fa-tag mr-2"></i>
+                        {{ survey.get_survey_type_display }}
+                    </span>
+                    {% if survey.target_audience %}
+                    <span class="flex items-center">
+                        <i class="fas fa-users mr-2"></i>
+                        {{ survey.target_audience }}
+                    </span>
+                    {% endif %}
+                    <span class="flex items-center">
+                        <i class="fas fa-user-secret mr-2"></i>
+                        {% if survey.is_anonymous %}Anonymous{% else %}Identified{% endif %}
+                    </span>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    {% if survey.is_open %}
+                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-500/20 text-green-100 border border-green-400/30">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Survey Open
+                    </span>
+                    {% else %}
+                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-red-500/20 text-red-100 border border-red-400/30">
+                        <i class="fas fa-times-circle mr-2"></i>
+                        Survey Closed
+                    </span>
+                    {% endif %}
+                    
+                    {% if survey.max_responses %}
+                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-500/20 text-blue-100 border border-blue-400/30">
+                        <i class="fas fa-chart-line mr-2"></i>
+                        {{ survey.response_count }}/{{ survey.max_responses }} responses
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Survey Information -->
+    <section class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Survey Description -->
+            <div class="bg-gray-50 rounded-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-info-circle mr-3 text-primary"></i>
+                    Survey Information
+                </h2>
+                <div class="prose prose-lg max-w-none text-gray-700">
+                    {{ survey.description|safe }}
+                </div>
+            </div>
+
+            <!-- Survey Timeline -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                        <i class="fas fa-calendar-alt mr-2 text-primary"></i>
+                        Survey Timeline
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Start Date:</span>
+                            <span class="font-medium">{{ survey.start_date|date:"M d, Y" }}</span>
+                        </div>
+                        {% if survey.end_date %}
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">End Date:</span>
+                            <span class="font-medium">{{ survey.end_date|date:"M d, Y" }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Status:</span>
+                            <span class="font-medium {% if survey.is_open %}text-green-600{% else %}text-red-600{% endif %}">
+                                {% if survey.is_open %}Open for Responses{% else %}Closed{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                        <i class="fas fa-chart-bar mr-2 text-primary"></i>
+                        Response Statistics
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total Responses:</span>
+                            <span class="font-medium">{{ survey.response_count }}</span>
+                        </div>
+                        {% if survey.max_responses %}
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Response Limit:</span>
+                            <span class="font-medium">{{ survey.max_responses }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Availability:</span>
+                            <span class="font-medium">
+                                {{ survey.max_responses|add:"-"|add:survey.response_count }} spots remaining
+                            </span>
+                        </div>
+                        {% endif %}
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Response Type:</span>
+                            <span class="font-medium">
+                                {% if survey.is_anonymous %}Anonymous{% else %}Identified{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Survey Content/Questions -->
+            {% if survey.is_open %}
+            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden mb-8">
+                <div class="bg-primary text-white px-6 py-4">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i class="fas fa-clipboard-list mr-3"></i>
+                        Survey Questions
+                    </h2>
+                </div>
+                <div class="p-6">
+                    <div class="prose prose-lg max-w-none">
+                        {{ survey.content|safe }}
+                    </div>
+                    
+                    <!-- Participation Notice -->
+                    <div class="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex">
+                            <i class="fas fa-info-circle text-blue-600 mt-1 mr-3"></i>
+                            <div>
+                                <h4 class="text-sm font-medium text-blue-900 mb-1">How to Participate</h4>
+                                <p class="text-sm text-blue-700">
+                                    {% if survey.is_anonymous %}
+                                    This survey is anonymous. Your responses will not be linked to your identity.
+                                    {% else %}
+                                    This survey will record your identity along with your responses for follow-up purposes.
+                                    {% endif %}
+                                    Please answer all questions honestly and completely.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- External Survey Link Notice -->
+            <div class="text-center py-8">
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
+                    <i class="fas fa-external-link-alt text-yellow-600 text-2xl mb-3"></i>
+                    <h3 class="text-lg font-semibold text-yellow-900 mb-2">External Survey Platform</h3>
+                    <p class="text-yellow-800">
+                        This survey is hosted on an external platform. You will be redirected to complete the survey.
+                        Your responses will be collected securely according to our privacy policy.
+                    </p>
+                </div>
+                
+                <a href="#" onclick="alert('Survey link would be embedded here. Contact admin for survey participation link.')" 
+                   class="inline-flex items-center px-8 py-4 bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg transition-colors shadow-lg">
+                    <i class="fas fa-external-link-alt mr-3"></i>
+                    Take Survey
+                </a>
+            </div>
+            {% else %}
+            <!-- Survey Closed Message -->
+            <div class="text-center py-12">
+                <i class="fas fa-clock text-6xl text-gray-400 mb-4"></i>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-4">Survey No Longer Available</h3>
+                <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+                    This survey is currently closed for responses. 
+                    {% if survey.end_date and survey.end_date|date:"Y-m-d" < "now"|date:"Y-m-d" %}
+                    The survey closed on {{ survey.end_date|date:"M d, Y" }}.
+                    {% elif survey.max_responses and survey.response_count >= survey.max_responses %}
+                    The survey has reached its maximum number of responses ({{ survey.max_responses }}).
+                    {% else %}
+                    Please check back later or contact us for more information.
+                    {% endif %}
+                </p>
+                <div class="space-x-4">
+                    <a href="{% url 'core:surveys' %}" 
+                       class="inline-flex items-center px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors">
+                        <i class="fas fa-list mr-2"></i>
+                        View Other Surveys
+                    </a>
+                    <a href="{% url 'core:contact' %}" 
+                       class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 hover:border-primary hover:text-primary rounded-lg transition-colors">
+                        <i class="fas fa-envelope mr-2"></i>
+                        Contact Us
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Survey Guidelines -->
+    {% if survey.is_open %}
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-lg p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-shield-alt mr-3 text-primary"></i>
+                    Survey Guidelines & Privacy
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">Participation Guidelines</h3>
+                        <ul class="text-gray-600 space-y-2 text-sm">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                                Answer all questions honestly and completely
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                                Take your time to provide thoughtful responses
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                                Submit only one response per person
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                                Contact us if you encounter technical issues
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">Data Privacy</h3>
+                        <ul class="text-gray-600 space-y-2 text-sm">
+                            <li class="flex items-start">
+                                <i class="fas fa-lock text-blue-500 mr-2 mt-1"></i>
+                                {% if survey.is_anonymous %}Your responses are completely anonymous{% else %}Your identity is kept confidential{% endif %}
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-lock text-blue-500 mr-2 mt-1"></i>
+                                Data is used only for stated research purposes
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-lock text-blue-500 mr-2 mt-1"></i>
+                                We comply with data protection regulations
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-lock text-blue-500 mr-2 mt-1"></i>
+                                Results may be shared in aggregate form only
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    <p class="text-sm text-gray-600">
+                        By participating in this survey, you acknowledge that you have read and agree to our 
+                        <a href="{% url 'core:privacy_policy' %}" class="text-primary hover:underline">Privacy Policy</a> 
+                        and <a href="{% url 'core:terms_of_service' %}" class="text-primary hover:underline">Terms of Service</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}
