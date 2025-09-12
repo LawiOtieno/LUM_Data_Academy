@@ -89,7 +89,7 @@
                                             <div class="text-center">
                                                 <div class="font-semibold text-gray-900">2 Installments</div>
                                                 <div class="text-lg font-bold text-gray-900 mt-1">
-                                                    {% get_currency_symbol selected_currency %}{% convert_price course.get_display_price selected_currency as price %}{{ price|mul:0.5|floatformat:0 }} <span class="text-sm font-normal">/month</span>
+                                                    {% get_currency_symbol selected_currency %}{% convert_price course.get_display_price selected_currency as price %}{{ price|multiply:0.5|floatformat:0 }} <span class="text-sm font-normal">/month</span>
                                                 </div>
                                                 <div class="text-sm text-gray-500 mt-1">🗓️ Monthly</div>
                                             </div>
@@ -102,7 +102,7 @@
                                             <div class="text-center">
                                                 <div class="font-semibold text-gray-900">3 Installments</div>
                                                 <div class="text-lg font-bold text-gray-900 mt-1">
-                                                    {% get_currency_symbol selected_currency %}{% convert_price course.get_display_price selected_currency as price %}{{ price|mul:0.33|floatformat:0 }} <span class="text-sm font-normal">/month</span>
+                                                    {% get_currency_symbol selected_currency %}{% convert_price course.get_display_price selected_currency as price %}{{ price|multiply:0.33|floatformat:0 }} <span class="text-sm font-normal">/month</span>
                                                 </div>
                                                 <div class="text-sm text-gray-500 mt-1">⚡ Flexible</div>
                                             </div>
