@@ -61,7 +61,7 @@ def verify_math_captcha(session_key, user_answer):
 
 
 def send_verification_email(user, request):
-    """Send email verification link"""
+    """Send email verification link using new templated email system"""
     # Delete any existing tokens for this user
     EmailVerificationToken.objects.filter(user=user, is_used=False).delete()
     
@@ -76,44 +76,20 @@ def send_verification_email(user, request):
         reverse('accounts:verify_email', kwargs={'token': token.token})
     )
     
-    # Email content
-    subject = 'Verify Your Email - LUM Data Academy'
-    message = f"""
-Hello {user.get_full_name() or user.username},
-
-Thank you for registering with LUM Data Academy! Please click the link below to verify your email address:
-
-{verification_url}
-
-This link will expire in 24 hours.
-
-If you didn't create this account, please ignore this email.
-
-Best regards,
-LUM Data Academy Team
-"""
+    # Use new email service
+    from emails.services import EmailService
+    success, message = EmailService.send_verification_email(user, verification_url)
     
-    # Send email
-    try:
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-            fail_silently=False
-        )
-        
+    if success:
         # Update verification sent timestamp
         user.userprofile.email_verification_sent_at = timezone.now()
         user.userprofile.save()
-        
-        return True, "Verification email sent successfully!"
-    except Exception as e:
-        return False, f"Failed to send verification email: {str(e)}"
+    
+    return success, message
 
 
 def send_password_reset_email(user, request):
-    """Send password reset email"""
+    """Send password reset email using new templated email system"""
     # Delete any existing tokens for this user
     PasswordResetToken.objects.filter(user=user, is_used=False).delete()
     
@@ -125,35 +101,9 @@ def send_password_reset_email(user, request):
         reverse('accounts:password_reset_confirm', kwargs={'token': token.token})
     )
     
-    # Email content
-    subject = 'Password Reset - LUM Data Academy'
-    message = f"""
-Hello {user.get_full_name() or user.username},
-
-You requested a password reset for your LUM Data Academy account. Click the link below to reset your password:
-
-{reset_url}
-
-This link will expire in 1 hour.
-
-If you didn't request this, please ignore this email. Your password will remain unchanged.
-
-Best regards,
-LUM Data Academy Team
-"""
-    
-    # Send email
-    try:
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-            fail_silently=False
-        )
-        return True, "Password reset email sent successfully!"
-    except Exception as e:
-        return False, f"Failed to send password reset email: {str(e)}"
+    # Use new email service
+    from emails.services import EmailService
+    return EmailService.send_password_reset_email(user, reset_url)
 
 
 def clean_expired_tokens():
