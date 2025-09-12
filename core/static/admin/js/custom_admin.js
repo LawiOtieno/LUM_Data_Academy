@@ -322,22 +322,16 @@ function addKeyboardShortcuts() {
             window.location.href = '/admin/';
         }
         
-        // Ctrl/Cmd + L to toggle left sidebar (mobile)
+        // Ctrl/Cmd + L to toggle left sidebar
         if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
             e.preventDefault();
-            const leftSidebar = document.querySelector('#nav-sidebar');
-            if (leftSidebar) {
-                leftSidebar.classList.toggle('mobile-show');
-            }
+            toggleLeftSidebar();
         }
         
-        // Ctrl/Cmd + R to toggle right sidebar (mobile)
+        // Ctrl/Cmd + R to toggle right sidebar
         if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
             e.preventDefault();
-            const rightSidebar = document.querySelector('#nav-sidebar-right');
-            if (rightSidebar) {
-                rightSidebar.classList.toggle('mobile-show');
-            }
+            toggleRightSidebar();
         }
     });
 }
@@ -352,10 +346,7 @@ function addMobileMenuToggles() {
         leftToggle.title = 'Toggle Add Menu';
         
         leftToggle.addEventListener('click', function() {
-            const leftSidebar = document.querySelector('#nav-sidebar');
-            if (leftSidebar) {
-                leftSidebar.classList.toggle('mobile-show');
-            }
+            toggleLeftSidebar();
         });
         
         // Right menu toggle
@@ -365,10 +356,7 @@ function addMobileMenuToggles() {
         rightToggle.title = 'Toggle View Menu';
         
         rightToggle.addEventListener('click', function() {
-            const rightSidebar = document.querySelector('#nav-sidebar-right');
-            if (rightSidebar) {
-                rightSidebar.classList.toggle('mobile-show');
-            }
+            toggleRightSidebar();
         });
         
         document.body.appendChild(leftToggle);
@@ -421,6 +409,64 @@ function showNotification(message, type = 'success') {
             }
         }, 300);
     }, 3000);
+}
+
+// Sidebar toggle functions
+function toggleLeftSidebar() {
+    const leftSidebar = document.querySelector('#nav-sidebar');
+    const content = document.querySelector('.content');
+    const themeToggle = document.querySelector('.theme-toggle');
+    
+    if (leftSidebar && content) {
+        leftSidebar.classList.toggle('expanded');
+        
+        const isLeftExpanded = leftSidebar.classList.contains('expanded');
+        const isRightExpanded = content.classList.contains('right-expanded');
+        
+        // Update content classes
+        content.classList.remove('left-expanded', 'both-expanded');
+        
+        if (isLeftExpanded && isRightExpanded) {
+            content.classList.add('both-expanded');
+        } else if (isLeftExpanded) {
+            content.classList.add('left-expanded');
+        } else if (isRightExpanded) {
+            content.classList.add('right-expanded');
+        }
+    }
+}
+
+function toggleRightSidebar() {
+    const rightSidebar = document.querySelector('#nav-sidebar-right');
+    const content = document.querySelector('.content');
+    const themeToggle = document.querySelector('.theme-toggle');
+    
+    if (rightSidebar && content) {
+        rightSidebar.classList.toggle('expanded');
+        
+        const isLeftExpanded = content.classList.contains('left-expanded') || content.classList.contains('both-expanded');
+        const isRightExpanded = rightSidebar.classList.contains('expanded');
+        
+        // Update content classes
+        content.classList.remove('right-expanded', 'both-expanded');
+        
+        if (isLeftExpanded && isRightExpanded) {
+            content.classList.add('both-expanded');
+        } else if (isRightExpanded) {
+            content.classList.add('right-expanded');
+        } else if (isLeftExpanded) {
+            content.classList.add('left-expanded');
+        }
+        
+        // Update theme toggle position
+        if (themeToggle) {
+            if (isRightExpanded) {
+                themeToggle.classList.add('right-expanded');
+            } else {
+                themeToggle.classList.remove('right-expanded');
+            }
+        }
+    }
 }
 
 // Enhanced table interactions

@@ -62,7 +62,7 @@
 
 /* Right-side navigation menu */
 #nav-sidebar-right {
-    width: 280px !important;
+    width: 60px !important;
     background: #2d3748 !important;
     position: fixed !important;
     top: 70px !important;
@@ -73,6 +73,10 @@
     transition: all 0.3s ease !important;
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1) !important;
     border-left: 2px solid #3182ce !important;
+}
+
+#nav-sidebar-right.expanded {
+    width: 280px !important;
 }
 
 #nav-sidebar-right::-webkit-scrollbar {
@@ -96,6 +100,22 @@
     font-weight: 600;
     text-align: center;
     margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#nav-sidebar-right:not(.expanded) .nav-header {
+    padding: 20px 5px;
+    font-size: 18px;
+}
+
+#nav-sidebar-right:not(.expanded) .nav-header::before {
+    content: "👁️";
+    font-size: 20px;
+}
+
+#nav-sidebar-right:not(.expanded) .nav-header::after {
+    content: "";
 }
 
 /* Right Navigation Items */
@@ -139,6 +159,22 @@
     transition: all 0.3s ease !important;
     border-left: 4px solid transparent !important;
     font-weight: 500 !important;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#nav-sidebar-right:not(.expanded) .module td a {
+    padding: 12px 8px !important;
+    justify-content: center !important;
+}
+
+#nav-sidebar-right:not(.expanded) .module td a .view-icon {
+    margin-right: 0 !important;
+    font-size: 18px;
+}
+
+#nav-sidebar-right:not(.expanded) .module h2 {
+    display: none !important;
 }
 
 #nav-sidebar-right .module td a:hover {
@@ -164,7 +200,7 @@
 
 /* Custom Sidebar Navigation */
 #nav-sidebar {
-    width: 280px !important;
+    width: 60px !important;
     background: #2d3748 !important;
     position: fixed !important;
     top: 70px !important;
@@ -175,6 +211,10 @@
     transition: all 0.3s ease !important;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1) !important;
     border-right: 2px solid #3182ce !important;
+}
+
+#nav-sidebar.expanded {
+    width: 280px !important;
 }
 
 #nav-sidebar::-webkit-scrollbar {
@@ -198,6 +238,22 @@
     font-weight: 600;
     text-align: center;
     margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#nav-sidebar:not(.expanded) .nav-header {
+    padding: 20px 5px;
+    font-size: 18px;
+}
+
+#nav-sidebar:not(.expanded) .nav-header::before {
+    content: "➕";
+    font-size: 20px;
+}
+
+#nav-sidebar:not(.expanded) .nav-header::after {
+    content: "";
 }
 
 /* Navigation Items */
@@ -245,6 +301,26 @@
     transition: all 0.3s ease !important;
     border-left: 4px solid transparent !important;
     font-weight: 500 !important;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#nav-sidebar:not(.expanded) .module td a {
+    padding: 12px 8px !important;
+    justify-content: center !important;
+}
+
+#nav-sidebar:not(.expanded) .module td a .add-icon {
+    margin-right: 0 !important;
+    font-size: 18px;
+}
+
+#nav-sidebar:not(.expanded) .module td a::before {
+    margin-right: 0 !important;
+}
+
+#nav-sidebar:not(.expanded) .module h2 {
+    display: none !important;
 }
 
 #nav-sidebar .module td a:hover {
@@ -336,12 +412,29 @@
 
 /* Main Content Area */
 .content {
-    margin-left: 280px !important;
-    margin-right: 280px !important;
+    margin-left: 80px !important;
+    margin-right: 80px !important;
     padding: 30px !important;
     background: #f8f9fa !important;
     min-height: calc(100vh - 70px) !important;
-    width: calc(100% - 560px) !important;
+    width: calc(100% - 160px) !important;
+    transition: all 0.3s ease !important;
+}
+
+.content.left-expanded {
+    margin-left: 300px !important;
+    width: calc(100% - 380px) !important;
+}
+
+.content.right-expanded {
+    margin-right: 300px !important;
+    width: calc(100% - 380px) !important;
+}
+
+.content.both-expanded {
+    margin-left: 300px !important;
+    margin-right: 300px !important;
+    width: calc(100% - 600px) !important;
 }
 
 /* Content Header */
@@ -547,7 +640,11 @@
     
     .content {
         margin-right: 0 !important;
-        width: calc(100% - 280px) !important;
+        width: calc(100% - 80px) !important;
+    }
+    
+    .content.left-expanded {
+        width: calc(100% - 300px) !important;
     }
 }
 
@@ -583,7 +680,7 @@
 .theme-toggle {
     position: fixed !important;
     bottom: 30px !important;
-    right: 310px !important;
+    right: 90px !important;
     background: linear-gradient(135deg, #1a365d 0%, #2c5282 50%, #3182ce 100%) !important;
     color: white !important;
     border: none !important;
@@ -595,6 +692,10 @@
     box-shadow: 0 8px 25px rgba(49, 130, 206, 0.3) !important;
     transition: all 0.3s ease !important;
     z-index: 1001 !important;
+}
+
+.theme-toggle.right-expanded {
+    right: 310px !important;
 }
 
 .theme-toggle:hover {
