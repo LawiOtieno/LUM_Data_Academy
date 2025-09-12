@@ -361,45 +361,38 @@ def my_enrollments(request):
 
 
 def enroll_guest(request, slug):
-    """Handle enrollment for non-authenticated users"""
+    """Handle enrollment for non-authenticated users using unified registration form"""
+    from accounts.forms import UnifiedRegistrationForm
+    
     course = get_object_or_404(Course, slug=slug, is_active=True)
     
     if request.user.is_authenticated:
         return redirect('core:enroll_course', slug=course.slug)
     
     if request.method == 'POST':
-        # Create user account and enroll
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        first_name = request.POST.get('first_name', '')
-        last_name = request.POST.get('last_name', '')
+        # Use unified registration form for consistent validation and field handling
+        form = UnifiedRegistrationForm(request.POST, is_guest_enrollment=True)
         
-        if User.objects.filter(username=username).exists():
-            messages.error(request, 'Username already exists. Please choose a different one.')
-            return render(request, 'core/enroll_guest.html', {'course': course})
-        
-        if User.objects.filter(email=email).exists():
-            messages.error(request, 'Email already registered. Please log in instead.')
-            return render(request, 'core/enroll_guest.html', {'course': course})
-        
-        # Create user
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name
-        )
-        
-        # Log in the user
-        login(request, user)
-        
-        # Redirect to enrollment page
-        messages.success(request, 'Account created successfully! Now you can proceed with enrollment.')
-        return redirect('core:enroll_course', slug=course.slug)
+        if form.is_valid():
+            # Create user with immediate activation for guest enrollment
+            user = form.save(commit=True, activate_immediately=True)
+            
+            # Log in the user immediately
+            login(request, user)
+            
+            # Redirect to enrollment page
+            messages.success(request, 'Account created successfully! Now you can proceed with enrollment.')
+            return redirect('core:enroll_course', slug=course.slug)
+        else:
+            # If form has errors, show them to the user
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.title()}: {error}")
+    else:
+        form = UnifiedRegistrationForm(is_guest_enrollment=True)
     
     context = {
         'course': course,
+        'form': form,
     }
     return render(request, 'core/enroll_guest.html', context)
