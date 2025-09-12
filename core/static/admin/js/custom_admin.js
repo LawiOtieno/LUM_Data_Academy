@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add right sidebar
     createRightSidebar();
     
+    // Add sidebar toggle buttons
+    addSidebarToggleButtons();
+    
     // Add mobile menu toggles
     addMobileMenuToggles();
     
@@ -336,32 +339,32 @@ function addKeyboardShortcuts() {
     });
 }
 
+function addSidebarToggleButtons() {
+    // Left sidebar toggle button
+    const leftToggle = document.createElement('button');
+    leftToggle.className = 'sidebar-toggle left';
+    leftToggle.title = 'Toggle Left Sidebar (Ctrl+L)';
+    
+    leftToggle.addEventListener('click', function() {
+        toggleLeftSidebar();
+    });
+    
+    // Right sidebar toggle button
+    const rightToggle = document.createElement('button');
+    rightToggle.className = 'sidebar-toggle right';
+    rightToggle.title = 'Toggle Right Sidebar (Ctrl+R)';
+    
+    rightToggle.addEventListener('click', function() {
+        toggleRightSidebar();
+    });
+    
+    document.body.appendChild(leftToggle);
+    document.body.appendChild(rightToggle);
+}
+
 function addMobileMenuToggles() {
-    // Only add mobile toggles on small screens
-    if (window.innerWidth <= 768) {
-        // Left menu toggle
-        const leftToggle = document.createElement('button');
-        leftToggle.className = 'mobile-menu-toggle left';
-        leftToggle.innerHTML = '➕';
-        leftToggle.title = 'Toggle Add Menu';
-        
-        leftToggle.addEventListener('click', function() {
-            toggleLeftSidebar();
-        });
-        
-        // Right menu toggle
-        const rightToggle = document.createElement('button');
-        rightToggle.className = 'mobile-menu-toggle right';
-        rightToggle.innerHTML = '👁️';
-        rightToggle.title = 'Toggle View Menu';
-        
-        rightToggle.addEventListener('click', function() {
-            toggleRightSidebar();
-        });
-        
-        document.body.appendChild(leftToggle);
-        document.body.appendChild(rightToggle);
-    }
+    // Mobile toggles are now handled by the main sidebar toggle buttons
+    // This function is kept for compatibility but the functionality is merged
 }
 
 // Update initialization to include mobile toggles
@@ -415,13 +418,22 @@ function showNotification(message, type = 'success') {
 function toggleLeftSidebar() {
     const leftSidebar = document.querySelector('#nav-sidebar');
     const content = document.querySelector('.content');
-    const themeToggle = document.querySelector('.theme-toggle');
+    const leftToggleButton = document.querySelector('.sidebar-toggle.left');
     
     if (leftSidebar && content) {
         leftSidebar.classList.toggle('expanded');
         
         const isLeftExpanded = leftSidebar.classList.contains('expanded');
         const isRightExpanded = content.classList.contains('right-expanded');
+        
+        // Update toggle button state and position
+        if (leftToggleButton) {
+            if (isLeftExpanded) {
+                leftToggleButton.classList.add('expanded');
+            } else {
+                leftToggleButton.classList.remove('expanded');
+            }
+        }
         
         // Update content classes
         content.classList.remove('left-expanded', 'both-expanded');
@@ -433,6 +445,9 @@ function toggleLeftSidebar() {
         } else if (isRightExpanded) {
             content.classList.add('right-expanded');
         }
+        
+        // Show notification
+        showNotification(isLeftExpanded ? 'Left sidebar expanded' : 'Left sidebar collapsed');
     }
 }
 
@@ -440,12 +455,22 @@ function toggleRightSidebar() {
     const rightSidebar = document.querySelector('#nav-sidebar-right');
     const content = document.querySelector('.content');
     const themeToggle = document.querySelector('.theme-toggle');
+    const rightToggleButton = document.querySelector('.sidebar-toggle.right');
     
     if (rightSidebar && content) {
         rightSidebar.classList.toggle('expanded');
         
         const isLeftExpanded = content.classList.contains('left-expanded') || content.classList.contains('both-expanded');
         const isRightExpanded = rightSidebar.classList.contains('expanded');
+        
+        // Update toggle button state and position
+        if (rightToggleButton) {
+            if (isRightExpanded) {
+                rightToggleButton.classList.add('expanded');
+            } else {
+                rightToggleButton.classList.remove('expanded');
+            }
+        }
         
         // Update content classes
         content.classList.remove('right-expanded', 'both-expanded');
@@ -466,6 +491,9 @@ function toggleRightSidebar() {
                 themeToggle.classList.remove('right-expanded');
             }
         }
+        
+        // Show notification
+        showNotification(isRightExpanded ? 'Right sidebar expanded' : 'Right sidebar collapsed');
     }
 }
 

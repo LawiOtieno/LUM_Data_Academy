@@ -646,6 +646,14 @@
     .content.left-expanded {
         width: calc(100% - 300px) !important;
     }
+    
+    .sidebar-toggle.right {
+        right: -25px !important;
+    }
+    
+    .sidebar-toggle.right.expanded {
+        right: 265px !important;
+    }
 }
 
 @media (max-width: 768px) {
@@ -674,6 +682,84 @@
     .content {
         padding: 20px 15px !important;
     }
+    
+    .sidebar-toggle.left {
+        left: -25px !important;
+    }
+    
+    .sidebar-toggle.left.expanded {
+        left: 265px !important;
+    }
+    
+    .sidebar-toggle.right {
+        right: -25px !important;
+    }
+    
+    .sidebar-toggle.right.expanded {
+        right: 265px !important;
+    }
+}
+
+/* Toggle buttons for sidebars */
+.sidebar-toggle {
+    position: fixed !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: linear-gradient(135deg, #1a365d 0%, #2c5282 50%, #3182ce 100%) !important;
+    color: white !important;
+    border: none !important;
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50% !important;
+    font-size: 20px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 15px rgba(49, 130, 206, 0.3) !important;
+    transition: all 0.3s ease !important;
+    z-index: 1002 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.sidebar-toggle.left {
+    left: 10px !important;
+}
+
+.sidebar-toggle.left.expanded {
+    left: 290px !important;
+}
+
+.sidebar-toggle.right {
+    right: 10px !important;
+}
+
+.sidebar-toggle.right.expanded {
+    right: 290px !important;
+}
+
+.sidebar-toggle:hover {
+    transform: translateY(-50%) scale(1.1) !important;
+    box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4) !important;
+}
+
+.sidebar-toggle::before {
+    transition: transform 0.3s ease !important;
+}
+
+.sidebar-toggle.left::before {
+    content: "➕" !important;
+}
+
+.sidebar-toggle.left.expanded::before {
+    content: "✖️" !important;
+}
+
+.sidebar-toggle.right::before {
+    content: "👁️" !important;
+}
+
+.sidebar-toggle.right.expanded::before {
+    content: "✖️" !important;
 }
 
 /* Dark mode toggle button */
