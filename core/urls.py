@@ -27,6 +27,13 @@ urlpatterns = [
     # Testimonials
     path('testimonials/', views.testimonials_page, name='testimonials'),
     
+    # Enrollment system
+    path('enroll/<slug:slug>/', views.enroll_course, name='enroll_course'),
+    path('enroll-guest/<slug:slug>/', views.enroll_guest, name='enroll_guest'),
+    path('enrollment/<uuid:enrollment_id>/', views.enrollment_status, name='enrollment_status'),
+    path('activate/', views.activate_enrollment, name='activate_enrollment'),
+    path('my-enrollments/', views.my_enrollments, name='my_enrollments'),
+    
     # AJAX endpoints
     path('api/newsletter-subscribe/', views.newsletter_subscribe, name='newsletter_subscribe'),
 ]
