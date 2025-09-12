@@ -90,25 +90,27 @@ class Course(models.Model):
     
     def get_price_in_currency(self, currency='KES'):
         """Convert price to specified currency"""
+        from decimal import Decimal
         base_price = self.get_display_price()
         
         if currency == 'USD':
             return base_price
         elif currency == 'KES':
-            return base_price * self.USD_TO_KES_RATE
+            return base_price * Decimal(str(self.USD_TO_KES_RATE))
         elif currency == 'NGN':
-            return base_price * self.USD_TO_NGN_RATE
-        return base_price * self.USD_TO_KES_RATE  # Default to KES
+            return base_price * Decimal(str(self.USD_TO_NGN_RATE))
+        return base_price * Decimal(str(self.USD_TO_KES_RATE))  # Default to KES
     
     def get_original_price_in_currency(self, currency='KES'):
         """Get original price in specified currency"""
+        from decimal import Decimal
         if currency == 'USD':
             return self.price
         elif currency == 'KES':
-            return self.price * self.USD_TO_KES_RATE
+            return self.price * Decimal(str(self.USD_TO_KES_RATE))
         elif currency == 'NGN':
-            return self.price * self.USD_TO_NGN_RATE
-        return self.price * self.USD_TO_KES_RATE  # Default to KES
+            return self.price * Decimal(str(self.USD_TO_NGN_RATE))
+        return self.price * Decimal(str(self.USD_TO_KES_RATE))  # Default to KES
     
     def get_currency_symbol(self, currency='KES'):
         """Get currency symbol"""
@@ -147,8 +149,9 @@ class Course(models.Model):
     @property
     def savings_kes(self):
         """Savings amount in Kenya Shillings"""
+        from decimal import Decimal
         if self.discount_price:
-            return (self.price - self.discount_price) * self.USD_TO_KES_RATE
+            return (self.price - self.discount_price) * Decimal(str(self.USD_TO_KES_RATE))
         return 0
     
     def __str__(self):
