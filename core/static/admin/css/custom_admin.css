@@ -497,7 +497,7 @@
     border-radius: 0 !important;
     border: none !important;
     background: white !important;
-    max-height: 400px; /* Reduced height */
+    max-height: 40px; /* Reduced height */
     overflow-y: auto; /* Enable vertical scrolling */
 }
 
