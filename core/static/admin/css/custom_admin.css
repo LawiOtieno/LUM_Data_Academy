@@ -859,3 +859,144 @@ body.dark-theme .paginator {
         body.dark-theme .activity-item .time {
             color: #9ca3af !important;
         }
+
+/* Enrollment Detail View Styling */
+.form-row label {
+    color: #2d3748 !important;
+    font-weight: 600 !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+}
+
+.form-row .readonly {
+    color: #4a5568 !important;
+    background: #f7fafc !important;
+    padding: 8px 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+}
+
+/* Payment Installments Table Styling */
+.results table th,
+.inline-group table th {
+    background: #2d3748 !important;
+    color: #f7fafc !important;
+    font-weight: 600 !important;
+    padding: 12px 15px !important;
+    border-bottom: 2px solid #4a5568 !important;
+}
+
+.results table td,
+.inline-group table td {
+    padding: 10px 15px !important;
+    border: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    color: #2d3748 !important;
+    background: white !important;
+}
+
+.results table tbody tr:nth-child(odd) td,
+.inline-group table tbody tr:nth-child(odd) td {
+    background: #f8f9fa !important;
+}
+
+.results table tbody tr:hover td,
+.inline-group table tbody tr:hover td {
+    background: #e2e8f0 !important;
+    color: #1a202c !important;
+}
+
+/* Inline form styling for Payment Installments */
+.inline-group {
+    background: white !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+    margin-bottom: 25px !important;
+    overflow: hidden !important;
+}
+
+.inline-group h2 {
+    background: linear-gradient(135deg, #1a365d 0%, #2c5282 50%, #3182ce 100%) !important;
+    color: white !important;
+    margin: 0 !important;
+    padding: 15px 20px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+}
+
+.inline-group .tabular {
+    overflow-x: auto !important;
+}
+
+.inline-group .tabular table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 0 !important;
+}
+
+/* Field-specific styling */
+.field-user label,
+.field-course label,
+.field-payment_method label,
+.field-payment_status label,
+.field-installments label {
+    color: #2d3748 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+}
+
+.field-user .readonly,
+.field-course .readonly,
+.field-payment_method .readonly,
+.field-payment_status .readonly,
+.field-installments .readonly {
+    color: #2d3748 !important;
+    background: #f7fafc !important;
+    padding: 10px 15px !important;
+    border: 2px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+}
+
+/* Dark theme adjustments */
+body.dark-theme .form-row label {
+    color: #f7fafc !important;
+}
+
+body.dark-theme .form-row .readonly {
+    color: #e2e8f0 !important;
+    background: #2d3748 !important;
+    border-color: #4a5568 !important;
+}
+
+body.dark-theme .results table td,
+body.dark-theme .inline-group table td {
+    color: #e2e8f0 !important;
+    background: #2d3748 !important;
+    border-color: #4a5568 !important;
+}
+
+body.dark-theme .results table tbody tr:nth-child(odd) td,
+body.dark-theme .inline-group table tbody tr:nth-child(odd) td {
+    background: #374151 !important;
+}
+
+body.dark-theme .results table tbody tr:hover td,
+body.dark-theme .inline-group table tbody tr:hover td {
+    background: #4a5568 !important;
+    color: #f7fafc !important;
+}
+
+body.dark-theme .inline-group {
+    background: #2d3748 !important;
+}
+
+body.dark-theme .field-user .readonly,
+body.dark-theme .field-course .readonly,
+body.dark-theme .field-payment_method .readonly,
+body.dark-theme .field-payment_status .readonly,
+body.dark-theme .field-installments .readonly {
+    color: #e2e8f0 !important;
+    background: #374151 !important;
+    border-color: #4a5568 !important;
+}
