@@ -12,7 +12,7 @@ from django.contrib.auth.forms import UserCreationForm
 from datetime import timedelta, date
 import json
 
-from .models import Course, CourseCategory, Testimonial, Event, BlogPost, ContactSubmission, Newsletter, AboutPage, Enrollment, PaymentInstallment
+from .models import Course, CourseCategory, Testimonial, Event, BlogPost, ContactSubmission, Newsletter, AboutPage, Enrollment, PaymentInstallment, Career, Survey
 from .forms import ContactForm, NewsletterForm
 
 
@@ -396,3 +396,105 @@ def enroll_guest(request, slug):
         'form': form,
     }
     return render(request, 'core/enroll_guest.html', context)
+
+
+def terms_of_service(request):
+    """Terms of Service page"""
+    return render(request, 'core/terms_of_service.html')
+
+
+def privacy_policy(request):
+    """Privacy Policy page"""
+    return render(request, 'core/privacy_policy.html')
+
+
+def payment_policy(request):
+    """Payment Policy page"""
+    return render(request, 'core/payment_policy.html')
+
+
+def faqs(request):
+    """Frequently Asked Questions page"""
+    return render(request, 'core/faqs.html')
+
+
+def careers(request):
+    """Careers page listing all open positions"""
+    careers_list = Career.objects.filter(is_active=True)
+    
+    # Filter by department if specified
+    department = request.GET.get('department')
+    if department:
+        careers_list = careers_list.filter(department__icontains=department)
+    
+    # Filter by job type if specified
+    job_type = request.GET.get('type')
+    if job_type:
+        careers_list = careers_list.filter(job_type=job_type)
+    
+    paginator = Paginator(careers_list, 10)
+    page_number = request.GET.get('page')
+    careers_page = paginator.get_page(page_number)
+    
+    # Get unique departments for filter
+    departments = Career.objects.filter(is_active=True).values_list('department', flat=True).distinct()
+    
+    context = {
+        'careers': careers_page,
+        'departments': departments,
+        'current_department': department,
+        'current_job_type': job_type,
+    }
+    return render(request, 'core/careers.html', context)
+
+
+def career_detail(request, slug):
+    """Individual career detail page"""
+    career = get_object_or_404(Career, slug=slug, is_active=True)
+    related_careers = Career.objects.filter(
+        department=career.department, 
+        is_active=True
+    ).exclude(id=career.id)[:3]
+    
+    context = {
+        'career': career,
+        'related_careers': related_careers,
+    }
+    return render(request, 'core/career_detail.html', context)
+
+
+def surveys(request):
+    """Surveys page listing all active surveys"""
+    surveys_list = Survey.objects.filter(is_active=True)
+    
+    # Filter by survey type if specified
+    survey_type = request.GET.get('type')
+    if survey_type:
+        surveys_list = surveys_list.filter(survey_type=survey_type)
+    
+    paginator = Paginator(surveys_list, 10)
+    page_number = request.GET.get('page')
+    surveys_page = paginator.get_page(page_number)
+    
+    # Get survey types for filter
+    survey_types = Survey.objects.filter(is_active=True).values_list('survey_type', flat=True).distinct()
+    
+    context = {
+        'surveys': surveys_page,
+        'survey_types': survey_types,
+        'current_survey_type': survey_type,
+    }
+    return render(request, 'core/surveys.html', context)
+
+
+def survey_detail(request, slug):
+    """Individual survey detail page"""
+    survey = get_object_or_404(Survey, slug=slug, is_active=True)
+    
+    if not survey.is_open():
+        messages.info(request, 'This survey is currently not accepting responses.')
+    
+    context = {
+        'survey': survey,
+    }
+    return render(request, 'core/survey_detail.html', context)

@@ -1,0 +1,259 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Careers - LUM Data Academy{% endblock %}
+
+{% block content %}
+<div class="min-h-screen pt-20">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary to-primary-dark text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Join Our Team</h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8">
+                    Help us shape the future of data education in Africa
+                </p>
+                <p class="text-lg text-white/80">
+                    Be part of a mission-driven organization transforming careers through data science education
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Join Us Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Work at LUM Data Academy?</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    We're building the future of education while creating an environment where our team thrives
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-rocket text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Innovation & Impact</h3>
+                    <p class="text-gray-600">
+                        Work on cutting-edge educational technology and see your impact on thousands of students across Africa
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-users text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Collaborative Culture</h3>
+                    <p class="text-gray-600">
+                        Join a diverse, passionate team that values collaboration, creativity, and continuous learning
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chart-line text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Growth & Learning</h3>
+                    <p class="text-gray-600">
+                        Accelerate your career with professional development opportunities and access to latest technologies
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="py-8 bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap gap-4 items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-filter text-gray-500"></i>
+                    <span class="font-medium text-gray-700">Filter by:</span>
+                </div>
+                
+                <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm" onchange="filterJobs('department', this.value)">
+                    <option value="">All Departments</option>
+                    {% for department in departments %}
+                    <option value="{{ department }}" {% if current_department == department %}selected{% endif %}>
+                        {{ department }}
+                    </option>
+                    {% endfor %}
+                </select>
+                
+                <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm" onchange="filterJobs('type', this.value)">
+                    <option value="">All Types</option>
+                    <option value="full_time" {% if current_job_type == 'full_time' %}selected{% endif %}>Full Time</option>
+                    <option value="part_time" {% if current_job_type == 'part_time' %}selected{% endif %}>Part Time</option>
+                    <option value="contract" {% if current_job_type == 'contract' %}selected{% endif %}>Contract</option>
+                    <option value="internship" {% if current_job_type == 'internship' %}selected{% endif %}>Internship</option>
+                </select>
+                
+                {% if current_department or current_job_type %}
+                <a href="{% url 'core:careers' %}" class="text-primary hover:text-primary-dark text-sm font-medium">
+                    Clear Filters
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Job Listings -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {% if careers %}
+            <div class="space-y-6">
+                {% for career in careers %}
+                <div class="border border-gray-200 rounded-lg hover:shadow-lg transition-shadow bg-white">
+                    <div class="p-6">
+                        <div class="flex flex-wrap items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                                    <a href="{% url 'core:career_detail' career.slug %}" class="hover:text-primary">
+                                        {{ career.title }}
+                                    </a>
+                                </h3>
+                                <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-building mr-1"></i>
+                                        {{ career.department }}
+                                    </span>
+                                    <span class="flex items-center">
+                                        <i class="fas fa-map-marker-alt mr-1"></i>
+                                        {{ career.location }}
+                                    </span>
+                                    <span class="flex items-center">
+                                        <i class="fas fa-clock mr-1"></i>
+                                        {{ career.get_job_type_display }}
+                                    </span>
+                                    {% if career.salary_range %}
+                                    <span class="flex items-center">
+                                        <i class="fas fa-money-bill-wave mr-1"></i>
+                                        {{ career.salary_range }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            {% if career.is_featured %}
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                <i class="fas fa-star mr-1"></i>
+                                Featured
+                            </span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="prose prose-sm max-w-none text-gray-700 mb-4">
+                            {{ career.description|truncatewords:30|safe }}
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="far fa-calendar mr-1"></i>
+                                Posted {{ career.created_at|timesince }} ago
+                                {% if career.application_deadline %}
+                                <span class="mx-2">•</span>
+                                <i class="fas fa-exclamation-circle mr-1"></i>
+                                Apply by {{ career.application_deadline|date:"M d, Y" }}
+                                {% endif %}
+                            </div>
+                            
+                            <div class="space-x-3">
+                                <a href="{% url 'core:career_detail' career.slug %}" 
+                                   class="inline-flex items-center px-4 py-2 border border-primary text-primary hover:bg-primary hover:text-white rounded-lg transition-colors">
+                                    View Details
+                                </a>
+                                <a href="mailto:{{ career.contact_email }}?subject=Application for {{ career.title }}" 
+                                   class="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors">
+                                    Apply Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if careers.has_other_pages %}
+            <div class="flex justify-center mt-12">
+                <nav class="flex space-x-2">
+                    {% if careers.has_previous %}
+                    <a href="?page={{ careers.previous_page_number }}{% if current_department %}&department={{ current_department }}{% endif %}{% if current_job_type %}&type={{ current_job_type }}{% endif %}" 
+                       class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        Previous
+                    </a>
+                    {% endif %}
+
+                    {% for num in careers.paginator.page_range %}
+                    {% if careers.number == num %}
+                    <span class="px-3 py-2 rounded-md bg-primary text-white">{{ num }}</span>
+                    {% else %}
+                    <a href="?page={{ num }}{% if current_department %}&department={{ current_department }}{% endif %}{% if current_job_type %}&type={{ current_job_type }}{% endif %}" 
+                       class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        {{ num }}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if careers.has_next %}
+                    <a href="?page={{ careers.next_page_number }}{% if current_department %}&department={{ current_department }}{% endif %}{% if current_job_type %}&type={{ current_job_type }}{% endif %}" 
+                       class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        Next
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
+
+            {% else %}
+            <!-- No Jobs Available -->
+            <div class="text-center py-16">
+                <i class="fas fa-briefcase text-6xl text-gray-400 mb-4"></i>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-4">No Open Positions Right Now</h3>
+                <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+                    We're not currently hiring for any positions matching your criteria, but we're always growing! 
+                    Check back soon or send us your resume to be considered for future opportunities.
+                </p>
+                <div class="space-x-4">
+                    <a href="mailto:careers@lumdataacademy.org" 
+                       class="inline-flex items-center px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors">
+                        Send Resume
+                    </a>
+                    <a href="{% url 'core:home' %}" 
+                       class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 hover:border-primary hover:text-primary rounded-lg transition-colors">
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-16 bg-primary/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Don't See the Right Position?</h2>
+            <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                We're always looking for talented individuals to join our team. Send us your resume and tell us how you'd like to contribute to our mission.
+            </p>
+            <a href="mailto:careers@lumdataacademy.org?subject=General Application" 
+               class="inline-flex items-center px-8 py-4 bg-primary hover:bg-primary-dark text-white rounded-lg text-lg font-medium transition-colors">
+                <i class="fas fa-paper-plane mr-2"></i>
+                Submit General Application
+            </a>
+        </div>
+    </section>
+</div>
+
+<script>
+function filterJobs(type, value) {
+    const url = new URL(window.location.href);
+    if (value) {
+        url.searchParams.set(type, value);
+    } else {
+        url.searchParams.delete(type);
+    }
+    window.location.href = url.toString();
+}
+</script>
+{% endblock %}

@@ -5,7 +5,7 @@ from .models import (
     CourseCategory, Course, CourseModule, CodeExample, 
     Exercise, CapstoneProject, Testimonial, Event, 
     BlogPost, ContactSubmission, Newsletter, AboutPage,
-    Enrollment, PaymentInstallment
+    Enrollment, PaymentInstallment, Career, Survey
 )
 
 
@@ -470,3 +470,77 @@ class PaymentInstallmentAdmin(admin.ModelAdmin):
                 pass  # Continue even if email fails
         self.message_user(request, f'Sent reminder emails for {sent} installments.')
     send_reminder_email.short_description = "Send payment reminders"
+
+
+@admin.register(Career)
+class CareerAdmin(admin.ModelAdmin):
+    list_display = ('title', 'department', 'location', 'job_type', 'is_active', 'is_featured', 'application_deadline', 'created_at')
+    list_filter = ('department', 'job_type', 'location', 'is_active', 'is_featured', 'created_at')
+    search_fields = ('title', 'department', 'description', 'requirements')
+    list_editable = ('is_active', 'is_featured')
+    prepopulated_fields = {'slug': ('title',)}
+    readonly_fields = ('created_at', 'updated_at')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('title', 'slug', 'department', 'location', 'job_type')
+        }),
+        ('Job Details', {
+            'fields': ('description', 'responsibilities', 'requirements', 'benefits')
+        }),
+        ('Application Info', {
+            'fields': ('salary_range', 'application_deadline', 'contact_email')
+        }),
+        ('Visibility', {
+            'fields': ('is_active', 'is_featured')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    formfield_overrides = {
+        models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
+    }
+
+
+@admin.register(Survey)
+class SurveyAdmin(admin.ModelAdmin):
+    list_display = ('title', 'survey_type', 'target_audience', 'is_active', 'is_anonymous', 'response_count', 'start_date', 'end_date')
+    list_filter = ('survey_type', 'is_active', 'is_anonymous', 'start_date', 'created_at')
+    search_fields = ('title', 'description', 'target_audience')
+    list_editable = ('is_active',)
+    prepopulated_fields = {'slug': ('title',)}
+    readonly_fields = ('response_count', 'created_at', 'updated_at')
+    ordering = ('-created_at',)
+    
+    fieldsets = (
+        ('Survey Information', {
+            'fields': ('title', 'slug', 'description', 'content', 'survey_type')
+        }),
+        ('Settings', {
+            'fields': ('target_audience', 'is_active', 'is_anonymous', 'max_responses')
+        }),
+        ('Schedule', {
+            'fields': ('start_date', 'end_date')
+        }),
+        ('Statistics', {
+            'fields': ('response_count',),
+            'classes': ('collapse',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def save_model(self, request, obj, form, change):
+        if not change:  # Only set created_by for new objects
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)
+    
+    formfield_overrides = {
+        models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
+    }

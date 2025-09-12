@@ -36,4 +36,18 @@ urlpatterns = [
     
     # AJAX endpoints
     path('api/newsletter-subscribe/', views.newsletter_subscribe, name='newsletter_subscribe'),
+    
+    # Legal & Info Pages
+    path('terms-of-service/', views.terms_of_service, name='terms_of_service'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('payment-policy/', views.payment_policy, name='payment_policy'),
+    path('faqs/', views.faqs, name='faqs'),
+    
+    # Careers
+    path('careers/', views.careers, name='careers'),
+    path('career/<slug:slug>/', views.career_detail, name='career_detail'),
+    
+    # Surveys
+    path('surveys/', views.surveys, name='surveys'),
+    path('survey/<slug:slug>/', views.survey_detail, name='survey_detail'),
 ]

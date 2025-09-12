@@ -1,0 +1,393 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Frequently Asked Questions - LUM Data Academy{% endblock %}
+
+{% block content %}
+<div class="min-h-screen pt-20">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary to-primary-dark text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Frequently Asked Questions</h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8">
+                    Find answers to common questions about our courses and services
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Content -->
+    <section class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Search Box -->
+            <div class="mb-12">
+                <div class="relative">
+                    <input type="text" id="faq-search" placeholder="Search FAQs..." 
+                           class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <i class="fas fa-search absolute left-4 top-4 text-gray-400"></i>
+                </div>
+            </div>
+
+            <!-- FAQ Categories -->
+            <div class="mb-8">
+                <div class="flex flex-wrap gap-2">
+                    <button class="faq-category-btn active px-4 py-2 bg-primary text-white rounded-lg transition-colors" data-category="all">
+                        All Questions
+                    </button>
+                    <button class="faq-category-btn px-4 py-2 bg-gray-200 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors" data-category="enrollment">
+                        Enrollment
+                    </button>
+                    <button class="faq-category-btn px-4 py-2 bg-gray-200 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors" data-category="payments">
+                        Payments
+                    </button>
+                    <button class="faq-category-btn px-4 py-2 bg-gray-200 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors" data-category="courses">
+                        Courses
+                    </button>
+                    <button class="faq-category-btn px-4 py-2 bg-gray-200 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors" data-category="certificates">
+                        Certificates
+                    </button>
+                    <button class="faq-category-btn px-4 py-2 bg-gray-200 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors" data-category="technical">
+                        Technical
+                    </button>
+                </div>
+            </div>
+
+            <!-- FAQ Items -->
+            <div class="space-y-4">
+                
+                <!-- Enrollment FAQs -->
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="enrollment">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">How do I enroll in a course?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700">
+                            To enroll in a course, browse our course catalog, select your desired course, and click "Enroll Now." You'll need to create an account if you don't have one, choose your payment method, and complete the payment process. You'll receive a confirmation email with access instructions within 24 hours of payment verification.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="enrollment">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">What are the prerequisites for data science courses?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700 mb-2">
+                            Prerequisites vary by course level:
+                        </p>
+                        <ul class="list-disc pl-6 text-gray-700">
+                            <li><strong>Beginner courses:</strong> Basic computer skills and high school mathematics</li>
+                            <li><strong>Intermediate courses:</strong> Basic programming knowledge or completion of our beginner course</li>
+                            <li><strong>Advanced courses:</strong> 1-2 years programming experience and statistics knowledge</li>
+                            <li><strong>Masterclasses:</strong> Professional experience in related field</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="enrollment">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">Can I enroll without programming experience?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700">
+                            Absolutely! Our beginner courses are designed for complete newcomers to programming and data science. We start with the fundamentals and build up your skills progressively. Many of our successful graduates started with zero programming experience.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Payment FAQs -->
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="payments">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">What payment methods do you accept?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700 mb-2">We accept several payment methods:</p>
+                        <ul class="list-disc pl-6 text-gray-700">
+                            <li><strong>M-Pesa:</strong> PayBill 444174, Account 002013</li>
+                            <li><strong>PayPal:</strong> For international students</li>
+                            <li><strong>Bank Transfer:</strong> Available for large payments</li>
+                            <li><strong>Cash/Check:</strong> At our Nairobi offices by appointment</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="payments">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">Do you offer installment payment plans?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700 mb-2">Yes, we offer flexible payment plans:</p>
+                        <ul class="list-disc pl-6 text-gray-700">
+                            <li><strong>Full Payment:</strong> Pay upfront and get 5% discount</li>
+                            <li><strong>2 Installments:</strong> 50% upfront, 50% after 30 days</li>
+                            <li><strong>3 Installments:</strong> Monthly payments over 3 months (courses over KES 50,000)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="payments">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">What is your refund policy?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700 mb-2">Our refund policy is tiered:</p>
+                        <ul class="list-disc pl-6 text-gray-700">
+                            <li><strong>100% refund:</strong> Within 7 days of enrollment</li>
+                            <li><strong>50% refund:</strong> 8-14 days after enrollment (before accessing 25% of content)</li>
+                            <li><strong>No refund:</strong> After 14 days or accessing more than 25% of content</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Course FAQs -->
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="courses">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">How are courses delivered?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700">
+                            Our courses are delivered through a blended learning approach: online video lectures, live virtual sessions, hands-on projects, and optional in-person workshops. You can access course materials 24/7 through our learning management system. Most courses include weekly live Q&A sessions with instructors.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="courses">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">How long do I have access to course materials?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700">
+                            You have lifetime access to course materials once you complete payment. This includes all video lectures, assignments, projects, and resources. You can also access updated content and new modules added to the course at no extra cost.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="courses">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">Do you provide job placement assistance?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700 mb-2">Yes! Our job placement services include:</p>
+                        <ul class="list-disc pl-6 text-gray-700">
+                            <li>Resume and LinkedIn profile optimization</li>
+                            <li>Interview preparation and mock interviews</li>
+                            <li>Access to our employer network and job board</li>
+                            <li>Portfolio development guidance</li>
+                            <li>Career counseling sessions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Certificate FAQs -->
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="certificates">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">What certificates do you offer?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700 mb-2">We offer several types of certificates:</p>
+                        <ul class="list-disc pl-6 text-gray-700">
+                            <li><strong>Certificate of Completion:</strong> For finishing course requirements</li>
+                            <li><strong>Professional Certificate:</strong> For advanced courses with projects</li>
+                            <li><strong>Specialization Certificate:</strong> For completing course tracks</li>
+                            <li><strong>Industry-Recognized Certificates:</strong> From our partnership programs</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="certificates">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">Are your certificates accredited?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700">
+                            Our certificates are industry-recognized and accepted by many employers in Kenya and internationally. While not formally accredited by universities, they demonstrate practical skills valued by employers. We're working toward formal accreditation partnerships with universities.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="certificates">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">How do I receive my certificate?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700">
+                            Certificates are issued digitally upon course completion and can be downloaded from your student dashboard. They include a unique verification code and QR code for employer verification. Hard copies are available upon request for an additional fee.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Technical FAQs -->
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="technical">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">What software do I need for the courses?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700 mb-2">Software requirements vary by course, but typically include:</p>
+                        <ul class="list-disc pl-6 text-gray-700">
+                            <li><strong>Python courses:</strong> Python, Jupyter Notebook, Anaconda</li>
+                            <li><strong>R courses:</strong> R, RStudio</li>
+                            <li><strong>Power BI:</strong> Power BI Desktop (free version available)</li>
+                            <li><strong>SQL:</strong> We provide access to cloud databases</li>
+                        </ul>
+                        <p class="text-gray-700 mt-2">All required software is free or we provide access to cloud-based alternatives.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="technical">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">What are the minimum system requirements?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700 mb-2">Minimum requirements:</p>
+                        <ul class="list-disc pl-6 text-gray-700">
+                            <li><strong>OS:</strong> Windows 10, macOS 10.12, or Ubuntu 16.04+</li>
+                            <li><strong>RAM:</strong> 4GB minimum, 8GB recommended</li>
+                            <li><strong>Storage:</strong> 20GB free space</li>
+                            <li><strong>Internet:</strong> Stable broadband connection</li>
+                            <li><strong>Browser:</strong> Chrome, Firefox, Safari, or Edge (latest versions)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="technical">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">Do you provide technical support?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700">
+                            Yes! We provide comprehensive technical support including installation guides, troubleshooting documentation, live chat support during business hours, and dedicated technical support sessions. Our community forum is also available 24/7 for peer-to-peer assistance.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- General FAQs -->
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="general">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">Can I get a trial or demo before enrolling?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700">
+                            Yes! Most courses offer free preview lessons and sample materials. You can also attend our free webinars and workshops to get a feel for our teaching style. Contact us to schedule a demo session with our instructors.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 rounded-lg" data-category="general">
+                    <button class="faq-question w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-semibold text-gray-900">Do you offer corporate training?</span>
+                        <i class="fas fa-chevron-down transform transition-transform"></i>
+                    </button>
+                    <div class="faq-answer px-6 pb-4 hidden">
+                        <p class="text-gray-700">
+                            Absolutely! We offer customized corporate training programs with group discounts, on-site delivery options, and tailored curriculum. Contact our corporate training team for a consultation and custom quote.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Contact Section -->
+            <div class="mt-16 text-center">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Still Have Questions?</h2>
+                <p class="text-gray-600 mb-6">
+                    Can't find the answer you're looking for? Our support team is here to help.
+                </p>
+                <div class="space-y-4 md:space-y-0 md:space-x-4 md:flex md:justify-center">
+                    <a href="{% url 'core:contact' %}" 
+                       class="inline-block bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-lg font-medium transition-colors">
+                        Contact Support
+                    </a>
+                    <a href="mailto:support@lumdataacademy.org" 
+                       class="inline-block border border-gray-300 hover:border-primary text-gray-700 hover:text-primary px-8 py-3 rounded-lg font-medium transition-colors">
+                        Email Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // FAQ Search functionality
+    const searchInput = document.getElementById('faq-search');
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question span').textContent.toLowerCase();
+            const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+            
+            if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+    
+    // Category filtering
+    const categoryBtns = document.querySelectorAll('.faq-category-btn');
+    
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Update active button
+            categoryBtns.forEach(b => {
+                b.classList.remove('active', 'bg-primary', 'text-white');
+                b.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            this.classList.add('active', 'bg-primary', 'text-white');
+            this.classList.remove('bg-gray-200', 'text-gray-700');
+            
+            const category = this.dataset.category;
+            
+            faqItems.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+    
+    // FAQ accordion functionality
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', function() {
+            const answer = this.nextElementSibling;
+            const icon = this.querySelector('i');
+            
+            if (answer.classList.contains('hidden')) {
+                answer.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                answer.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

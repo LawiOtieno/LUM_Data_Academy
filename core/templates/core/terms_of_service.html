@@ -1,0 +1,166 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Terms of Service - LUM Data Academy{% endblock %}
+
+{% block content %}
+<div class="min-h-screen pt-20">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary to-primary-dark text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Terms of Service</h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8">
+                    Please read these terms carefully before using our services
+                </p>
+                <p class="text-sm text-white/70">Last updated: {{ "now"|date:"F d, Y" }}</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Terms Content -->
+    <section class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="prose prose-lg max-w-none">
+                
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-handshake mr-3 text-primary"></i>
+                    Acceptance of Terms
+                </h2>
+                <p class="mb-6">
+                    By accessing and using the LUM Data Academy website and services, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-graduation-cap mr-3 text-primary"></i>
+                    Educational Services
+                </h2>
+                <p class="mb-4">LUM Data Academy provides:</p>
+                <ul class="mb-6 list-disc pl-6">
+                    <li>Online and offline data science training programs</li>
+                    <li>Course materials, videos, and learning resources</li>
+                    <li>Certificates of completion for qualified students</li>
+                    <li>Career guidance and job placement assistance</li>
+                    <li>Access to our learning management system</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-user-graduate mr-3 text-primary"></i>
+                    Student Responsibilities
+                </h2>
+                <p class="mb-4">As a student, you agree to:</p>
+                <ul class="mb-6 list-disc pl-6">
+                    <li>Provide accurate and complete registration information</li>
+                    <li>Maintain the confidentiality of your account credentials</li>
+                    <li>Use the platform and materials for educational purposes only</li>
+                    <li>Respect intellectual property rights of course content</li>
+                    <li>Conduct yourself professionally in all interactions</li>
+                    <li>Complete assignments and assessments honestly</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-credit-card mr-3 text-primary"></i>
+                    Payment Terms
+                </h2>
+                <p class="mb-4">Payment terms include:</p>
+                <ul class="mb-6 list-disc pl-6">
+                    <li>Full payment is required upon enrollment unless installment plans are available</li>
+                    <li>All fees are in Kenyan Shillings (KES) unless otherwise stated</li>
+                    <li>Refund policy applies as per our Payment Policy</li>
+                    <li>Late payment may result in suspension of access to course materials</li>
+                    <li>Additional fees may apply for certification and job placement services</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-shield-alt mr-3 text-primary"></i>
+                    Intellectual Property
+                </h2>
+                <p class="mb-4">All course content, including but not limited to:</p>
+                <ul class="mb-4 list-disc pl-6">
+                    <li>Videos, presentations, and written materials</li>
+                    <li>Software code and datasets</li>
+                    <li>Assignments and project templates</li>
+                    <li>LUM Data Academy branding and logos</li>
+                </ul>
+                <p class="mb-6">
+                    Are the exclusive property of LUM Data Academy and are protected by Kenyan and international copyright laws. Students are granted a limited, non-transferable license to use materials for personal educational purposes only.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-ban mr-3 text-primary"></i>
+                    Prohibited Activities
+                </h2>
+                <p class="mb-4">You may not:</p>
+                <ul class="mb-6 list-disc pl-6">
+                    <li>Share, distribute, or resell course materials without written permission</li>
+                    <li>Use the platform for any illegal or unauthorized purpose</li>
+                    <li>Attempt to reverse engineer or hack our systems</li>
+                    <li>Harass, threaten, or discriminate against other users</li>
+                    <li>Upload malicious code or spam content</li>
+                    <li>Impersonate LUM Data Academy staff or other students</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-certificate mr-3 text-primary"></i>
+                    Certification and Completion
+                </h2>
+                <p class="mb-4">To receive certification:</p>
+                <ul class="mb-6 list-disc pl-6">
+                    <li>Complete all required coursework and assessments</li>
+                    <li>Achieve minimum passing grades as specified in course requirements</li>
+                    <li>Pay all applicable fees</li>
+                    <li>Comply with academic integrity policies</li>
+                </ul>
+                <p class="mb-6">
+                    Certificates are issued digitally and may be verified through our platform. LUM Data Academy reserves the right to revoke certificates for violations of these terms.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-3 text-primary"></i>
+                    Disclaimer of Warranties
+                </h2>
+                <p class="mb-6">
+                    LUM Data Academy provides educational services "as is" without warranties of any kind. While we strive to provide high-quality education, we cannot guarantee specific career outcomes or job placement. Success depends on individual effort, market conditions, and other factors beyond our control.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-balance-scale mr-3 text-primary"></i>
+                    Limitation of Liability
+                </h2>
+                <p class="mb-6">
+                    LUM Data Academy's liability is limited to the fees paid for the specific course or service. We are not responsible for indirect, incidental, or consequential damages, including but not limited to lost profits, career opportunities, or business interruption.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-gavel mr-3 text-primary"></i>
+                    Governing Law
+                </h2>
+                <p class="mb-6">
+                    These Terms of Service are governed by the laws of the Republic of Kenya. Any disputes arising from these terms shall be resolved in Kenyan courts, with jurisdiction in Nairobi County.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-edit mr-3 text-primary"></i>
+                    Modifications
+                </h2>
+                <p class="mb-6">
+                    LUM Data Academy reserves the right to modify these terms at any time. Changes will be posted on our website and will take effect immediately upon posting. Continued use of our services constitutes acceptance of modified terms.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-phone mr-3 text-primary"></i>
+                    Contact Information
+                </h2>
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <p class="mb-2"><strong>Email:</strong> legal@lumdataacademy.org</p>
+                    <p class="mb-2"><strong>Phone:</strong> +254 768 998 305</p>
+                    <p class="mb-2"><strong>Address:</strong> Nairobi, Kenya</p>
+                    <p class="text-sm text-gray-600">
+                        For questions about these Terms of Service, please contact our legal team.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,294 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Surveys - LUM Data Academy{% endblock %}
+
+{% block content %}
+<div class="min-h-screen pt-20">
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-primary to-primary-dark text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Surveys & Feedback</h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8">
+                    Help us improve by sharing your thoughts and experiences
+                </p>
+                <p class="text-lg text-white/80">
+                    Your feedback drives our continuous improvement and helps us serve you better
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Your Opinion Matters -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Your Opinion Matters</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    We value your feedback and use it to continuously improve our courses, services, and overall experience
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-lightbulb text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Shape Our Future</h3>
+                    <p class="text-gray-600">
+                        Your insights help us develop new courses and improve existing ones based on real student needs
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chart-bar text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Data-Driven Decisions</h3>
+                    <p class="text-gray-600">
+                        We use survey data to make informed decisions about curriculum, teaching methods, and support services
+                    </p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-users text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Community Impact</h3>
+                    <p class="text-gray-600">
+                        Your participation helps create a better learning environment for the entire LUM Data Academy community
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    {% if surveys %}
+    <section class="py-8 bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap gap-4 items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-filter text-gray-500"></i>
+                    <span class="font-medium text-gray-700">Filter by:</span>
+                </div>
+                
+                <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm" onchange="filterSurveys(this.value)">
+                    <option value="">All Survey Types</option>
+                    {% for survey_type in survey_types %}
+                    <option value="{{ survey_type }}" {% if current_survey_type == survey_type %}selected{% endif %}>
+                        {{ survey_type|capfirst|replace:"_":" " }}
+                    </option>
+                    {% endfor %}
+                </select>
+                
+                {% if current_survey_type %}
+                <a href="{% url 'core:surveys' %}" class="text-primary hover:text-primary-dark text-sm font-medium">
+                    Clear Filters
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Survey Listings -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {% if surveys %}
+            <div class="space-y-6">
+                {% for survey in surveys %}
+                <div class="border border-gray-200 rounded-lg hover:shadow-lg transition-shadow bg-white">
+                    <div class="p-6">
+                        <div class="flex flex-wrap items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                                    <a href="{% url 'core:survey_detail' survey.slug %}" class="hover:text-primary">
+                                        {{ survey.title }}
+                                    </a>
+                                </h3>
+                                <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-tag mr-1"></i>
+                                        {{ survey.get_survey_type_display }}
+                                    </span>
+                                    {% if survey.target_audience %}
+                                    <span class="flex items-center">
+                                        <i class="fas fa-users mr-1"></i>
+                                        {{ survey.target_audience }}
+                                    </span>
+                                    {% endif %}
+                                    <span class="flex items-center">
+                                        <i class="fas fa-user-secret mr-1"></i>
+                                        {% if survey.is_anonymous %}Anonymous{% else %}Identified{% endif %}
+                                    </span>
+                                    {% if survey.max_responses %}
+                                    <span class="flex items-center">
+                                        <i class="fas fa-chart-line mr-1"></i>
+                                        {{ survey.response_count }}/{{ survey.max_responses }} responses
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-2">
+                                {% if survey.is_open %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    Open
+                                </span>
+                                {% else %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    <i class="fas fa-times-circle mr-1"></i>
+                                    Closed
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="prose prose-sm max-w-none text-gray-700 mb-4">
+                            {{ survey.description|safe }}
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="far fa-calendar mr-1"></i>
+                                Started {{ survey.start_date|date:"M d, Y" }}
+                                {% if survey.end_date %}
+                                <span class="mx-2">•</span>
+                                <i class="fas fa-calendar-times mr-1"></i>
+                                Ends {{ survey.end_date|date:"M d, Y" }}
+                                {% endif %}
+                            </div>
+                            
+                            <div class="space-x-3">
+                                <a href="{% url 'core:survey_detail' survey.slug %}" 
+                                   class="inline-flex items-center px-4 py-2 border border-primary text-primary hover:bg-primary hover:text-white rounded-lg transition-colors">
+                                    View Details
+                                </a>
+                                {% if survey.is_open %}
+                                <a href="{% url 'core:survey_detail' survey.slug %}" 
+                                   class="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors">
+                                    Take Survey
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if surveys.has_other_pages %}
+            <div class="flex justify-center mt-12">
+                <nav class="flex space-x-2">
+                    {% if surveys.has_previous %}
+                    <a href="?page={{ surveys.previous_page_number }}{% if current_survey_type %}&type={{ current_survey_type }}{% endif %}" 
+                       class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        Previous
+                    </a>
+                    {% endif %}
+
+                    {% for num in surveys.paginator.page_range %}
+                    {% if surveys.number == num %}
+                    <span class="px-3 py-2 rounded-md bg-primary text-white">{{ num }}</span>
+                    {% else %}
+                    <a href="?page={{ num }}{% if current_survey_type %}&type={{ current_survey_type }}{% endif %}" 
+                       class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        {{ num }}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if surveys.has_next %}
+                    <a href="?page={{ surveys.next_page_number }}{% if current_survey_type %}&type={{ current_survey_type }}{% endif %}" 
+                       class="px-3 py-2 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+                        Next
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
+
+            {% else %}
+            <!-- No Surveys Available -->
+            <div class="text-center py-16">
+                <i class="fas fa-clipboard-list text-6xl text-gray-400 mb-4"></i>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-4">No Active Surveys</h3>
+                <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+                    There are currently no active surveys available. We regularly publish new surveys to gather your feedback and improve our services. Check back soon!
+                </p>
+                <div class="space-x-4">
+                    <a href="{% url 'core:contact' %}" 
+                       class="inline-flex items-center px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors">
+                        Share Feedback
+                    </a>
+                    <a href="{% url 'core:home' %}" 
+                       class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 hover:border-primary hover:text-primary rounded-lg transition-colors">
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Feedback Importance -->
+    <section class="py-16 bg-primary/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-lg p-8 md:p-12">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Why We Value Your Feedback</h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        At LUM Data Academy, student feedback is at the heart of everything we do
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-cogs mr-3 text-primary"></i>
+                            Continuous Improvement
+                        </h3>
+                        <p class="text-gray-600 mb-4">
+                            We use your feedback to identify areas for improvement in our courses, teaching methods, and student support services. Every suggestion is carefully reviewed and considered.
+                        </p>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• Course content updates based on student needs</li>
+                            <li>• Improved teaching methodologies</li>
+                            <li>• Enhanced student support systems</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-chart-line mr-3 text-primary"></i>
+                            Data-Driven Decisions
+                        </h3>
+                        <p class="text-gray-600 mb-4">
+                            Your responses provide valuable data that helps us make informed decisions about new course offerings, scheduling, pricing, and service improvements.
+                        </p>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li>• New course development priorities</li>
+                            <li>• Optimal class scheduling times</li>
+                            <li>• Fair and competitive pricing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+function filterSurveys(value) {
+    const url = new URL(window.location.href);
+    if (value) {
+        url.searchParams.set('type', value);
+    } else {
+        url.searchParams.delete('type');
+    }
+    window.location.href = url.toString();
+}
+</script>
+{% endblock %}
