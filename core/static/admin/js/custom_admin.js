@@ -155,10 +155,10 @@ function createRightSidebar() {
         {
             category: 'Course Management',
             items: [
-                { name: 'View - All Courses', url: '/admin/core/course/', icon: '📚' },
-                { name: 'View - Course Categories', url: '/admin/core/coursecategory/', icon: '📂' },
-                { name: 'View - Course Modules', url: '/admin/core/coursemodule/', icon: '📖' },
-                { name: 'View - Enrollments', url: '/admin/core/enrollment/', icon: '🎯' }
+                { name: 'View - All Courses', url: '/admin/courses/course/', icon: '📚' },
+                { name: 'View - Course Categories', url: '/admin/courses/coursecategory/', icon: '📂' },
+                { name: 'View - Course Modules', url: '/admin/courses/coursemodule/', icon: '📖' },
+                { name: 'View - Enrollments', url: '/admin/courses/enrollment/', icon: '🎯' }
             ]
         },
         {
