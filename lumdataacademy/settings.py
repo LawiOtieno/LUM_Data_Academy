@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'anymail',
     'templated_email',
     'core',
+    'courses',
     'accounts',
     'emails',
 ]
