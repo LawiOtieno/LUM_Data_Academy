@@ -13,10 +13,10 @@ class Testimonial(models.Model):
     image = models.ImageField(upload_to='testimonial_images/', blank=True, null=True)
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         ordering = ['-created_at']
-    
+
     def __str__(self):
         return f"{self.name} - {self.role}"
 
@@ -34,15 +34,15 @@ class Event(models.Model):
     registration_deadline = models.DateTimeField()
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
-    
+
     def get_absolute_url(self):
         return reverse('core:event_detail', kwargs={'slug': self.slug})
-    
+
     def __str__(self):
         return self.title
 
@@ -57,18 +57,18 @@ class BlogPost(models.Model):
     is_published = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         ordering = ['-created_at']
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
-    
+
     def get_absolute_url(self):
         return reverse('core:blog_detail', kwargs={'slug': self.slug})
-    
+
     def __str__(self):
         return self.title
 
@@ -81,7 +81,7 @@ class ContactSubmission(models.Model):
         ('partnership', 'Partnership'),
         ('career', 'Career Opportunities'),
     ]
-    
+
     name = models.CharField(max_length=100)
     email = models.EmailField()
     phone = models.CharField(max_length=20, blank=True)
@@ -90,10 +90,10 @@ class ContactSubmission(models.Model):
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     is_responded = models.BooleanField(default=False)
-    
+
     class Meta:
         ordering = ['-created_at']
-    
+
     def __str__(self):
         return f"{self.name} - {self.subject}"
 
@@ -103,7 +103,7 @@ class Newsletter(models.Model):
     name = models.CharField(max_length=100, blank=True)
     subscribed_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
-    
+
     def __str__(self):
         return self.email
 
@@ -118,14 +118,14 @@ class AboutPage(models.Model):
     hero_title = models.CharField(max_length=200, default="About LUM Data Academy")
     hero_subtitle = models.CharField(max_length=300, default="Equipping Africa with Future-Ready Data Skills", blank=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         verbose_name = 'About Page'
         verbose_name_plural = 'About Page'
-    
+
     def __str__(self):
         return "About Page Content"
-    
+
     def save(self, *args, **kwargs):
         # Ensure only one instance exists
         self.pk = 1
@@ -155,20 +155,20 @@ class Career(models.Model):
     is_featured = models.BooleanField(default=False, help_text="Show on homepage")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         ordering = ['-created_at']
         verbose_name = 'Career Opportunity'
         verbose_name_plural = 'Career Opportunities'
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
-    
+
     def get_absolute_url(self):
         return reverse('core:career_detail', kwargs={'slug': self.slug})
-    
+
     def __str__(self):
         return f"{self.title} - {self.department}"
 
@@ -196,18 +196,18 @@ class Survey(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         ordering = ['-created_at']
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
-    
+
     def get_absolute_url(self):
         return reverse('core:survey_detail', kwargs={'slug': self.slug})
-    
+
     def is_open(self):
         """Check if survey is currently open for responses"""
         now = timezone.now()
@@ -218,6 +218,6 @@ class Survey(models.Model):
         if self.max_responses and self.response_count >= self.max_responses:
             return False
         return now >= self.start_date
-    
+
     def __str__(self):
         return self.title

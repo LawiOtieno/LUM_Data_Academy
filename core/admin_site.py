@@ -4,7 +4,7 @@ from django.contrib.admin import AdminSite
 from django.template.response import TemplateResponse
 from django.urls import path
 from django.contrib.auth.models import User
-from .models import Course, BlogPost, Enrollment
+from .models import BlogPost
 
 class CustomAdminSite(AdminSite):
     site_header = "LUM Data Academy Administration"
