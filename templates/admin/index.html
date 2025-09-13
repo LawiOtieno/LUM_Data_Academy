@@ -248,6 +248,21 @@
         <span class="icon">🌐</span>
         <div>Visit Site</div>
     </a>
+
+    <a href="{% url 'admin:courses_enrollment_changelist' %}" class="quick-action">
+        <span class="icon">👥</span>
+        <div>Manage Enrollments</div>
+    </a>
+
+    <a href="{% url 'admin:courses_coursemodule_changelist' %}" class="quick-action">
+        <span class="icon">📚</span>
+        <div>Course Modules</div>
+    </a>
+
+    <a href="{% url 'admin:courses_coursecategory_changelist' %}" class="quick-action">
+        <span class="icon">🏷️</span>
+        <div>Course Categories</div>
+    </a>
 </div>
 
 <div class="recent-activity">
@@ -306,6 +321,7 @@
                         {% elif app.app_label == 'core' %}🎓
                         {% elif app.app_label == 'accounts' %}👤
                         {% elif app.app_label == 'emails' %}📧
+                        {% elif app.app_label == 'courses' %}📚
                         {% else %}⚙️
                         {% endif %}
                         {{ app.name }}
