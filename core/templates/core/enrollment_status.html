@@ -209,7 +209,7 @@
                             <div class="font-mono text-2xl font-bold text-blue-800 tracking-wider mb-4">
                                 {{ enrollment.activation_code }}
                             </div>
-                            <a href="{% url 'core:activate_enrollment' %}" 
+                            <a href="{% url 'courses:activate_enrollment' %}" 
                                class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors">
                                 🔓 Activate Course Access
                             </a>
@@ -253,12 +253,12 @@
                                class="block w-full bg-green-600 hover:bg-green-700 text-white text-center font-semibold py-3 px-4 rounded-lg transition-colors">
                                 📚 View All Enrollments
                             </a>
-                            <a href="{% url 'core:course_detail' slug=enrollment.course.slug %}" 
+                            <a href="{% url 'courses:course_detail' slug=enrollment.course.slug %}" 
                                class="block w-full bg-primary hover:bg-primary-dark text-white text-center font-semibold py-3 px-4 rounded-lg transition-colors">
                                 🎓 Access Course Materials
                             </a>
                             {% elif enrollment.payment_status == 'completed' %}
-                            <a href="{% url 'core:activate_enrollment' %}" 
+                            <a href="{% url 'courses:activate_enrollment' %}" 
                                class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-semibold py-3 px-4 rounded-lg transition-colors">
                                 🔓 Activate Course Access
                             </a>

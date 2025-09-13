@@ -107,7 +107,7 @@
                                 <h3 class="font-medium text-gray-900">{{ course.title }}</h3>
                                 <p class="text-sm text-gray-600">{{ course.category.name }}</p>
                             </div>
-                            <a href="{% url 'core:course_detail' course.slug %}" 
+                            <a href="{% url 'courses:course_detail' course.slug %}" 
                                class="text-primary hover:text-primary-dark font-medium text-sm">
                                 View →
                             </a>

@@ -159,30 +159,30 @@
                                     📚 Access Course Materials
                                 </a>
                             {% elif user_enrollment.payment_status == 'completed' %}
-                                <a href="{% url 'core:activate_enrollment' %}" 
+                                <a href="{% url 'courses:activate_enrollment' %}" 
                                    class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-center px-8 py-3 rounded-lg font-semibold transition-colors mb-2">
                                     🔓 Activate Course Access
                                 </a>
                             {% else %}
-                                <a href="{% url 'core:enrollment_status' enrollment_id=user_enrollment.id %}" 
+                                <a href="{% url 'courses:enrollment_status' enrollment_id=user_enrollment.id %}" 
                                    class="block w-full bg-yellow-500 hover:bg-yellow-600 text-black text-center px-8 py-3 rounded-lg font-semibold transition-colors mb-2">
                                     💰 Complete Payment
                                 </a>
                             {% endif %}
                         {% else %}
                             {% if user.is_authenticated %}
-                                <a href="{% url 'core:enroll_course' slug=course.slug %}?currency={{ selected_currency }}" 
+                                <a href="{% url 'courses:enroll_course' slug=course.slug %}?currency={{ selected_currency }}" 
                                    class="block w-full bg-yellow-500 hover:bg-yellow-600 text-black text-center px-8 py-3 rounded-lg font-semibold transition-colors mb-2">
                                     🚀 Enroll Now
                                 </a>
                             {% else %}
                                 <div class="space-y-2">
-                                    <a href="{% url 'core:enroll_guest' slug=course.slug %}?currency={{ selected_currency }}" 
+                                    <a href="{% url 'courses:enroll_guest' slug=course.slug %}?currency={{ selected_currency }}" 
                                        class="block w-full bg-yellow-500 hover:bg-yellow-600 text-black text-center px-8 py-3 rounded-lg font-semibold transition-colors">
                                         🚀 Enroll Now
                                     </a>
                                     <p class="text-center text-sm text-white/70">
-                                        Already have an account? <a href="{% url 'accounts:login' %}?next={% url 'core:enroll_course' slug=course.slug %}" class="text-yellow-400 hover:text-yellow-300">Sign In</a>
+                                        Already have an account? <a href="{% url 'accounts:login' %}?next={% url 'courses:enroll_course' slug=course.slug %}" class="text-yellow-400 hover:text-yellow-300">Sign In</a>
                                     </p>
                                 </div>
                             {% endif %}
@@ -434,7 +434,7 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Related Courses</h3>
                         <div class="space-y-4">
                             {% for related in related_courses %}
-                            <a href="{% url 'core:course_detail' related.slug %}" class="block">
+                            <a href="{% url 'courses:course_detail' related.slug %}" class="block">
                                 <div class="bg-white rounded-lg p-4 hover:shadow-md transition-shadow">
                                     <h4 class="font-medium text-gray-900 mb-1">{{ related.title }}</h4>
                                     <p class="text-sm text-gray-600 mb-2">{{ related.category.display_name }}</p>

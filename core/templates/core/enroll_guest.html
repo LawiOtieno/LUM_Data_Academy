@@ -178,7 +178,7 @@
                         <div class="mt-6 pt-6 border-t text-center">
                             <p class="text-gray-600">
                                 Already have an account? 
-                                <a href="{% url 'accounts:login' %}?next={% url 'core:enroll_course' slug=course.slug %}" 
+                                <a href="{% url 'accounts:login' %}?next={% url 'courses:enroll_course' slug=course.slug %}" 
                                    class="text-primary font-medium hover:text-primary-dark">
                                     Sign in to enroll
                                 </a>
