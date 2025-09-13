@@ -12,7 +12,8 @@ from django.contrib.auth.forms import UserCreationForm
 from datetime import timedelta, date
 import json
 
-from .models import Course, CourseCategory, Testimonial, Event, BlogPost, ContactSubmission, Newsletter, AboutPage, Enrollment, PaymentInstallment, Career, Survey
+from .models import Testimonial, Event, BlogPost, ContactSubmission, Newsletter, AboutPage, Career, Survey
+from courses.models import Course, CourseCategory, Enrollment, PaymentInstallment
 from .forms import ContactForm, NewsletterForm
 
 

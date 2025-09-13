@@ -24,6 +24,7 @@ class CourseCategory(models.Model):
     order = models.PositiveIntegerField(default=0)
     
     class Meta:
+        db_table = 'core_coursecategory'
         ordering = ['order', 'name']
         verbose_name_plural = 'Course Categories'
     
@@ -59,6 +60,7 @@ class Course(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
+        db_table = 'core_course'
         ordering = ['-created_at']
     
     def save(self, *args, **kwargs):
@@ -171,6 +173,7 @@ class CourseModule(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
+        db_table = 'core_coursemodule'
         ordering = ['order', 'id']
         unique_together = ['course', 'order']
     
@@ -202,6 +205,7 @@ class CodeExample(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
+        db_table = 'core_codeexample'
         ordering = ['order', 'id']
     
     def __str__(self):
@@ -227,6 +231,7 @@ class Exercise(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
+        db_table = 'core_exercise'
         ordering = ['order', 'id']
     
     def __str__(self):
@@ -253,6 +258,7 @@ class CapstoneProject(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
+        db_table = 'core_capstoneproject'
         ordering = ['order', 'id']
         unique_together = ['course', 'order']
     
@@ -316,6 +322,7 @@ class Enrollment(models.Model):
     admin_notes = models.TextField(blank=True, help_text="Internal notes for administrators")
     
     class Meta:
+        db_table = 'core_enrollment'
         ordering = ['-created_at']
         unique_together = ['user', 'course']
     
@@ -399,6 +406,7 @@ class PaymentInstallment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
+        db_table = 'core_paymentinstallment'
         ordering = ['enrollment', 'installment_number']
         unique_together = ['enrollment', 'installment_number']
     

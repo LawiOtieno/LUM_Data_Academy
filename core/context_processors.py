@@ -1,6 +1,7 @@
 
 from django.contrib.auth.models import User
-from .models import Course, BlogPost, Enrollment
+from .models import BlogPost
+from courses.models import Course, Enrollment
 from accounts.models import UserProfile
 
 def admin_stats(request):
