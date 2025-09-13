@@ -1,4 +1,3 @@
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.core.paginator import Paginator
@@ -23,7 +22,7 @@ def home(request):
     testimonials = Testimonial.objects.filter(is_featured=True)[:6]
     upcoming_events = Event.objects.filter(is_active=True).order_by('event_date')[:3]
     recent_blogs = BlogPost.objects.filter(is_published=True)[:3]
-    
+
     context = {
         'featured_courses': featured_courses,
         'testimonials': testimonials,
@@ -47,7 +46,7 @@ def about(request):
             values="Excellence, Innovation, Accessibility, Impact",
             story="Founded with the vision of transforming careers through practical, industry-relevant education."
         )
-    
+
     return render(request, 'core/about.html', {'about': about_page})
 
 
@@ -57,25 +56,25 @@ def courses(request):
     category_slug = request.GET.get('category')
     search_query = request.GET.get('search')
     selected_currency = request.GET.get('currency', 'KES')
-    
+
     courses_list = Course.objects.filter(is_active=True)
-    
+
     if category_slug:
         courses_list = courses_list.filter(category__name=category_slug)
-    
+
     if search_query:
         courses_list = courses_list.filter(title__icontains=search_query)
-    
+
     paginator = Paginator(courses_list, 9)
     page_number = request.GET.get('page')
     courses_page = paginator.get_page(page_number)
-    
+
     currencies = [
         {'code': 'KES', 'name': 'Kenyan Shillings', 'symbol': 'KShs.'},
         {'code': 'USD', 'name': 'US Dollars', 'symbol': '$'},
         {'code': 'NGN', 'name': 'Nigerian Nairas', 'symbol': '₦'},
     ]
-    
+
     context = {
         'courses': courses_page,
         'categories': categories,
@@ -94,14 +93,14 @@ def course_detail(request, slug):
         category=course.category, 
         is_active=True
     ).exclude(id=course.id)[:3]
-    
+
     selected_currency = request.GET.get('currency', 'KES')
     currencies = [
         {'code': 'KES', 'name': 'Kenyan Shillings', 'symbol': 'KShs.'},
         {'code': 'USD', 'name': 'US Dollars', 'symbol': '$'},
         {'code': 'NGN', 'name': 'Nigerian Nairas', 'symbol': '₦'},
     ]
-    
+
     # Check enrollment status for authenticated users
     user_enrollment = None
     if request.user.is_authenticated:
@@ -109,7 +108,7 @@ def course_detail(request, slug):
             user_enrollment = Enrollment.objects.get(user=request.user, course=course)
         except Enrollment.DoesNotExist:
             pass
-    
+
     context = {
         'course': course,
         'related_courses': related_courses,
@@ -123,11 +122,11 @@ def course_detail(request, slug):
 def events(request):
     """Events listing"""
     events_list = Event.objects.filter(is_active=True).order_by('event_date')
-    
+
     paginator = Paginator(events_list, 6)
     page_number = request.GET.get('page')
     events_page = paginator.get_page(page_number)
-    
+
     context = {
         'events': events_page,
     }
@@ -143,11 +142,11 @@ def event_detail(request, slug):
 def blog(request):
     """Blog listing"""
     posts_list = BlogPost.objects.filter(is_published=True)
-    
+
     paginator = Paginator(posts_list, 6)
     page_number = request.GET.get('page')
     posts_page = paginator.get_page(page_number)
-    
+
     context = {
         'posts': posts_page,
     }
@@ -158,7 +157,7 @@ def blog_detail(request, slug):
     """Individual blog post"""
     post = get_object_or_404(BlogPost, slug=slug, is_published=True)
     recent_posts = BlogPost.objects.filter(is_published=True).exclude(id=post.id)[:3]
-    
+
     context = {
         'post': post,
         'recent_posts': recent_posts,
@@ -176,7 +175,7 @@ def contact(request):
             return redirect('core:contact')
     else:
         form = ContactForm()
-    
+
     return render(request, 'core/contact.html', {'form': form})
 
 
@@ -187,20 +186,20 @@ def newsletter_subscribe(request):
         data = json.loads(request.body)
         email = data.get('email')
         name = data.get('name', '')
-        
+
         if not email:
             return JsonResponse({'success': False, 'message': 'Email is required'})
-        
+
         newsletter, created = Newsletter.objects.get_or_create(
             email=email,
             defaults={'name': name}
         )
-        
+
         if created:
             return JsonResponse({'success': True, 'message': 'Successfully subscribed to our newsletter!'})
         else:
             return JsonResponse({'success': False, 'message': 'You are already subscribed!'})
-            
+
     except Exception as e:
         return JsonResponse({'success': False, 'message': 'Something went wrong. Please try again.'})
 
@@ -218,11 +217,11 @@ def student_resources(request):
 def testimonials_page(request):
     """Dedicated testimonials page"""
     testimonials_list = Testimonial.objects.all()
-    
+
     paginator = Paginator(testimonials_list, 12)
     page_number = request.GET.get('page')
     testimonials_page = paginator.get_page(page_number)
-    
+
     context = {
         'testimonials': testimonials_page,
     }
@@ -233,25 +232,25 @@ def testimonials_page(request):
 def enroll_course(request, slug):
     """Course enrollment page with payment method and installment selection"""
     course = get_object_or_404(Course, slug=slug, is_active=True)
-    
+
     # Check if user is already enrolled
     existing_enrollment = Enrollment.objects.filter(user=request.user, course=course).first()
     if existing_enrollment:
         messages.info(request, 'You are already enrolled in this course.')
         return redirect('core:enrollment_status', enrollment_id=existing_enrollment.id)
-    
+
     if request.method == 'POST':
         payment_method = request.POST.get('payment_method')
         installments = int(request.POST.get('installments', 1))
         selected_currency = request.POST.get('currency', 'KES')
-        
+
         if not payment_method:
             messages.error(request, 'Please select a payment method.')
             return redirect('core:enroll_course', slug=course.slug)
-        
+
         # Calculate total amount in selected currency
         total_amount = course.get_price_in_currency(selected_currency)
-        
+
         # Create enrollment
         enrollment = Enrollment.objects.create(
             user=request.user,
@@ -261,7 +260,7 @@ def enroll_course(request, slug):
             currency=selected_currency,
             installments=installments
         )
-        
+
         # Create installment records
         installment_amount = total_amount / installments
         for i in range(installments):
@@ -272,7 +271,7 @@ def enroll_course(request, slug):
                 amount=installment_amount,
                 due_date=due_date
             )
-        
+
         # Send enrollment email with payment instructions
         from emails.services import EmailService
         EmailService.send_enrollment_confirmation_email(
@@ -280,17 +279,17 @@ def enroll_course(request, slug):
             course=course,
             enrollment=enrollment
         )
-        
+
         messages.success(request, 'Enrollment created successfully! Check your email for payment instructions.')
         return redirect('core:enrollment_status', enrollment_id=enrollment.id)
-    
+
     selected_currency = request.GET.get('currency', 'KES')
     currencies = [
         {'code': 'KES', 'name': 'Kenyan Shillings', 'symbol': 'KShs.'},
         {'code': 'USD', 'name': 'US Dollars', 'symbol': '$'},
         {'code': 'NGN', 'name': 'Nigerian Nairas', 'symbol': '₦'},
     ]
-    
+
     context = {
         'course': course,
         'currencies': currencies,
@@ -305,7 +304,7 @@ def enrollment_status(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, id=enrollment_id, user=request.user)
     installments = enrollment.payment_installments.all()
     payment_instructions = enrollment.get_payment_instructions()
-    
+
     context = {
         'enrollment': enrollment,
         'installments': installments,
@@ -319,11 +318,11 @@ def activate_enrollment(request):
     """Activate enrollment using activation code"""
     if request.method == 'POST':
         activation_code = request.POST.get('activation_code', '').strip().upper()
-        
+
         if not activation_code:
             messages.error(request, 'Please enter an activation code.')
             return redirect('core:activate_enrollment')
-        
+
         try:
             enrollment = Enrollment.objects.get(
                 activation_code=activation_code,
@@ -331,7 +330,7 @@ def activate_enrollment(request):
                 is_activated=False
             )
             enrollment.activate_enrollment()
-            
+
             # Send welcome email
             from emails.services import EmailService
             EmailService.send_course_access_email(
@@ -339,14 +338,14 @@ def activate_enrollment(request):
                 course=enrollment.course,
                 enrollment=enrollment
             )
-            
+
             messages.success(request, f'Congratulations! You have successfully activated your enrollment for {enrollment.course.title}.')
-            return redirect('core:my_enrollments')
-            
+            return redirect('courses:my_enrollments')
+
         except Enrollment.DoesNotExist:
             messages.error(request, 'Invalid activation code or this code has already been used.')
             return redirect('core:activate_enrollment')
-    
+
     return render(request, 'core/activate_enrollment.html')
 
 
@@ -354,7 +353,7 @@ def activate_enrollment(request):
 def my_enrollments(request):
     """Display user's enrollments"""
     enrollments = Enrollment.objects.filter(user=request.user).order_by('-created_at')
-    
+
     context = {
         'enrollments': enrollments,
     }
@@ -364,23 +363,23 @@ def my_enrollments(request):
 def enroll_guest(request, slug):
     """Handle enrollment for non-authenticated users using unified registration form"""
     from accounts.forms import UnifiedRegistrationForm
-    
+
     course = get_object_or_404(Course, slug=slug, is_active=True)
-    
+
     if request.user.is_authenticated:
         return redirect('core:enroll_course', slug=course.slug)
-    
+
     if request.method == 'POST':
         # Use unified registration form for consistent validation and field handling
         form = UnifiedRegistrationForm(request.POST, is_guest_enrollment=True)
-        
+
         if form.is_valid():
             # Create user with immediate activation for guest enrollment
             user = form.save(commit=True, activate_immediately=True)
-            
+
             # Log in the user immediately
             login(request, user)
-            
+
             # Redirect to enrollment page
             messages.success(request, 'Account created successfully! Now you can proceed with enrollment.')
             return redirect('core:enroll_course', slug=course.slug)
@@ -391,7 +390,7 @@ def enroll_guest(request, slug):
                     messages.error(request, f"{field.title()}: {error}")
     else:
         form = UnifiedRegistrationForm(is_guest_enrollment=True)
-    
+
     context = {
         'course': course,
         'form': form,
@@ -422,24 +421,24 @@ def faqs(request):
 def careers(request):
     """Careers page listing all open positions"""
     careers_list = Career.objects.filter(is_active=True)
-    
+
     # Filter by department if specified
     department = request.GET.get('department')
     if department:
         careers_list = careers_list.filter(department__icontains=department)
-    
+
     # Filter by job type if specified
     job_type = request.GET.get('type')
     if job_type:
         careers_list = careers_list.filter(job_type=job_type)
-    
+
     paginator = Paginator(careers_list, 10)
     page_number = request.GET.get('page')
     careers_page = paginator.get_page(page_number)
-    
+
     # Get unique departments for filter
     departments = Career.objects.filter(is_active=True).values_list('department', flat=True).distinct()
-    
+
     context = {
         'careers': careers_page,
         'departments': departments,
@@ -456,7 +455,7 @@ def career_detail(request, slug):
         department=career.department, 
         is_active=True
     ).exclude(id=career.id)[:3]
-    
+
     context = {
         'career': career,
         'related_careers': related_careers,
@@ -467,19 +466,19 @@ def career_detail(request, slug):
 def surveys(request):
     """Surveys page listing all active surveys"""
     surveys_list = Survey.objects.filter(is_active=True)
-    
+
     # Filter by survey type if specified
     survey_type = request.GET.get('type')
     if survey_type:
         surveys_list = surveys_list.filter(survey_type=survey_type)
-    
+
     paginator = Paginator(surveys_list, 10)
     page_number = request.GET.get('page')
     surveys_page = paginator.get_page(page_number)
-    
+
     # Get survey types for filter
     survey_types = Survey.objects.filter(is_active=True).values_list('survey_type', flat=True).distinct()
-    
+
     context = {
         'surveys': surveys_page,
         'survey_types': survey_types,
@@ -491,10 +490,10 @@ def surveys(request):
 def survey_detail(request, slug):
     """Individual survey detail page"""
     survey = get_object_or_404(Survey, slug=slug, is_active=True)
-    
+
     if not survey.is_open():
         messages.info(request, 'This survey is currently not accepting responses.')
-    
+
     context = {
         'survey': survey,
     }

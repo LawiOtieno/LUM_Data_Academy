@@ -228,7 +228,7 @@
                     <li><a href="{% url 'core:student_resources' %}" class="text-white/80 hover:text-white transition-colors">Student Resources</a></li>
                     <li><a href="{% url 'core:testimonials' %}" class="text-white/80 hover:text-white transition-colors">Testimonials</a></li>
                     {% if user.is_authenticated %}
-                    <li><a href="{% url 'core:my_enrollments' %}" class="text-white/80 hover:text-white transition-colors">My Enrollments</a></li>
+                    <li><a href="{% url 'courses:my_enrollments' %}" class="text-white/80 hover:text-white transition-colors">My Enrollments</a></li>
                     {% endif %}
                 </ul>
             </div>

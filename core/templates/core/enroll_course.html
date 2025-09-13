@@ -30,7 +30,7 @@
 
                         <form method="post" class="space-y-6">
                             {% csrf_token %}
-                            
+
                             <!-- Hidden fields -->
                             <input type="hidden" name="currency" value="{{ selected_currency }}">
 
@@ -50,7 +50,7 @@
                                             </div>
                                         </div>
                                     </label>
-                                    
+
                                     <label class="relative">
                                         <input type="radio" name="payment_method" value="paypal" class="sr-only" required>
                                         <div class="payment-option flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition-all hover:border-blue-500">
@@ -82,7 +82,7 @@
                                             </div>
                                         </div>
                                     </label>
-                                    
+
                                     <label class="relative">
                                         <input type="radio" name="installments" value="2" class="sr-only">
                                         <div class="installment-option p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50">
@@ -95,7 +95,7 @@
                                             </div>
                                         </div>
                                     </label>
-                                    
+
                                     <label class="relative">
                                         <input type="radio" name="installments" value="3" class="sr-only">
                                         <div class="installment-option p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition-all hover:border-purple-500 hover:bg-purple-50">
@@ -142,7 +142,7 @@
                             <img src="{{ course.image.url }}" alt="{{ course.title }}" class="w-full aspect-video object-cover rounded-lg mb-4">
                             {% endif %}
                         </div>
-                        
+
                         <div class="space-y-3 mb-6">
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Course</span>
@@ -165,7 +165,7 @@
                                 <span class="font-semibold text-gray-900">{{ course.estimated_hours }} hours</span>
                             </div>
                         </div>
-                        
+
                         <div class="border-t pt-4">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-lg font-semibold text-gray-900">Total Price</span>

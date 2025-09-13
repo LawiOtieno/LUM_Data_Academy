@@ -1,4 +1,3 @@
-
 {% extends 'core/base.html' %}
 {% load static %}
 
@@ -18,25 +17,25 @@
             <i class="fas fa-chart-bar"></i>
         </div>
     </div>
-    
+
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div data-aos="fade-up">
             <img src="{% static 'core/img/logo.jpg' %}" alt="LUM Data Academy" 
                  class="w-24 h-24 mx-auto mb-8 rounded-full shadow-2xl animate-bounce-in">
         </div>
-        
+
         <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight" data-aos="fade-up" data-aos-delay="100">
             Equipping <span class="text-secondary">Africa</span> with <br>
             <span class="bg-gradient-to-r from-yellow-400 via-pink-500 to-red-500 bg-clip-text text-transparent animate-pulse">
                 Future-Ready
             </span> Data Skills
         </h1>
-        
+
         <p class="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed" data-aos="fade-up" data-aos-delay="200">
             Join the next generation of data scientists, AI engineers, and analytics professionals. 
             Your journey to tech greatness starts here! 🚀
         </p>
-        
+
         <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12" data-aos="fade-up" data-aos-delay="300">
             <a href="{% url 'core:admissions' %}" 
                class="bg-secondary hover:bg-secondary/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 transform hover:scale-110 hover:shadow-2xl">
@@ -47,7 +46,7 @@
                 🔍 Explore Courses
             </a>
         </div>
-        
+
         <!-- Stats -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-white" data-aos="fade-up" data-aos-delay="400">
             <div class="text-center">
@@ -68,7 +67,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Scroll Indicator -->
     <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
         <i class="fas fa-chevron-down text-white text-2xl"></i>
@@ -86,7 +85,7 @@
                 Level up your skills with our most popular courses designed for the digital generation
             </p>
         </div>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {% for course in featured_courses %}
                 <div class="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:100 }}">
@@ -104,13 +103,13 @@
                             <div class="text-2xl font-bold">{{ course.duration }}</div>
                         </div>
                     </div>
-                    
+
                     <div class="p-6">
                         <h3 class="text-xl font-bold text-primary mb-3 group-hover:text-secondary transition-colors duration-200">
                             {{ course.title }}
                         </h3>
                         <p class="text-gray-600 mb-4 line-clamp-3">{{ course.overview }}</p>
-                        
+
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center space-x-2">
                                 {% if course.has_discount %}
@@ -122,7 +121,7 @@
                             </div>
                             <div class="text-sm text-gray-500">{{ course.schedule }}</div>
                         </div>
-                        
+
                         <a href="{{ course.get_absolute_url }}" 
                            class="block w-full bg-gradient-to-r from-primary to-primary-light text-white text-center py-3 rounded-xl font-semibold hover:from-secondary hover:to-secondary/90 transition-all duration-300 transform hover:scale-105">
                             Learn More 🚀
@@ -136,7 +135,7 @@
                 </div>
             {% endfor %}
         </div>
-        
+
         <div class="text-center mt-12" data-aos="fade-up">
             <a href="{% url 'courses:courses' %}" 
                class="inline-flex items-center px-8 py-4 bg-secondary text-white rounded-full font-semibold hover:bg-secondary/90 transition-all duration-300 transform hover:scale-105">
@@ -155,7 +154,7 @@
             </h2>
             <p class="text-xl text-gray-600">We get it. You want relevant, practical skills that actually matter in today's digital world.</p>
         </div>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div class="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="100">
                 <div class="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -164,7 +163,7 @@
                 <h3 class="text-2xl font-bold text-primary mb-4">Industry-Relevant</h3>
                 <p class="text-gray-600">Learn skills that companies are actually hiring for. No outdated content, just pure 🔥</p>
             </div>
-            
+
             <div class="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="200">
                 <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i class="fas fa-users text-white text-3xl"></i>
@@ -172,7 +171,7 @@
                 <h3 class="text-2xl font-bold text-primary mb-4">Community Vibes</h3>
                 <p class="text-gray-600">Join a supportive community of learners. Study groups, networking, and lifelong connections 🤝</p>
             </div>
-            
+
             <div class="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="300">
                 <div class="w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i class="fas fa-mobile-alt text-white text-3xl"></i>
@@ -180,7 +179,7 @@
                 <h3 class="text-2xl font-bold text-primary mb-4">Mobile-First Learning</h3>
                 <p class="text-gray-600">Learn on-the-go with our mobile-optimized platform. Perfect for your busy lifestyle 📱</p>
             </div>
-            
+
             <div class="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="400">
                 <div class="w-20 h-20 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i class="fas fa-briefcase text-white text-3xl"></i>
@@ -188,7 +187,7 @@
                 <h3 class="text-2xl font-bold text-primary mb-4">Career Support</h3>
                 <p class="text-gray-600">From resume building to interview prep. We've got your back until you land that dream job 💼</p>
             </div>
-            
+
             <div class="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="500">
                 <div class="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i class="fas fa-clock text-white text-3xl"></i>
@@ -196,7 +195,7 @@
                 <h3 class="text-2xl font-bold text-primary mb-4">Flexible Schedule</h3>
                 <p class="text-gray-600">Evening classes, weekend workshops. Learn at your own pace without disrupting your life ⏰</p>
             </div>
-            
+
             <div class="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="600">
                 <div class="w-20 h-20 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i class="fas fa-certificate text-white text-3xl"></i>
@@ -218,7 +217,7 @@
             </h2>
             <p class="text-xl text-gray-600">Real students, real transformations, real results</p>
         </div>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {% for testimonial in testimonials %}
                 <div class="bg-gradient-to-br from-primary/5 to-secondary/5 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:100 }}">
@@ -242,7 +241,7 @@
                 </div>
             {% endfor %}
         </div>
-        
+
         <div class="text-center mt-12" data-aos="fade-up">
             <a href="{% url 'core:testimonials' %}" 
                class="inline-flex items-center px-8 py-4 bg-primary text-white rounded-full font-semibold hover:bg-primary-light transition-all duration-300 transform hover:scale-105">
@@ -263,7 +262,7 @@
             </h2>
             <p class="text-xl text-gray-600">Don't miss out on these exciting learning opportunities</p>
         </div>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {% for event in upcoming_events %}
                 <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:100 }}">
@@ -279,7 +278,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="p-6">
                         <p class="text-gray-600 mb-4">{{ event.description|truncatewords:20 }}</p>
                         <div class="flex items-center justify-between mb-4">
@@ -309,7 +308,7 @@
         <div class="absolute top-10 right-10 w-40 h-40 bg-white/10 rounded-full animate-pulse-slow"></div>
         <div class="absolute bottom-10 left-10 w-32 h-32 bg-secondary/20 rounded-full animate-bounce-in"></div>
     </div>
-    
+
     <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
         <div data-aos="fade-up">
             <h2 class="text-4xl md:text-5xl font-bold mb-6">
@@ -341,12 +340,12 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    
+
     @keyframes float {
         0%, 100% { transform: translateY(0px); }
         50% { transform: translateY(-20px); }
     }
-    
+
     .animate-float {
         animation: float 6s ease-in-out infinite;
     }
