@@ -21,12 +21,12 @@
             <div class="flex flex-wrap items-center justify-between gap-4">
                 <!-- Category Filters -->
                 <div class="flex flex-wrap gap-2">
-                    <a href="{% url 'core:courses' %}" 
+                    <a href="{% url 'courses:courses' %}" 
                        class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if not current_category %}bg-primary text-white{% else %}bg-white text-gray-700 hover:bg-gray-100{% endif %}">
                         All Courses
                     </a>
                     {% for category in categories %}
-                    <a href="{% url 'core:courses' %}?category={{ category.name }}" 
+                    <a href="{% url 'courses:courses' %}?category={{ category.name }}" 
                        class="px-4 py-2 rounded-full text-sm font-medium transition-colors {% if current_category == category.name %}bg-primary text-white{% else %}bg-white text-gray-700 hover:bg-gray-100{% endif %}">
                         {{ category.display_name }}
                     </a>
@@ -262,7 +262,7 @@
                 </svg>
                 <h3 class="text-lg font-medium text-gray-900 mb-2">No courses found</h3>
                 <p class="text-gray-600 mb-6">Try adjusting your search criteria or browse different categories.</p>
-                <a href="{% url 'core:courses' %}" class="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <a href="{% url 'courses:courses' %}" class="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg font-medium transition-colors">
                     View All Courses
                 </a>
             </div>
