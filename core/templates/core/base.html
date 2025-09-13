@@ -352,7 +352,9 @@
         });
 
         // Newsletter subscription
-        document.getElementById('newsletter-form').addEventListener('submit', async (e) => {
+        const newsletterForm = document.getElementById('newsletter-form');
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('newsletter-email').value;
 
@@ -394,6 +396,7 @@
                 console.error('Newsletter subscription error:', error);
             }
         });
+        }
 
         // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
