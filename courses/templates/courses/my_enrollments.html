@@ -163,29 +163,29 @@
                             <!-- Action Buttons -->
                             <div class="flex flex-wrap gap-2">
                                 {% if enrollment.is_activated %}
-                                    <a href="{% url 'core:course_detail' slug=enrollment.course.slug %}" 
+                                    <a href="{% url 'courses:course_detail' slug=enrollment.course.slug %}" 
                                        class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors">
                                         📚 Access Course
                                     </a>
-                                    <a href="{% url 'core:enrollment_status' enrollment_id=enrollment.id %}" 
+                                    <a href="{% url 'courses:enrollment_status' enrollment_id=enrollment.id %}" 
                                        class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors">
                                         📊 View Details
                                     </a>
                                 {% elif enrollment.payment_status == 'completed' %}
-                                    <a href="{% url 'core:activate_enrollment' %}" 
+                                    <a href="{% url 'courses:activate_enrollment' %}" 
                                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors">
                                         🔓 Activate Course
                                     </a>
-                                    <a href="{% url 'core:enrollment_status' enrollment_id=enrollment.id %}" 
+                                    <a href="{% url 'courses:enrollment_status' enrollment_id=enrollment.id %}" 
                                        class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors">
                                         📊 View Details
                                     </a>
                                 {% else %}
-                                    <a href="{% url 'core:enrollment_status' enrollment_id=enrollment.id %}" 
+                                    <a href="{% url 'courses:enrollment_status' enrollment_id=enrollment.id %}" 
                                        class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors">
                                         💰 Complete Payment
                                     </a>
-                                    <a href="{% url 'core:course_detail' slug=enrollment.course.slug %}" 
+                                    <a href="{% url 'courses:course_detail' slug=enrollment.course.slug %}" 
                                        class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors">
                                         👁️ View Course
                                     </a>

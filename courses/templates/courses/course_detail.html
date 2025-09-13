@@ -434,7 +434,7 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Related Courses</h3>
                         <div class="space-y-4">
                             {% for related in related_courses %}
-                            <a href="{% url 'core:course_detail' related.slug %}" class="block">
+                            <a href="{% url 'courses:course_detail' related.slug %}" class="block">
                                 <div class="bg-white rounded-lg p-4 hover:shadow-md transition-shadow">
                                     <h4 class="font-medium text-gray-900 mb-1">{{ related.title }}</h4>
                                     <p class="text-sm text-gray-600 mb-2">{{ related.category.display_name }}</p>
