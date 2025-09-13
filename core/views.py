@@ -13,10 +13,12 @@ import json
 from django.db.models import Q
 from decimal import Decimal
 
+from courses.models import Course
 from .models import (
     Testimonial, Event, BlogPost, ContactSubmission, 
     Newsletter, AboutPage, Career, Survey
 )
+from .forms import ContactForm, NewsletterForm
 
 
 def home(request):
