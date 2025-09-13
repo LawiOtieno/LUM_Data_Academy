@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - LUM Data Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/static/core/img/favicon.ico">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .logo-rounded {
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center px-4">
+    <div class="max-w-2xl mx-auto text-center">
+        <!-- Logo -->
+        <div class="mb-8 floating">
+            <img src="/static/core/img/logo.jpg" alt="LUM Data Academy" class="w-32 h-32 mx-auto logo-rounded shadow-lg">
+        </div>
+        
+        <!-- 404 Number -->
+        <div class="text-8xl font-bold text-gray-300 mb-4">404</div>
+        
+        <!-- Heading -->
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            Oops! Page Not Found
+        </h1>
+        
+        <!-- Description -->
+        <p class="text-xl text-gray-600 mb-8 leading-relaxed max-w-lg mx-auto">
+            The page you're looking for seems to have vanished into the data void. 
+            Don't worry, even the best data scientists sometimes take wrong paths!
+        </p>
+        
+        <!-- Stats/Tips Box -->
+        <div class="gradient-bg text-white p-8 rounded-2xl mb-8 shadow-lg">
+            <h3 class="text-xl font-semibold mb-4">🎯 Quick Navigation:</h3>
+            <div class="grid md:grid-cols-2 gap-4 text-left">
+                <div class="flex items-start space-x-3">
+                    <span class="text-yellow-300">✓</span>
+                    <span>Check the URL for typos</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="text-yellow-300">✓</span>
+                    <span>Use the menu to navigate</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="text-yellow-300">✓</span>
+                    <span>Go back to the homepage</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="text-yellow-300">✓</span>
+                    <span>Contact us if you need help</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/" 
+               class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-lg">
+                🏠 Back to Home
+            </a>
+            
+            <a href="/courses/" 
+               class="inline-flex items-center justify-center px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-lg">
+                📚 View Courses
+            </a>
+            
+            <a href="/contact/" 
+               class="inline-flex items-center justify-center px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-lg">
+                📞 Contact Us
+            </a>
+        </div>
+        
+        <!-- Pro Tip -->
+        <div class="mt-12 p-6 bg-blue-50 rounded-xl border-l-4 border-blue-500">
+            <p class="text-blue-800 font-medium">
+                💡 <strong>Pro Tip:</strong> Bookmark our courses page to quickly access your learning materials!
+            </p>
+        </div>
+        
+        <!-- Footer -->
+        <div class="mt-12 text-gray-500 text-sm">
+            <p>© 2024 LUM Data Academy. Equipping Africa with future-ready data skills.</p>
+        </div>
+    </div>
+</body>
+</html>
