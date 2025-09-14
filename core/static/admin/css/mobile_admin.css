@@ -105,6 +105,32 @@
         height: 50px !important;
         font-size: 20px !important;
     }
+
+    /* Enhanced mobile support for inline tables */
+    .inline-group .tabular {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: 8px !important;
+    }
+
+    .inline-group .tabular table {
+        min-width: 100% !important;
+        width: max-content !important;
+    }
+
+    .inline-group .tabular th,
+    .inline-group .tabular td {
+        padding: 6px 8px !important;
+        font-size: 12px !important;
+        min-width: 80px !important;
+    }
+
+    .inline-group .tabular input,
+    .inline-group .tabular select {
+        font-size: 12px !important;
+        padding: 4px 6px !important;
+        min-width: 70px !important;
+    }
 }
 
 @media (max-width: 480px) {

@@ -23,13 +23,25 @@ class ExerciseInline(admin.TabularInline):
 class CourseModuleInline(admin.TabularInline):
     model = CourseModule
     extra = 0
+    classes = ['wide']
     fields = ('title', 'order', 'duration_hours', 'is_active')
+    readonly_fields = ('created_at',)
+    ordering = ('order',)
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).order_by('order')
 
 
 class CapstoneProjectInline(admin.TabularInline):
     model = CapstoneProject
     extra = 0
+    classes = ['wide']
     fields = ('title', 'difficulty_level', 'estimated_hours', 'order', 'is_group_project')
+    readonly_fields = ('created_at',)
+    ordering = ('order',)
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).order_by('order')
 
 
 class PaymentInstallmentInline(admin.TabularInline):
