@@ -102,10 +102,10 @@
                         <!-- Course Pricing -->
                         <div class="mb-6">
                             <div class="text-sm text-white/80 mb-2">Course Price</div>
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
+                            <div class="flex items-center justify-between flex-wrap">
+                                <div class="flex items-center mb-2 sm:mb-0">
                                     {% if course.discount_price %}
-                                    <span class="text-3xl font-bold">
+                                    <span class="text-lg font-bold">
                                         {% get_currency_symbol selected_currency %}{% convert_price course.get_display_price selected_currency as display_price %}{{ display_price|floatformat:0 }}
                                     </span>
                                     <span class="text-lg text-white/60 line-through ml-2">
@@ -115,7 +115,7 @@
                                         Save {% get_currency_symbol selected_currency %}{% convert_price course.get_savings selected_currency as savings %}{{ savings|floatformat:0 }}
                                     </span>
                                     {% else %}
-                                    <span class="text-3xl font-bold">
+                                    <span class="text-lg font-bold">
                                         {% get_currency_symbol selected_currency %}{% convert_price course.price selected_currency as price %}{{ price|floatformat:0 }}
                                     </span>
                                     {% endif %}
@@ -413,9 +413,9 @@
                         </div>
                         {% endif %}
 
-                        <button class="w-full bg-primary hover:bg-primary-dark text-white py-3 px-6 rounded-lg font-semibold transition-colors">
-                            Enroll in Course
-                        </button>
+                        <a href="{% url 'courses:enroll_course' slug=course.slug %}?currency={{ selected_currency }}">
+                            <button class="w-full bg-primary hover:bg-primary-dark text-white py-3 px-6 rounded-lg font-semibold transition-colors"> Enroll in Course </button>
+                        </a>
 
                         {% if course.course_pdf %}
                         <a href="{{ course.course_pdf.url }}" target="_blank" 
