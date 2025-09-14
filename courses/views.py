@@ -197,6 +197,37 @@ def activate_enrollment(request):
             messages.success(request, f'Congratulations! You have successfully activated your enrollment for {enrollment.course.title}.')
             return redirect('courses:my_enrollments')
 
+
+
+@login_required
+def course_materials(request, slug):
+    """Access course materials for enrolled and activated users"""
+    course = get_object_or_404(Course, slug=slug, is_active=True)
+    
+    # Check if user has active enrollment
+    try:
+        enrollment = Enrollment.objects.get(
+            user=request.user, 
+            course=course, 
+            is_activated=True
+        )
+    except Enrollment.DoesNotExist:
+        messages.error(request, 'You do not have access to this course. Please ensure your enrollment is activated.')
+        return redirect('courses:course_detail', slug=course.slug)
+    
+    # Get course modules and content
+    modules = course.modules.filter(is_active=True).order_by('order')
+    capstone_projects = course.capstone_projects.all().order_by('order')
+    
+    context = {
+        'course': course,
+        'enrollment': enrollment,
+        'modules': modules,
+        'capstone_projects': capstone_projects,
+        'total_modules': modules.count(),
+    }
+    return render(request, 'courses/course_materials.html', context)
+
         except Enrollment.DoesNotExist:
             messages.error(request, 'Invalid activation code or this code has already been used.')
             return redirect('courses:activate_enrollment')

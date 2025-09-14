@@ -13,6 +13,7 @@ urlpatterns = [
     path('enroll/<slug:slug>/', views.enroll_course, name='enroll_course'),
     path('enroll-guest/<slug:slug>/', views.enroll_guest, name='enroll_guest'),
     path('enrollment/<uuid:enrollment_id>/', views.enrollment_status, name='enrollment_status'),
+    path('materials/<slug:slug>/', views.course_materials, name='course_materials'),
     
     # Course details (put last since it catches any slug)
     path('<slug:slug>/', views.course_detail, name='course_detail'),
