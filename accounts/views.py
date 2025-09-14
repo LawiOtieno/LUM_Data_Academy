@@ -249,17 +249,19 @@ def instructor_dashboard(request):
     try:
         from courses.models import Course, Enrollment
         
-        # For now, show all published courses as instructor courses
-        # In a real scenario, you'd filter by instructor
-        instructor_courses = Course.objects.filter(is_published=True).order_by('-created_at')
+        # Get courses assigned to this instructor
+        instructor_courses = Course.objects.filter(
+            instructor=request.user,
+            is_active=True
+        ).order_by('-created_at')
         
-        # Calculate total students across all courses
+        # Calculate total students across instructor's courses
         total_students = Enrollment.objects.filter(
             course__in=instructor_courses,
             is_activated=True
         ).count()
         
-        # Get recent activity (could be expanded)
+        # Get recent activity from instructor's courses
         recent_enrollments = Enrollment.objects.filter(
             course__in=instructor_courses
         ).order_by('-created_at')[:5]

@@ -64,41 +64,52 @@ class CourseCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'price', 'discount_price', 'total_modules', 'estimated_hours', 'is_featured', 'is_active', 'created_at')
-    list_filter = ('category', 'is_featured', 'is_active', 'created_at')
-    search_fields = ('title', 'overview', 'tools_software')
-    list_editable = ('is_featured', 'is_active')
+    list_display = ['title', 'instructor', 'category', 'price', 'discount_price', 'is_featured', 'is_published', 'is_active', 'created_at']
+    list_filter = ['instructor', 'category', 'is_featured', 'is_published', 'is_active', 'created_at']
+    search_fields = ['title', 'overview', 'description']
     prepopulated_fields = {'slug': ('title',)}
-    readonly_fields = ('created_at', 'updated_at')
+    list_editable = ['instructor', 'is_featured', 'is_published', 'is_active']
+    ordering = ['-created_at']
 
     fieldsets = (
         ('Basic Information', {
-            'fields': ('title', 'slug', 'category', 'overview', 'description')
+            'fields': ('title', 'slug', 'instructor', 'category', 'overview', 'description')
         }),
         ('Course Details', {
-            'fields': ('duration', 'schedule', 'learning_outcomes', 'tools_software',
-                      'prerequisites', 'course_syllabus')
+            'fields': ('duration', 'schedule', 'learning_outcomes', 'tools_software', 'prerequisites', 'course_syllabus')
         }),
-        ('Pricing & Media', {
-            'fields': ('price', 'discount_price', 'image', 'video_intro_url', 'course_pdf')
+        ('Pricing', {
+            'fields': ('price', 'discount_price')
         }),
-        ('Course Structure', {
-            'fields': ('total_modules', 'estimated_hours')
+        ('Media', {
+            'fields': ('course_pdf', 'image', 'video_intro_url')
         }),
-        ('Status & Visibility', {
-            'fields': ('is_featured', 'is_active')
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
+        ('Settings', {
+            'fields': ('is_featured', 'is_published', 'is_active', 'total_modules', 'estimated_hours')
+        })
     )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        # If user is an instructor, show only their courses
+        if hasattr(request.user, 'userprofile') and request.user.userprofile.is_instructor:
+            return qs.filter(instructor=request.user)
+        return qs.none()  # Non-instructors see no courses
+
+    def save_model(self, request, obj, form, change):
+        # Auto-assign instructor if not set and user is instructor
+        if not obj.instructor and hasattr(request.user, 'userprofile') and request.user.userprofile.is_instructor:
+            obj.instructor = request.user
+        super().save_model(request, obj, form, change)
 
     inlines = [CourseModuleInline, CapstoneProjectInline]
 
     formfield_overrides = {
         models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
     }
+    readonly_fields = ('created_at', 'updated_at')
 
 
 @admin.register(CourseModule)

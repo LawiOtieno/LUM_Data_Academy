@@ -35,6 +35,7 @@ class CourseCategory(models.Model):
 class Course(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True)
+    instructor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='instructor_courses', null=True, blank=True)
     category = models.ForeignKey(CourseCategory, on_delete=models.CASCADE, related_name='courses')
     overview = CKEditor5Field(config_name='default', help_text="Brief course overview")
     description = CKEditor5Field(config_name='extends', help_text="Detailed course description")
@@ -54,6 +55,7 @@ class Course(models.Model):
     video_intro_url = models.URLField(blank=True, help_text="YouTube or Vimeo URL for course intro")
     is_featured = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    is_published = models.BooleanField(default=True, help_text="Is this course published and visible to students?")
     total_modules = models.PositiveIntegerField(default=0, help_text="Total number of modules")
     estimated_hours = models.PositiveIntegerField(default=0, help_text="Estimated completion time in hours")
     created_at = models.DateTimeField(auto_now_add=True)
