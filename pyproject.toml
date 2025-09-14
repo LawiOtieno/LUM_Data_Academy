@@ -12,4 +12,5 @@ dependencies = [
     "django-anymail>=13.1",
     "django-templated-email>=3.1.1",
     "html2text>=2025.4.15",
+    "python-dotenv>=1.1.1",
 ]
