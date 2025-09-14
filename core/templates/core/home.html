@@ -112,11 +112,18 @@
 
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center space-x-2">
+                                {% load currency_filters %}
                                 {% if course.has_discount %}
-                                    <span class="text-2xl font-bold text-accent">KSh {{ course.discount_price|floatformat:0 }}</span>
-                                    <span class="text-lg text-gray-500 line-through">KSh {{ course.price|floatformat:0 }}</span>
+                                    <span class="text-2xl font-bold text-accent">
+                                        {% get_currency_symbol 'KES' %}{% convert_price course.get_display_price 'KES' as display_price %}{{ display_price|floatformat:0 }}
+                                    </span>
+                                    <span class="text-lg text-gray-500 line-through">
+                                        {% get_currency_symbol 'KES' %}{% convert_price course.price 'KES' as original_price %}{{ original_price|floatformat:0 }}
+                                    </span>
                                 {% else %}
-                                    <span class="text-2xl font-bold text-primary">KSh {{ course.price|floatformat:0 }}</span>
+                                    <span class="text-2xl font-bold text-primary">
+                                        {% get_currency_symbol 'KES' %}{% convert_price course.price 'KES' as price %}{{ price|floatformat:0 }}
+                                    </span>
                                 {% endif %}
                             </div>
                             <div class="text-sm text-gray-500">{{ course.schedule }}</div>

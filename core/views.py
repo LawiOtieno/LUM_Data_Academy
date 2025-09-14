@@ -23,7 +23,10 @@ from .forms import ContactForm, NewsletterForm
 
 def home(request):
     """Modern homepage with dynamic content"""
-    featured_courses = Course.objects.filter(is_featured=True, is_active=True)[:3]
+    # Get featured courses that are active, prioritizing those with discounts
+    featured_courses = Course.objects.filter(is_featured=True, is_active=True).order_by(
+        '-discount_price', '-created_at'
+    )[:3]
     testimonials = Testimonial.objects.filter(is_featured=True)[:6]
     upcoming_events = Event.objects.filter(is_active=True).order_by('event_date')[:3]
     recent_blogs = BlogPost.objects.filter(is_published=True)[:3]
