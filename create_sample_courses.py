@@ -1,4 +1,4 @@
-from core.models import CourseCategory, Course, CourseModule, CodeExample, Exercise, CapstoneProject
+from courses.models import CourseCategory, Course, CourseModule, CodeExample, Exercise, CapstoneProject
 
 # Create Course Categories
 beginner_cat, _ = CourseCategory.objects.get_or_create(

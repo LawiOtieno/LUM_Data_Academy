@@ -1,4 +1,4 @@
-from core.models import Course, CourseModule, CodeExample, Exercise, CapstoneProject
+from courses.models import Course, CourseModule, CodeExample, Exercise, CapstoneProject
 
 # Get the Python course
 python_course = Course.objects.get(slug='python-data-analysis-complete')

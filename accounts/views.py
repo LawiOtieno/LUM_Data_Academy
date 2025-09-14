@@ -200,7 +200,7 @@ def learner_dashboard(request):
     
     # Get user's enrolled courses (assuming Course model exists)
     try:
-        from core.models import Course
+        from courses.models import Course
         enrolled_courses = Course.objects.filter(is_published=True)[:3]  # Mock for now
     except:
         enrolled_courses = []
@@ -225,7 +225,7 @@ def instructor_dashboard(request):
     
     # Get instructor's courses (mock for now)
     try:
-        from core.models import Course
+        from courses.models import Course
         instructor_courses = Course.objects.filter(is_published=True)[:3]  # Mock for now
     except:
         instructor_courses = []

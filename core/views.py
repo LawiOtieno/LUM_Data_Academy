@@ -171,7 +171,7 @@ def enroll_guest(request, slug):
     course = get_object_or_404(Course, slug=slug, is_active=True)
 
     if request.user.is_authenticated:
-        return redirect('core:enroll_course', slug=course.slug)
+        return redirect('courses:enroll_course', slug=course.slug)
 
     if request.method == 'POST':
         # Use unified registration form for consistent validation and field handling
@@ -186,7 +186,7 @@ def enroll_guest(request, slug):
 
             # Redirect to enrollment page
             messages.success(request, 'Account created successfully! Now you can proceed with enrollment.')
-            return redirect('core:enroll_course', slug=course.slug)
+            return redirect('courses:enroll_course', slug=course.slug)
         else:
             # If form has errors, show them to the user
             for field, errors in form.errors.items():
