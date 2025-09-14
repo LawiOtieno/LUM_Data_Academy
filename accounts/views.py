@@ -245,16 +245,35 @@ def instructor_dashboard(request):
         messages.error(request, 'Access denied. Instructor privileges required.')
         return redirect('accounts:learner_dashboard')
 
-    # Get instructor's courses (mock for now)
+    # Get instructor's courses and statistics
     try:
-        from courses.models import Course
-        instructor_courses = Course.objects.filter(is_published=True)[:3]  # Mock for now
-    except:
+        from courses.models import Course, Enrollment
+        
+        # For now, show all published courses as instructor courses
+        # In a real scenario, you'd filter by instructor
+        instructor_courses = Course.objects.filter(is_published=True).order_by('-created_at')
+        
+        # Calculate total students across all courses
+        total_students = Enrollment.objects.filter(
+            course__in=instructor_courses,
+            is_activated=True
+        ).count()
+        
+        # Get recent activity (could be expanded)
+        recent_enrollments = Enrollment.objects.filter(
+            course__in=instructor_courses
+        ).order_by('-created_at')[:5]
+        
+    except Exception as e:
         instructor_courses = []
+        total_students = 0
+        recent_enrollments = []
 
     context = {
         'profile': profile,
         'instructor_courses': instructor_courses,
+        'total_students': total_students,
+        'recent_enrollments': recent_enrollments,
         'completion_percentage': profile.get_profile_completion_percentage(),
     }
     return render(request, 'accounts/instructor_dashboard.html', context)
