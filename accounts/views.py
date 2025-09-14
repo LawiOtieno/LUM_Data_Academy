@@ -199,13 +199,38 @@ def learner_dashboard(request):
         return redirect('accounts:login')
 
     # Import here to avoid circular imports
-    from courses.models import Enrollment
+    from courses.models import Enrollment, Course
 
+    profile = request.user.userprofile
+    
     # Get user's enrollments
     enrollments = Enrollment.objects.filter(user=request.user).order_by('-created_at')
+    
+    # Get enrolled courses
+    enrolled_courses = []
+    for enrollment in enrollments:
+        enrolled_courses.append(enrollment.course)
+    
+    # Get available courses (not enrolled)
+    enrolled_course_ids = [course.id for course in enrolled_courses]
+    available_courses = Course.objects.filter(
+        is_active=True
+    ).exclude(id__in=enrolled_course_ids)[:6]  # Limit to 6 courses
+    
+    # Calculate statistics
+    active_enrollments = enrollments.filter(is_activated=True).count()
+    completed_payments = enrollments.filter(payment_status='completed').count()
+    total_enrollments = enrollments.count()
 
     context = {
+        'profile': profile,
         'enrollments': enrollments,
+        'enrolled_courses': enrolled_courses,
+        'available_courses': available_courses,
+        'active_enrollments': active_enrollments,
+        'completed_payments': completed_payments,
+        'total_enrollments': total_enrollments,
+        'completion_percentage': profile.get_profile_completion_percentage(),
     }
     return render(request, 'accounts/learner_dashboard.html', context)
 
