@@ -215,17 +215,6 @@ def my_enrollments(request):
     return render(request, 'courses/my_enrollments.html', context)
 
 
-@login_required
-def my_enrollments(request):
-    """Display user's enrollments"""
-    enrollments = Enrollment.objects.filter(user=request.user).order_by('-created_at')
-
-    context = {
-        'enrollments': enrollments,
-    }
-    return render(request, 'courses/my_enrollments.html', context)
-
-
 def enroll_guest(request, slug):
     """Handle enrollment for non-authenticated users using unified registration form"""
     from accounts.forms import UnifiedRegistrationForm
