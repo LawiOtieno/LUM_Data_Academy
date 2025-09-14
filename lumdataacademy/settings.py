@@ -30,8 +30,11 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-47#)460thu(5q@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', '1') == '1'
 
-# For development, allow all hosts. For production, set ALLOWED_HOSTS environment variable
-ALLOWED_HOSTS = ['*']
+# Environment-based host configuration
+ALLOWED_HOSTS = (
+    os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS')
+    else (['*'] if DEBUG else ['lumdataacademy.org', 'www.lumdataacademy.org'])
+)
 
 
 # Application definition
@@ -140,18 +143,29 @@ MEDIA_ROOT = BASE_DIR / 'media'
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# CSRF and CORS settings for Replit
-CSRF_TRUSTED_ORIGINS = [
+# CSRF and CORS settings for Replit and production
+default_replit_origins = [
     'https://*.repl.co',
     'https://*.replit.app',
     'https://*.replit.dev',
 ]
+
+CSRF_TRUSTED_ORIGINS = (
+    os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if os.environ.get('CSRF_TRUSTED_ORIGINS')
+    else (default_replit_origins + (['https://lumdataacademy.org', 'https://www.lumdataacademy.org'] if not DEBUG else []))
+)
 
 # Security settings for production
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # CKEditor 5 Configuration
 customColorPalette = [

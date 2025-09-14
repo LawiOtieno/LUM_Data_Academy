@@ -39,14 +39,24 @@ Django's URL dispatcher is configured to handle routing, with the admin interfac
 ### Deployment Architecture
 The WSGI/ASGI configuration supports both synchronous and asynchronous deployment scenarios, making it compatible with various hosting platforms and scaling requirements.
 
+## Recent Changes
+
+### September 14, 2025 - Replit Environment Setup
+- Installed Python dependencies using uv package manager
+- Fixed DEBUG configuration for development environment (DEBUG=True by default)
+- Configured Gunicorn for production deployment with proper build steps
+- Applied Django migrations and verified server startup
+- Configured autoscale deployment with collectstatic build step
+
 ## External Dependencies
 
 ### Core Framework
 - **Django 5.2**: Main web framework providing ORM, admin interface, security features, and template system
 - **WhiteNoise**: Static file serving middleware for simplified deployment without separate web servers
+- **Gunicorn**: Production WSGI server for deployment
 
 ### Infrastructure Requirements
-- **Python Runtime**: Compatible with Python 3.8+ for Django 5.2 support
+- **Python Runtime**: Python 3.11 installed via Replit modules
 - **Database**: SQLite for development (Django default), with architecture ready for PostgreSQL/MySQL in production
 - **Email Services**: Configuration ready for SMTP integration for the specified email addresses (noreply@lumdataacademy.org, info@lumdataacademy.org, careers@lumdataacademy.org)
 
