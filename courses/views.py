@@ -197,6 +197,11 @@ def activate_enrollment(request):
             messages.success(request, f'Congratulations! You have successfully activated your enrollment for {enrollment.course.title}.')
             return redirect('courses:my_enrollments')
 
+        except Enrollment.DoesNotExist:
+            messages.error(request, 'Invalid activation code or this code has already been used.')
+            return redirect('courses:activate_enrollment')
+
+    return render(request, 'courses/activate_enrollment.html')
 
 
 @login_required
@@ -227,12 +232,6 @@ def course_materials(request, slug):
         'total_modules': modules.count(),
     }
     return render(request, 'courses/course_materials.html', context)
-
-        except Enrollment.DoesNotExist:
-            messages.error(request, 'Invalid activation code or this code has already been used.')
-            return redirect('courses:activate_enrollment')
-
-    return render(request, 'courses/activate_enrollment.html')
 
 
 @login_required
