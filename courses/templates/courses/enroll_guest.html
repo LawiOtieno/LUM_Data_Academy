@@ -30,7 +30,7 @@
 
                         <form method="post" class="space-y-6">
                             {% csrf_token %}
-                            
+
                             <!-- Display form errors -->
                             {% if form.errors %}
                             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -43,7 +43,7 @@
                                 </ul>
                             </div>
                             {% endif %}
-                            
+
                             <!-- Personal Information -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
@@ -156,7 +156,7 @@
                                         <a href="#" class="text-primary font-medium hover:text-primary-dark">Privacy Policy</a>. *
                                     </div>
                                 </label>
-                                
+
                                 <label class="flex items-start">
                                     <input type="checkbox" class="mt-1 mr-3">
                                     <div class="text-sm text-gray-600">
@@ -196,7 +196,7 @@
                             <img src="{{ course.image.url }}" alt="{{ course.title }}" class="w-full aspect-video object-cover rounded-lg mb-4">
                             {% endif %}
                         </div>
-                        
+
                         <div class="space-y-3 mb-6">
                             <div>
                                 <div class="text-sm text-gray-600">Course</div>
@@ -219,7 +219,7 @@
                                 <div class="font-semibold text-gray-900">{{ course.estimated_hours }} hours</div>
                             </div>
                         </div>
-                        
+
                         <!-- Pricing -->
                         <div class="border-t pt-4 mb-6">
                             <div class="flex justify-between items-center">
@@ -304,24 +304,24 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
     if (!form) return;
-    
+
     // Form submission validation
     form.addEventListener('submit', function(e) {
         const password1 = document.getElementById('{{ form.password1.id_for_label }}');
         const password2 = document.getElementById('{{ form.password2.id_for_label }}');
-        
+
         if (password1 && password1.value.length < 8) {
             e.preventDefault();
             alert('Password must be at least 8 characters long.');
             password1.focus();
             return;
         }
-        
+
         // Check if password contains letters and numbers
         if (password1) {
             const hasLetter = /[a-zA-Z]/.test(password1.value);
             const hasNumber = /\d/.test(password1.value);
-            
+
             if (!hasLetter || !hasNumber) {
                 e.preventDefault();
                 alert('Password must contain both letters and numbers.');
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
         }
-        
+
         // Check password confirmation matches
         if (password1 && password2 && password1.value !== password2.value) {
             e.preventDefault();
@@ -338,13 +338,51 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
     });
-    
+
     // Username validation (no spaces, special characters)
     const usernameField = document.getElementById('{{ form.username.id_for_label }}');
     if (usernameField) {
         usernameField.addEventListener('input', function(e) {
             let value = e.target.value.replace(/[^a-zA-Z0-9_]/g, '');
             e.target.value = value;
+        });
+    }
+});
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Mobile menu toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.querySelector('.mobile-menu-button');
+    const mobileMenu = document.querySelector('.mobile-menu');
+
+    if (mobileMenuButton && mobileMenu) {
+        function toggleMobileMenu() {
+            const isHidden = mobileMenu.classList.contains('hidden');
+
+            if (isHidden) {
+                mobileMenu.classList.remove('hidden');
+            } else {
+                mobileMenu.classList.add('hidden');
+            }
+        }
+
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+
+        // Close menu when clicking on menu items
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenuButton.contains(e.target) && !mobileMenu.contains(e.target)) {
+                mobileMenu.classList.add('hidden');
+            }
         });
     }
 });
