@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.db import models
 from django_ckeditor_5.widgets import CKEditor5Widget
 from .models import (
-    CourseCategory, Course, CourseModule, CodeExample, Exercise, 
-    CapstoneProject, Enrollment, PaymentInstallment
+    Course, CourseCategory, CourseModule, CodeExample, Exercise,
+    CapstoneProject, Enrollment, PaymentInstallment, ModuleCompletion, ProjectEnrollment
 )
 
 
@@ -27,7 +27,7 @@ class CourseModuleInline(admin.TabularInline):
     fields = ('title', 'order', 'duration_hours', 'is_active')
     readonly_fields = ('created_at',)
     ordering = ('order',)
-    
+
     def get_queryset(self, request):
         return super().get_queryset(request).order_by('order')
 
@@ -39,7 +39,7 @@ class CapstoneProjectInline(admin.TabularInline):
     fields = ('title', 'difficulty_level', 'estimated_hours', 'order', 'is_group_project')
     readonly_fields = ('created_at',)
     ordering = ('order',)
-    
+
     def get_queryset(self, request):
         return super().get_queryset(request).order_by('order')
 
@@ -70,13 +70,13 @@ class CourseAdmin(admin.ModelAdmin):
     list_editable = ('is_featured', 'is_active')
     prepopulated_fields = {'slug': ('title',)}
     readonly_fields = ('created_at', 'updated_at')
-    
+
     fieldsets = (
         ('Basic Information', {
             'fields': ('title', 'slug', 'category', 'overview', 'description')
         }),
         ('Course Details', {
-            'fields': ('duration', 'schedule', 'learning_outcomes', 'tools_software', 
+            'fields': ('duration', 'schedule', 'learning_outcomes', 'tools_software',
                       'prerequisites', 'course_syllabus')
         }),
         ('Pricing & Media', {
@@ -93,9 +93,9 @@ class CourseAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     inlines = [CourseModuleInline, CapstoneProjectInline]
-    
+
     formfield_overrides = {
         models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
     }
@@ -108,7 +108,7 @@ class CourseModuleAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description', 'course__title')
     list_editable = ('order', 'is_active')
     ordering = ('course', 'order')
-    
+
     fieldsets = (
         ('Module Information', {
             'fields': ('course', 'title', 'description', 'content', 'order')
@@ -120,9 +120,9 @@ class CourseModuleAdmin(admin.ModelAdmin):
             'fields': ('resources', 'is_active')
         }),
     )
-    
+
     inlines = [CodeExampleInline, ExerciseInline]
-    
+
     formfield_overrides = {
         models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
     }
@@ -135,7 +135,7 @@ class CodeExampleAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description', 'code', 'module__title')
     list_editable = ('order', 'is_interactive')
     ordering = ('module', 'order')
-    
+
     fieldsets = (
         ('Example Information', {
             'fields': ('module', 'title', 'description', 'language', 'difficulty_level', 'order')
@@ -147,7 +147,7 @@ class CodeExampleAdmin(admin.ModelAdmin):
             'fields': ('is_interactive',)
         }),
     )
-    
+
     formfield_overrides = {
         models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
     }
@@ -160,7 +160,7 @@ class ExerciseAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description', 'module__title')
     list_editable = ('order', 'is_graded', 'points')
     ordering = ('module', 'order')
-    
+
     fieldsets = (
         ('Exercise Information', {
             'fields': ('module', 'title', 'description', 'difficulty_level', 'order')
@@ -172,7 +172,7 @@ class ExerciseAdmin(admin.ModelAdmin):
             'fields': ('is_graded', 'points')
         }),
     )
-    
+
     formfield_overrides = {
         models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
     }
@@ -185,7 +185,7 @@ class CapstoneProjectAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description', 'course__title')
     list_editable = ('order', 'is_group_project')
     ordering = ('course', 'order')
-    
+
     fieldsets = (
         ('Project Information', {
             'fields': ('course', 'title', 'description', 'requirements', 'order')
@@ -200,7 +200,7 @@ class CapstoneProjectAdmin(admin.ModelAdmin):
             'fields': ('is_group_project', 'max_group_size')
         }),
     )
-    
+
     formfield_overrides = {
         models.TextField: {'widget': CKEditor5Widget(config_name='extends')}
     }
@@ -213,13 +213,13 @@ class EnrollmentAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'user__email', 'course__title', 'activation_code')
     readonly_fields = ('activation_code', 'created_at', 'updated_at', 'activated_at')
     ordering = ('-created_at',)
-    
+
     fieldsets = (
         ('Enrollment Information', {
             'fields': ('user', 'course', 'activation_code', 'is_activated', 'activated_at')
         }),
         ('Payment Details', {
-            'fields': ('payment_method', 'currency', 'total_amount', 'amount_paid', 
+            'fields': ('payment_method', 'currency', 'total_amount', 'amount_paid',
                       'payment_status', 'installments')
         }),
         ('Timestamps', {
@@ -227,9 +227,9 @@ class EnrollmentAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     inlines = [PaymentInstallmentInline]
-    
+
     def save_model(self, request, obj, form, change):
         # Auto-generate activation code if not present
         if not obj.activation_code:
@@ -240,9 +240,9 @@ class EnrollmentAdmin(admin.ModelAdmin):
                 obj.activation_code[i:i+4] for i in range(0, 16, 4)
             ])
         super().save_model(request, obj, form, change)
-    
+
     actions = ['activate_enrollment', 'mark_payment_complete', 'send_activation_email']
-    
+
     def activate_enrollment(self, request, queryset):
         """Custom admin action to activate enrollments"""
         from django.utils import timezone
@@ -252,17 +252,17 @@ class EnrollmentAdmin(admin.ModelAdmin):
             enrollment.activated_at = timezone.now()
             enrollment.save()
             updated += 1
-            
+
             # Send course access email
             try:
                 from emails.services import EmailService
                 EmailService.send_course_access_email(enrollment.user, enrollment.course, enrollment)
             except Exception as e:
                 pass  # Continue even if email fails
-                
+
         self.message_user(request, f'Successfully activated {updated} enrollments.')
     activate_enrollment.short_description = "Activate selected enrollments"
-    
+
     def mark_payment_complete(self, request, queryset):
         """Mark payment as complete and activate enrollment"""
         from django.utils import timezone
@@ -272,17 +272,17 @@ class EnrollmentAdmin(admin.ModelAdmin):
             enrollment.amount_paid = enrollment.total_amount
             enrollment.save()
             updated += 1
-            
+
             # Send payment confirmation email
             try:
                 from emails.services import EmailService
                 EmailService.send_payment_confirmation_email(enrollment.user, enrollment.course, enrollment)
             except Exception as e:
                 pass  # Continue even if email fails
-                
+
         self.message_user(request, f'Marked {updated} payments as complete.')
     mark_payment_complete.short_description = "Mark payment as complete"
-    
+
     def send_activation_email(self, request, queryset):
         """Send activation email to students"""
         sent = 0
@@ -303,10 +303,10 @@ class EnrollmentAdmin(admin.ModelAdmin):
 class PaymentInstallmentAdmin(admin.ModelAdmin):
     list_display = ('enrollment', 'installment_number', 'amount', 'due_date', 'status', 'payment_date', 'payment_reference')
     list_filter = ('status', 'due_date', 'payment_date', 'created_at')
-    search_fields = ('enrollment__user__username', 'enrollment__course__title', 'payment_reference')
+    search_fields = ('enrollment__user__username', 'enrollment__user__email', 'enrollment__course__title', 'payment_reference')
     readonly_fields = ('created_at', 'updated_at')
     ordering = ('enrollment', 'installment_number')
-    
+
     fieldsets = (
         ('Installment Information', {
             'fields': ('enrollment', 'installment_number', 'amount', 'due_date')
@@ -319,12 +319,12 @@ class PaymentInstallmentAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     def get_queryset(self, request):
         return super().get_queryset(request).select_related('enrollment__user', 'enrollment__course')
-    
+
     actions = ['mark_as_paid', 'mark_as_verified', 'send_reminder_email']
-    
+
     def mark_as_paid(self, request, queryset):
         """Mark installments as paid"""
         from django.utils import timezone
@@ -336,7 +336,7 @@ class PaymentInstallmentAdmin(admin.ModelAdmin):
             updated += 1
         self.message_user(request, f'Marked {updated} installments as paid.')
     mark_as_paid.short_description = "Mark as paid"
-    
+
     def mark_as_verified(self, request, queryset):
         """Mark installments as verified"""
         from django.utils import timezone
@@ -344,26 +344,26 @@ class PaymentInstallmentAdmin(admin.ModelAdmin):
         for installment in queryset.filter(status='paid'):
             installment.status = 'verified'
             installment.save()
-            
+
             # Update enrollment paid amount
             enrollment = installment.enrollment
             paid_amount = enrollment.payment_installments.filter(status='verified').aggregate(
                 total=models.Sum('amount')
             )['total'] or 0
             enrollment.amount_paid = paid_amount
-            
+
             # Check if fully paid
             if enrollment.amount_paid >= enrollment.total_amount:
                 enrollment.payment_status = 'completed'
             elif enrollment.amount_paid > 0:
                 enrollment.payment_status = 'partial'
-            
+
             enrollment.save()
             updated += 1
-            
+
         self.message_user(request, f'Verified {updated} installments.')
     mark_as_verified.short_description = "Mark as verified"
-    
+
     def send_reminder_email(self, request, queryset):
         """Send payment reminder emails"""
         sent = 0
@@ -371,8 +371,8 @@ class PaymentInstallmentAdmin(admin.ModelAdmin):
             try:
                 from emails.services import EmailService
                 EmailService.send_payment_reminder_email(
-                    installment.enrollment.user, 
-                    installment.enrollment.course, 
+                    installment.enrollment.user,
+                    installment.enrollment.course,
                     installment
                 )
                 sent += 1
@@ -380,3 +380,33 @@ class PaymentInstallmentAdmin(admin.ModelAdmin):
                 pass  # Continue even if email fails
         self.message_user(request, f'Sent {sent} payment reminder emails.')
     send_reminder_email.short_description = "Send payment reminder"
+
+
+@admin.register(ModuleCompletion)
+class ModuleCompletionAdmin(admin.ModelAdmin):
+    list_display = ('enrollment', 'module', 'completed_at')
+    list_filter = ('completed_at', 'module__course')
+    search_fields = ('enrollment__user__username', 'enrollment__user__email', 'module__title')
+    raw_id_fields = ('enrollment', 'module')
+    readonly_fields = ('completed_at',)
+
+
+@admin.register(ProjectEnrollment)
+class ProjectEnrollmentAdmin(admin.ModelAdmin):
+    list_display = ('enrollment', 'project', 'status', 'started_at', 'grade')
+    list_filter = ('status', 'started_at', 'completed_at', 'project__course')
+    search_fields = ('enrollment__user__username', 'enrollment__user__email', 'project__title')
+    raw_id_fields = ('enrollment', 'project')
+    readonly_fields = ('started_at', 'submitted_at', 'completed_at')
+
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('enrollment', 'project', 'status')
+        }),
+        ('Timeline', {
+            'fields': ('started_at', 'submitted_at', 'completed_at')
+        }),
+        ('Submission & Grading', {
+            'fields': ('submission_notes', 'instructor_feedback', 'grade')
+        }),
+    )

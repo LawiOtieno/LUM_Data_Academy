@@ -50,7 +50,7 @@
                         <div class="text-sm text-gray-600">Total Modules</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-3xl font-bold text-green-600">0</div>
+                        <div class="text-3xl font-bold text-green-600">{{ completed_modules_count }}</div>
                         <div class="text-sm text-gray-600">Completed</div>
                     </div>
                     <div class="text-center">
@@ -234,9 +234,18 @@
                                 <div class="text-sm text-gray-500">
                                     Module {{ module.order }} of {{ total_modules }}
                                 </div>
-                                <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                                    ✅ Mark as Complete
-                                </button>
+                                <form method="post" action="{% url 'courses:mark_module_complete' course.slug module.id %}" class="inline">
+                                    {% csrf_token %}
+                                    {% if module.is_completed %}
+                                    <button type="submit" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                        ↩️ Mark as Incomplete
+                                    </button>
+                                    {% else %}
+                                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                        ✅ Mark as Complete
+                                    </button>
+                                    {% endif %}
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -306,9 +315,18 @@
                         </div>
                         {% endif %}
 
-                        <button class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                            🚀 Start Project
-                        </button>
+                        <form method="post" action="{% url 'courses:start_project' course.slug project.id %}" class="inline">
+                            {% csrf_token %}
+                            {% if project.is_started %}
+                            <button type="button" class="bg-gray-500 text-white px-6 py-3 rounded-lg font-medium cursor-not-allowed" disabled>
+                                ✅ Project Started
+                            </button>
+                            {% else %}
+                            <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                                🚀 Start Project
+                            </button>
+                            {% endif %}
+                        </form>
                     </div>
                     {% endfor %}
                 </div>

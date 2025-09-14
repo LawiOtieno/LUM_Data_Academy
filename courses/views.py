@@ -11,7 +11,7 @@ from django.contrib.auth.forms import UserCreationForm
 from datetime import timedelta, date
 import json
 
-from .models import Course, CourseCategory, Enrollment, PaymentInstallment
+from .models import Course, CourseCategory, Enrollment, PaymentInstallment, ModuleCompletion, ProjectEnrollment
 
 
 def courses(request):
@@ -224,12 +224,25 @@ def course_materials(request, slug):
     modules = course.modules.filter(is_active=True).order_by('order')
     capstone_projects = course.capstone_projects.all().order_by('order')
     
+    # Get completion data
+    completed_modules = enrollment.module_completions.values_list('module_id', flat=True)
+    started_projects = enrollment.project_enrollments.values_list('project_id', flat=True)
+    
+    # Add completion status to modules
+    for module in modules:
+        module.is_completed = module.id in completed_modules
+    
+    # Add enrollment status to projects
+    for project in capstone_projects:
+        project.is_started = project.id in started_projects
+    
     context = {
         'course': course,
         'enrollment': enrollment,
         'modules': modules,
         'capstone_projects': capstone_projects,
         'total_modules': modules.count(),
+        'completed_modules_count': len(completed_modules),
     }
     return render(request, 'courses/course_materials.html', context)
 
@@ -243,6 +256,96 @@ def my_enrollments(request):
         'enrollments': enrollments,
     }
     return render(request, 'courses/my_enrollments.html', context)
+
+
+@login_required
+@require_http_methods(["POST"])
+def mark_module_complete(request, slug, module_id):
+    """Mark a module as complete for the user"""
+    course = get_object_or_404(Course, slug=slug, is_active=True)
+    module = get_object_or_404(course.modules, id=module_id, is_active=True)
+    
+    # Check if user has active enrollment
+    try:
+        enrollment = Enrollment.objects.get(
+            user=request.user, 
+            course=course, 
+            is_activated=True
+        )
+    except Enrollment.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'No active enrollment found'})
+    
+    # Create or get module completion record
+    completion, created = ModuleCompletion.objects.get_or_create(
+        enrollment=enrollment,
+        module=module,
+        defaults={'completed_at': timezone.now()}
+    )
+    
+    if not created:
+        # If already completed, mark as incomplete (toggle)
+        completion.delete()
+        completed = False
+        message = f"Module {module.order} marked as incomplete"
+    else:
+        completed = True
+        message = f"Congratulations! Module {module.order} completed"
+    
+    # Get updated completion count
+    completed_modules = ModuleCompletion.objects.filter(enrollment=enrollment).count()
+    
+    if request.headers.get('Accept') == 'application/json':
+        return JsonResponse({
+            'success': True,
+            'completed': completed,
+            'message': message,
+            'completed_modules': completed_modules
+        })
+    
+    messages.success(request, message)
+    return redirect('courses:course_materials', slug=course.slug)
+
+
+@login_required
+@require_http_methods(["POST"])
+def start_project(request, slug, project_id):
+    """Start a capstone project"""
+    course = get_object_or_404(Course, slug=slug, is_active=True)
+    project = get_object_or_404(course.capstone_projects, id=project_id)
+    
+    # Check if user has active enrollment
+    try:
+        enrollment = Enrollment.objects.get(
+            user=request.user, 
+            course=course, 
+            is_activated=True
+        )
+    except Enrollment.DoesNotExist:
+        messages.error(request, 'You do not have access to this course.')
+        return redirect('courses:course_detail', slug=course.slug)
+    
+    # Create or get project enrollment
+    project_enrollment, created = ProjectEnrollment.objects.get_or_create(
+        enrollment=enrollment,
+        project=project,
+        defaults={'started_at': timezone.now()}
+    )
+    
+    if created:
+        message = f"Project '{project.title}' started successfully! Good luck!"
+        messages.success(request, message)
+    else:
+        message = f"You have already started project '{project.title}'"
+        messages.info(request, message)
+    
+    if request.headers.get('Accept') == 'application/json':
+        return JsonResponse({
+            'success': True,
+            'message': message,
+            'started': created
+        })
+    
+    return redirect('courses:course_materials', slug=course.slug)
 
 
 def enroll_guest(request, slug):

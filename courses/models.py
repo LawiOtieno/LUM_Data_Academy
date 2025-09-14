@@ -417,3 +417,69 @@ class PaymentInstallment(models.Model):
     
     def __str__(self):
         return f"{self.enrollment} - Installment {self.installment_number}"
+
+
+class ModuleCompletion(models.Model):
+    """Track module completion for enrolled users"""
+    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, related_name='module_completions')
+    module = models.ForeignKey(CourseModule, on_delete=models.CASCADE, related_name='completions')
+    completed_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'core_modulecompletion'
+        unique_together = ['enrollment', 'module']
+        ordering = ['-completed_at']
+    
+    def __str__(self):
+        return f"{self.enrollment.user.get_full_name()} - {self.module.title}"
+
+
+class ProjectEnrollment(models.Model):
+    """Track capstone project enrollment and progress"""
+    STATUS_CHOICES = [
+        ('not_started', 'Not Started'),
+        ('in_progress', 'In Progress'),
+        ('submitted', 'Submitted'),
+        ('completed', 'Completed'),
+    ]
+    
+    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, related_name='project_enrollments')
+    project = models.ForeignKey(CapstoneProject, on_delete=models.CASCADE, related_name='enrollments')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='not_started')
+    started_at = models.DateTimeField(null=True, blank=True)
+    submitted_at = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    submission_notes = models.TextField(blank=True, help_text="Student's submission notes")
+    instructor_feedback = models.TextField(blank=True, help_text="Instructor feedback")
+    grade = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, help_text="Grade out of 100")
+    
+    class Meta:
+        db_table = 'core_projectenrollment'
+        unique_together = ['enrollment', 'project']
+        ordering = ['-started_at']
+    
+    def start_project(self):
+        """Start the project"""
+        if self.status == 'not_started':
+            self.status = 'in_progress'
+            self.started_at = timezone.now()
+            self.save()
+    
+    def submit_project(self, notes=''):
+        """Submit the project"""
+        if self.status == 'in_progress':
+            self.status = 'submitted'
+            self.submitted_at = timezone.now()
+            self.submission_notes = notes
+            self.save()
+    
+    def complete_project(self, grade=None):
+        """Complete the project"""
+        self.status = 'completed'
+        self.completed_at = timezone.now()
+        if grade is not None:
+            self.grade = grade
+        self.save()
+    
+    def __str__(self):
+        return f"{self.enrollment.user.get_full_name()} - {self.project.title}"
