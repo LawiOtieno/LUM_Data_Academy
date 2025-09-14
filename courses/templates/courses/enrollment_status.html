@@ -148,17 +148,17 @@
                                 </div>
                             </div>
                             <div class="bg-white rounded-lg p-4">
-                                <h5 class="font-semibold text-gray-900 mb-2">Steps to Pay via M-Pesa:</h5>
+                                <h5 class="font-semibold text-gray-900 mb-2">Complete Steps to Pay via M-Pesa:</h5>
                                 <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700">
-                                    <li>Go to M-Pesa on your phone</li>
-                                    <li>Select "Lipa na M-Pesa"</li>
-                                    <li>Select "Pay Bill"</li>
-                                    <li>Enter Business Number (PayBill): <strong>444174</strong></li>
-                                    <li>Enter Account Number: <strong>002013</strong></li>
-                                    <li>Enter Amount: <strong>KShs {{ payment_instructions.amount|floatformat:0 }}</strong></li>
-                                    <li>Include reference: <strong>{{ enrollment.id }}</strong> (optional)</li>
-                                    <li>Enter your M-Pesa PIN and Send</li>
-                                    <li>You will receive a confirmation SMS from M-Pesa</li>
+                                    <li>Go to the M-Pesa menu on your mobile device</li>
+                                    <li>Select the <strong>"Lipa na M-Pesa"</strong> option</li>
+                                    <li>Choose the <strong>"Paybill"</strong> option</li>
+                                    <li>When prompted to enter the business number, key in <strong>444174</strong> – this is the official Paybill number</li>
+                                    <li>In the account number field, enter <strong>002013</strong> account number</li>
+                                    <li>Enter the amount to pay: <strong>KShs {{ payment_instructions.amount|floatformat:0 }}</strong></li>
+                                    <li>Enter your M-Pesa PIN to authorise the transaction</li>
+                                    <li>Review all transaction details carefully, and if they are correct, press <strong>"OK"</strong></li>
+                                    <li>You will receive a confirmation SMS from both M-Pesa</li>
                                     <li>Save the M-Pesa confirmation code for your records</li>
                                 </ol>
                             </div>
@@ -185,15 +185,15 @@
                                 </div>
                             </div>
                             <div class="bg-white rounded-lg p-4">
-                                <h5 class="font-semibold text-gray-900 mb-2">Steps to Pay via PayPal:</h5>
+                                <h5 class="font-semibold text-gray-900 mb-2">Complete Steps to Pay via PayPal:</h5>
                                 <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700">
                                     <li>Log in to your PayPal account or mobile app</li>
-                                    <li>Click "Send & Request" or "Send Money"</li>
+                                    <li>Click <strong>"Send & Request"</strong> or <strong>"Send Money"</strong></li>
                                     <li>Enter recipient email: <strong>lum.analytica@gmail.com</strong></li>
                                     <li>Enter amount: <strong>${{ payment_instructions.amount|floatformat:2 }}</strong></li>
                                     <li>Add note/reference: <strong>Enrollment {{ enrollment.id }}</strong></li>
                                     <li>Choose your preferred payment method (card/bank account)</li>
-                                    <li>Review payment details and send</li>
+                                    <li>Review payment details carefully and send</li>
                                     <li>You will receive a PayPal confirmation email</li>
                                     <li>Save the PayPal transaction ID for your records</li>
                                 </ol>
