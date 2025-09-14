@@ -511,7 +511,7 @@
 
 .inline-group .tabular table {
     min-width: 100% !important;
-    white-space: nowrap !important;
+    table-layout: auto !important;
 }
 
 .inline-group .tabular th,
@@ -697,7 +697,8 @@
     position: sticky !important;
     top: 0 !important;
     z-index: 10 !important;
-    white-space: nowrap !important;
+    word-wrap: break-word !important;
+    white-space: normal !important;
 }
 
 .inline-group .tabular tbody tr {
@@ -712,7 +713,11 @@
 .inline-group .tabular tbody td {
     padding: 12px !important;
     border: none !important;
-    vertical-align: middle !important;
+    vertical-align: top !important;
+    word-wrap: break-word !important;
+    white-space: normal !important;
+    max-width: 50ch !important;
+    line-height: 1.4 !important;
 }
 
 .inline-group .tabular input,
