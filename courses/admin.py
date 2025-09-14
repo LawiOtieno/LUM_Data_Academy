@@ -99,10 +99,19 @@ class CourseAdmin(admin.ModelAdmin):
         return qs.none()  # Non-instructors see no courses
 
     def save_model(self, request, obj, form, change):
-        # Auto-assign instructor if not set and user is instructor
-        if not obj.instructor and hasattr(request.user, 'userprofile') and request.user.userprofile.is_instructor:
+        # Auto-assign instructor if not set and user is instructor (but not superuser)
+        if not obj.instructor and not request.user.is_superuser and hasattr(request.user, 'userprofile') and request.user.userprofile.is_instructor:
             obj.instructor = request.user
         super().save_model(request, obj, form, change)
+
+    def has_change_permission(self, request, obj=None):
+        # Superusers can change any course
+        if request.user.is_superuser:
+            return True
+        # Instructors can only change their own courses
+        if obj and hasattr(request.user, 'userprofile') and request.user.userprofile.is_instructor:
+            return obj.instructor == request.user
+        return super().has_change_permission(request, obj)
 
     inlines = [CourseModuleInline, CapstoneProjectInline]
 
