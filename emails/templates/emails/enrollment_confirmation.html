@@ -85,37 +85,44 @@
                                 <div style="background: #22c55e; color: white; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
                                     <h4 style="margin: 0 0 8px 0; font-size: 18px;">M-Pesa PayBill Payment</h4>
                                     <div style="font-family: 'Fira Code', monospace; font-size: 14px;">
-                                        <div><strong>Business Number:</strong> 444174</div>
+                                        <div><strong>Business Number (PayBill):</strong> 444174</div>
                                         <div><strong>Account Number:</strong> 002013</div>
                                         <div><strong>Amount:</strong> KShs {{ enrollment.get_next_installment_amount|floatformat:0 }}</div>
+                                        <div><strong>Reference:</strong> {{ enrollment.id }}</div>
                                     </div>
                                 </div>
                                 <div style="color: #92400e; font-size: 14px;">
-                                    <strong>Steps:</strong><br>
+                                    <strong>Steps to Pay via M-Pesa:</strong><br>
                                     1. Go to M-Pesa on your phone<br>
                                     2. Select "Lipa na M-Pesa"<br>
                                     3. Select "Pay Bill"<br>
                                     4. Enter Business Number: <strong>444174</strong><br>
                                     5. Enter Account Number: <strong>002013</strong><br>
                                     6. Enter Amount: <strong>KShs {{ enrollment.get_next_installment_amount|floatformat:0 }}</strong><br>
-                                    7. Enter your PIN and Send
+                                    7. Include reference: <strong>{{ enrollment.id }}</strong> (optional)<br>
+                                    8. Enter your M-Pesa PIN and Send<br>
+                                    9. You will receive a confirmation SMS from M-Pesa
                                 </div>
                                 {% elif enrollment.payment_method == 'paypal' %}
                                 <div style="background: #0070ba; color: white; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
                                     <h4 style="margin: 0 0 8px 0; font-size: 18px;">PayPal Payment</h4>
                                     <div style="font-family: 'Fira Code', monospace; font-size: 14px;">
-                                        <div><strong>Send to:</strong> lum.analytica@gmail.com</div>
+                                        <div><strong>Send to Email:</strong> lum.analytica@gmail.com</div>
                                         <div><strong>Amount:</strong> ${{ enrollment.get_next_installment_amount|floatformat:2 }}</div>
+                                        <div><strong>Payment Type:</strong> Friends & Family or Goods & Services</div>
                                         <div><strong>Reference:</strong> {{ enrollment.id }}</div>
                                     </div>
                                 </div>
                                 <div style="color: #92400e; font-size: 14px;">
-                                    <strong>Instructions:</strong><br>
-                                    1. Log in to your PayPal account<br>
-                                    2. Send payment to: <strong>lum.analytica@gmail.com</strong><br>
-                                    3. Amount: <strong>${{ enrollment.get_next_installment_amount|floatformat:2 }}</strong><br>
-                                    4. Include reference: <strong>{{ enrollment.id }}</strong> in the note<br>
-                                    5. Send payment
+                                    <strong>Steps to Pay via PayPal:</strong><br>
+                                    1. Log in to your PayPal account or app<br>
+                                    2. Click "Send & Request" or "Send Money"<br>
+                                    3. Enter recipient email: <strong>lum.analytica@gmail.com</strong><br>
+                                    4. Enter amount: <strong>${{ enrollment.get_next_installment_amount|floatformat:2 }}</strong><br>
+                                    5. Add note/reference: <strong>Enrollment {{ enrollment.id }}</strong><br>
+                                    6. Choose payment method (card/bank account)<br>
+                                    7. Review and send payment<br>
+                                    8. You will receive PayPal confirmation email
                                 </div>
                                 {% endif %}
                             </div>

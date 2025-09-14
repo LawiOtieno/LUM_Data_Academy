@@ -129,44 +129,55 @@
                         {% if payment_instructions.method == 'M-Pesa PayBill' %}
                         <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
                             <h4 class="font-semibold text-green-800 mb-3">M-Pesa PayBill Payment</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mb-4">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center mb-4">
                                 <div class="bg-green-600 text-white rounded-lg p-3">
-                                    <div class="font-bold">Business Number</div>
-                                    <div class="text-xl">{{ payment_instructions.paybill }}</div>
+                                    <div class="font-bold">PayBill Number</div>
+                                    <div class="text-xl">444174</div>
                                 </div>
                                 <div class="bg-green-600 text-white rounded-lg p-3">
                                     <div class="font-bold">Account Number</div>
-                                    <div class="text-xl">{{ payment_instructions.account }}</div>
+                                    <div class="text-xl">002013</div>
                                 </div>
                                 <div class="bg-green-600 text-white rounded-lg p-3">
                                     <div class="font-bold">Amount</div>
                                     <div class="text-xl">KShs {{ payment_instructions.amount|floatformat:0 }}</div>
                                 </div>
+                                <div class="bg-green-600 text-white rounded-lg p-3">
+                                    <div class="font-bold">Reference</div>
+                                    <div class="text-sm">{{ enrollment.id }}</div>
+                                </div>
                             </div>
                             <div class="bg-white rounded-lg p-4">
-                                <h5 class="font-semibold text-gray-900 mb-2">Steps to Pay:</h5>
+                                <h5 class="font-semibold text-gray-900 mb-2">Steps to Pay via M-Pesa:</h5>
                                 <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700">
                                     <li>Go to M-Pesa on your phone</li>
                                     <li>Select "Lipa na M-Pesa"</li>
                                     <li>Select "Pay Bill"</li>
-                                    <li>Enter Business Number: <strong>{{ payment_instructions.paybill }}</strong></li>
-                                    <li>Enter Account Number: <strong>{{ payment_instructions.account }}</strong></li>
+                                    <li>Enter Business Number (PayBill): <strong>444174</strong></li>
+                                    <li>Enter Account Number: <strong>002013</strong></li>
                                     <li>Enter Amount: <strong>KShs {{ payment_instructions.amount|floatformat:0 }}</strong></li>
-                                    <li>Enter your PIN and Send</li>
+                                    <li>Include reference: <strong>{{ enrollment.id }}</strong> (optional)</li>
+                                    <li>Enter your M-Pesa PIN and Send</li>
+                                    <li>You will receive a confirmation SMS from M-Pesa</li>
+                                    <li>Save the M-Pesa confirmation code for your records</li>
                                 </ol>
                             </div>
                         </div>
                         {% elif payment_instructions.method == 'PayPal' %}
                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                             <h4 class="font-semibold text-blue-800 mb-3">PayPal Payment</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mb-4">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center mb-4">
                                 <div class="bg-blue-600 text-white rounded-lg p-3">
-                                    <div class="font-bold">Send To</div>
-                                    <div class="text-lg">{{ payment_instructions.email }}</div>
+                                    <div class="font-bold">Send To Email</div>
+                                    <div class="text-sm">lum.analytica@gmail.com</div>
                                 </div>
                                 <div class="bg-blue-600 text-white rounded-lg p-3">
                                     <div class="font-bold">Amount</div>
                                     <div class="text-xl">${{ payment_instructions.amount|floatformat:2 }}</div>
+                                </div>
+                                <div class="bg-blue-600 text-white rounded-lg p-3">
+                                    <div class="font-bold">Payment Type</div>
+                                    <div class="text-xs">Friends & Family or Goods & Services</div>
                                 </div>
                                 <div class="bg-blue-600 text-white rounded-lg p-3">
                                     <div class="font-bold">Reference</div>
@@ -174,13 +185,17 @@
                                 </div>
                             </div>
                             <div class="bg-white rounded-lg p-4">
-                                <h5 class="font-semibold text-gray-900 mb-2">Steps to Pay:</h5>
+                                <h5 class="font-semibold text-gray-900 mb-2">Steps to Pay via PayPal:</h5>
                                 <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700">
-                                    <li>Log in to your PayPal account</li>
-                                    <li>Send payment to: <strong>{{ payment_instructions.email }}</strong></li>
-                                    <li>Amount: <strong>${{ payment_instructions.amount|floatformat:2 }}</strong></li>
-                                    <li>Include reference: <strong>{{ enrollment.id }}</strong> in the note</li>
-                                    <li>Send payment</li>
+                                    <li>Log in to your PayPal account or mobile app</li>
+                                    <li>Click "Send & Request" or "Send Money"</li>
+                                    <li>Enter recipient email: <strong>lum.analytica@gmail.com</strong></li>
+                                    <li>Enter amount: <strong>${{ payment_instructions.amount|floatformat:2 }}</strong></li>
+                                    <li>Add note/reference: <strong>Enrollment {{ enrollment.id }}</strong></li>
+                                    <li>Choose your preferred payment method (card/bank account)</li>
+                                    <li>Review payment details and send</li>
+                                    <li>You will receive a PayPal confirmation email</li>
+                                    <li>Save the PayPal transaction ID for your records</li>
                                 </ol>
                             </div>
                         </div>
