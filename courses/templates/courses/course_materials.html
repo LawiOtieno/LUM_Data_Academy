@@ -315,18 +315,127 @@
                         </div>
                         {% endif %}
 
+                        <!-- Project Status and Actions -->
+                        {% if project.project_enrollment %}
+                            {% with enrollment=project.project_enrollment %}
+                            <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h5 class="font-semibold text-gray-900">📊 Project Status</h5>
+                                    {% if enrollment.status == 'not_started' %}
+                                    <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">Not Started</span>
+                                    {% elif enrollment.status == 'in_progress' %}
+                                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">In Progress</span>
+                                    {% elif enrollment.status == 'submitted' %}
+                                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Submitted for Review</span>
+                                    {% elif enrollment.status == 'completed' %}
+                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">✅ Completed</span>
+                                    {% endif %}
+                                </div>
+                                
+                                {% if enrollment.status == 'in_progress' %}
+                                <!-- Submit Project Section -->
+                                <div class="space-y-3">
+                                    <p class="text-sm text-gray-600">Ready to submit your project? Make sure you have your GitHub repository, Google Colab notebook, or Jupyter notebook ready.</p>
+                                    <a href="{% url 'courses:submit_project' course.slug project.id %}" 
+                                       class="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                        📤 Submit Project
+                                    </a>
+                                </div>
+                                
+                                {% elif enrollment.status == 'submitted' %}
+                                <!-- Submitted Status -->
+                                <div class="space-y-3">
+                                    <div class="text-sm text-gray-600">
+                                        <p><strong>Submitted:</strong> {{ enrollment.submitted_at|date:"F j, Y \a\t g:i A" }}</p>
+                                        {% if enrollment.submission_notes %}
+                                        <p class="mt-2"><strong>Your Notes:</strong> {{ enrollment.submission_notes|truncatewords:20 }}</p>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    {% if enrollment.has_submission_links %}
+                                    <div>
+                                        <h6 class="font-medium text-gray-900 mb-2">📎 Submitted Links:</h6>
+                                        <ul class="space-y-1">
+                                            {% for link_type, link_url in enrollment.get_submission_links %}
+                                            <li>
+                                                <a href="{{ link_url }}" target="_blank" 
+                                                   class="text-blue-600 hover:text-blue-800 text-sm underline">
+                                                    {{ link_type }}: {{ link_url|truncatechars:50 }}
+                                                </a>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div class="flex items-center space-x-3">
+                                        <span class="text-sm text-gray-500">Waiting for instructor review...</span>
+                                        <a href="{% url 'courses:submit_project' course.slug project.id %}" 
+                                           class="text-blue-600 hover:text-blue-800 text-sm underline">
+                                            Update Submission
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                {% elif enrollment.status == 'completed' %}
+                                <!-- Completed Status with Certificate -->
+                                <div class="space-y-4">
+                                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                        <div class="flex items-center mb-2">
+                                            <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path>
+                                            </svg>
+                                            <h6 class="font-semibold text-green-800">Congratulations! Project Completed</h6>
+                                        </div>
+                                        <div class="text-sm text-green-700 space-y-1">
+                                            <p><strong>Completed:</strong> {{ enrollment.completed_at|date:"F j, Y \a\t g:i A" }}</p>
+                                            {% if enrollment.grade %}
+                                            <p><strong>Grade:</strong> {{ enrollment.grade }}%</p>
+                                            {% endif %}
+                                            {% if enrollment.reviewed_by %}
+                                            <p><strong>Reviewed by:</strong> {{ enrollment.reviewed_by.get_full_name }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    {% if enrollment.instructor_feedback %}
+                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                        <h6 class="font-semibold text-blue-800 mb-2">📝 Instructor Feedback</h6>
+                                        <p class="text-sm text-blue-700">{{ enrollment.instructor_feedback }}</p>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if enrollment.can_download_certificate %}
+                                    <div class="flex items-center justify-between bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                        <div>
+                                            <h6 class="font-semibold text-yellow-800">🏆 Certificate Available</h6>
+                                            <p class="text-sm text-yellow-700">Your completion certificate is ready for download!</p>
+                                            {% if enrollment.certificate_download_count > 0 %}
+                                            <p class="text-xs text-yellow-600">Downloaded {{ enrollment.certificate_download_count }} time{{ enrollment.certificate_download_count|pluralize }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <a href="{% url 'courses:download_certificate' enrollment.id %}" 
+                                           class="inline-flex items-center bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"></path>
+                                            </svg>
+                                            Download Certificate
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endwith %}
+                        {% else %}
+                        <!-- Start Project Section -->
                         <form method="post" action="{% url 'courses:start_project' course.slug project.id %}" class="inline">
                             {% csrf_token %}
-                            {% if project.is_started %}
-                            <button type="button" class="bg-gray-500 text-white px-6 py-3 rounded-lg font-medium cursor-not-allowed" disabled>
-                                ✅ Project Started
-                            </button>
-                            {% else %}
                             <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                                 🚀 Start Project
                             </button>
-                            {% endif %}
                         </form>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>

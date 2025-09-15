@@ -235,9 +235,11 @@ def course_materials(request, slug):
     for module in modules:
         module.is_completed = module.id in completed_modules
     
-    # Add enrollment status to projects
+    # Add enrollment status and enrollment object to projects
+    project_enrollments = {pe.project_id: pe for pe in enrollment.project_enrollments.all()}
     for project in capstone_projects:
         project.is_started = project.id in started_projects
+        project.project_enrollment = project_enrollments.get(project.id)
     
     context = {
         'course': course,
