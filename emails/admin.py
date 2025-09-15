@@ -17,9 +17,6 @@ class EmailsAdminConfig:
         ]
         return custom_urls + urls
 
-# Register the email test in admin
-admin.site.index_template = 'admin/custom_index.html'
-
 # Add custom admin action
 def test_email_system_action(modeladmin, request, queryset):
     """Redirect to email test system"""
