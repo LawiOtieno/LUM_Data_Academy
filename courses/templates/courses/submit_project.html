@@ -1,0 +1,237 @@
+
+{% extends 'core/base.html' %}
+
+{% block title %}Submit Project - {{ project.title }} - LUM Data Academy{% endblock %}
+
+{% block content %}
+<div class="min-h-screen pt-20 bg-gray-50">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-primary to-primary-dark text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex items-center">
+                <div class="bg-white/20 p-3 rounded-xl mr-4 backdrop-blur-sm">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold">
+                        {% if is_resubmission %}Re-submit{% else %}Submit{% endif %} Project
+                    </h1>
+                    <p class="mt-2 text-white/90 text-lg">{{ project.title }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Breadcrumb -->
+        <nav class="mb-8">
+            <ol class="flex items-center space-x-2 text-sm text-gray-600">
+                <li><a href="{% url 'courses:course_materials' course.slug %}" class="hover:text-primary">{{ course.title }}</a></li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span>{{ project.title }}</span>
+                </li>
+                <li class="flex items-center">
+                    <svg class="w-4 h-4 mx-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 111.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span>{% if is_resubmission %}Re-submit{% else %}Submit{% endif %}</span>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- Project Info -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+            <div class="flex items-start">
+                <div class="p-3 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl shadow-lg mr-4">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h2 class="text-xl font-bold text-gray-900 mb-2">{{ project.title }}</h2>
+                    <p class="text-gray-600 mb-4">{{ project.description }}</p>
+                    
+                    {% if project.requirements %}
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h3 class="font-semibold text-blue-900 mb-2">📋 Project Requirements</h3>
+                        <div class="text-blue-800 text-sm">{{ project.requirements|linebreaks }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Status -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900">📊 Project Status</h3>
+                    <p class="text-gray-600">Current status of your project submission</p>
+                </div>
+                <div class="text-right">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                        {% if project_enrollment.status == 'not_started' %}bg-gray-100 text-gray-800
+                        {% elif project_enrollment.status == 'in_progress' %}bg-yellow-100 text-yellow-800
+                        {% elif project_enrollment.status == 'submitted' %}bg-blue-100 text-blue-800
+                        {% elif project_enrollment.status == 'completed' %}bg-green-100 text-green-800
+                        {% endif %}">
+                        {{ project_enrollment.get_status_display }}
+                    </span>
+                    {% if project_enrollment.submitted_at %}
+                    <div class="text-sm text-gray-500 mt-1">
+                        Submitted: {{ project_enrollment.submitted_at|date:"F j, Y \a\t g:i A" }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Submission Form -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-2">
+                    {% if is_resubmission %}
+                    🔄 Update Your Submission
+                    {% else %}
+                    📤 Submit Your Project
+                    {% endif %}
+                </h3>
+                <p class="text-gray-600">
+                    {% if is_resubmission %}
+                    Update your project submission with the latest information and links.
+                    {% else %}
+                    Provide your project details and links to your work for instructor review.
+                    {% endif %}
+                </p>
+            </div>
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Submission Notes -->
+                <div>
+                    <label for="{{ form.submission_notes.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.submission_notes.label }}
+                    </label>
+                    {{ form.submission_notes }}
+                    {% if form.submission_notes.help_text %}
+                    <p class="mt-1 text-sm text-gray-600">{{ form.submission_notes.help_text }}</p>
+                    {% endif %}
+                    {% if form.submission_notes.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {{ form.submission_notes.errors.0 }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- GitHub Repository URL -->
+                <div>
+                    <label for="{{ form.github_repo_url.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.github_repo_url.label }}
+                    </label>
+                    {{ form.github_repo_url }}
+                    {% if form.github_repo_url.help_text %}
+                    <p class="mt-1 text-sm text-gray-600">{{ form.github_repo_url.help_text }}</p>
+                    {% endif %}
+                    {% if form.github_repo_url.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {{ form.github_repo_url.errors.0 }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Google Colab URL -->
+                <div>
+                    <label for="{{ form.google_colab_url.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.google_colab_url.label }}
+                    </label>
+                    {{ form.google_colab_url }}
+                    {% if form.google_colab_url.help_text %}
+                    <p class="mt-1 text-sm text-gray-600">{{ form.google_colab_url.help_text }}</p>
+                    {% endif %}
+                    {% if form.google_colab_url.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {{ form.google_colab_url.errors.0 }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Jupyter Notebook URL -->
+                <div>
+                    <label for="{{ form.jupyter_notebook_url.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.jupyter_notebook_url.label }}
+                    </label>
+                    {{ form.jupyter_notebook_url }}
+                    {% if form.jupyter_notebook_url.help_text %}
+                    <p class="mt-1 text-sm text-gray-600">{{ form.jupyter_notebook_url.help_text }}</p>
+                    {% endif %}
+                    {% if form.jupyter_notebook_url.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {{ form.jupyter_notebook_url.errors.0 }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Additional Links -->
+                <div>
+                    <label for="{{ form.additional_links.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.additional_links.label }}
+                    </label>
+                    {{ form.additional_links }}
+                    {% if form.additional_links.help_text %}
+                    <p class="mt-1 text-sm text-gray-600">{{ form.additional_links.help_text }}</p>
+                    {% endif %}
+                    {% if form.additional_links.errors %}
+                    <div class="mt-1 text-sm text-red-600">
+                        {{ form.additional_links.errors.0 }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Guidelines -->
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-amber-400 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div>
+                            <h4 class="font-semibold text-amber-900">📝 Submission Guidelines</h4>
+                            <ul class="mt-2 text-sm text-amber-800 space-y-1">
+                                <li>• Provide at least one working link (GitHub, Colab, or Jupyter notebook)</li>
+                                <li>• Ensure all repositories are public or accessible to instructors</li>
+                                <li>• Include a clear description of your approach and findings</li>
+                                <li>• Make sure your code runs without errors</li>
+                                <li>• Double-check all URLs before submitting</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+                    <a href="{% url 'courses:course_materials' course.slug %}" 
+                       class="inline-flex items-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold transition-colors">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Back to Course
+                    </a>
+                    
+                    <button type="submit" 
+                            class="inline-flex items-center bg-primary hover:bg-primary-dark text-white px-8 py-3 rounded-xl font-semibold transition-colors shadow-lg hover:shadow-xl">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{% if is_resubmission %}M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15{% else %}M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12{% endif %}"></path>
+                        </svg>
+                        {% if is_resubmission %}Update Submission{% else %}Submit Project{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
