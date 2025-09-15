@@ -455,6 +455,21 @@ class ProjectEnrollment(models.Model):
     instructor_feedback = models.TextField(blank=True, help_text="Instructor feedback")
     grade = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, help_text="Grade out of 100")
     
+    # Submission Links
+    github_repo_url = models.URLField(blank=True, help_text="GitHub repository URL")
+    google_colab_url = models.URLField(blank=True, help_text="Google Colab notebook URL")
+    jupyter_notebook_url = models.URLField(blank=True, help_text="Jupyter Notebook URL or file link")
+    additional_links = models.TextField(blank=True, help_text="Any additional project links (one per line)")
+    
+    # Certificate fields
+    certificate_generated_at = models.DateTimeField(null=True, blank=True)
+    certificate_file = models.FileField(upload_to='certificates/', blank=True, null=True)
+    certificate_download_count = models.PositiveIntegerField(default=0)
+    
+    # Instructor review fields
+    reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviewed_projects')
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    
     class Meta:
         db_table = 'core_projectenrollment'
         unique_together = ['enrollment', 'project']
@@ -467,21 +482,71 @@ class ProjectEnrollment(models.Model):
             self.started_at = timezone.now()
             self.save()
     
-    def submit_project(self, notes=''):
-        """Submit the project"""
+    def submit_project(self, submission_data=None):
+        """Submit the project with submission links"""
         if self.status == 'in_progress':
             self.status = 'submitted'
             self.submitted_at = timezone.now()
-            self.submission_notes = notes
+            
+            if submission_data:
+                self.submission_notes = submission_data.get('submission_notes', '')
+                self.github_repo_url = submission_data.get('github_repo_url', '')
+                self.google_colab_url = submission_data.get('google_colab_url', '')
+                self.jupyter_notebook_url = submission_data.get('jupyter_notebook_url', '')
+                self.additional_links = submission_data.get('additional_links', '')
+            
             self.save()
     
-    def complete_project(self, grade=None):
-        """Complete the project"""
+    def complete_project(self, grade=None, instructor=None):
+        """Complete the project and mark for certificate generation"""
         self.status = 'completed'
         self.completed_at = timezone.now()
+        self.reviewed_at = timezone.now()
+        
         if grade is not None:
             self.grade = grade
+        if instructor is not None:
+            self.reviewed_by = instructor
+            
         self.save()
+        
+        # Trigger certificate generation
+        self.generate_certificate()
+    
+    def generate_certificate(self):
+        """Generate PDF certificate for completed project"""
+        if self.status == 'completed' and not self.certificate_file:
+            from .utils import CertificateGenerator
+            certificate_path = CertificateGenerator.generate_project_certificate(self)
+            if certificate_path:
+                self.certificate_file = certificate_path
+                self.certificate_generated_at = timezone.now()
+                self.save()
+                return True
+        return False
+    
+    def has_submission_links(self):
+        """Check if project has any submission links"""
+        return bool(self.github_repo_url or self.google_colab_url or self.jupyter_notebook_url or self.additional_links)
+    
+    def get_submission_links(self):
+        """Get all submission links as a list"""
+        links = []
+        if self.github_repo_url:
+            links.append(('GitHub Repository', self.github_repo_url))
+        if self.google_colab_url:
+            links.append(('Google Colab', self.google_colab_url))
+        if self.jupyter_notebook_url:
+            links.append(('Jupyter Notebook', self.jupyter_notebook_url))
+        if self.additional_links:
+            for line in self.additional_links.strip().split('\n'):
+                if line.strip():
+                    links.append(('Additional Link', line.strip()))
+        return links
+    
+    def can_download_certificate(self):
+        """Check if certificate is available for download"""
+        return self.status == 'completed' and self.certificate_file
     
     def __str__(self):
         return f"{self.enrollment.user.get_full_name()} - {self.project.title}"
