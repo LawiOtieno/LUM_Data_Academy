@@ -364,6 +364,98 @@ class EmailService:
             logger.error(f"Failed to send payment reminder email to {user.email}: {str(e)}")
             return False, str(e)
 
+    @staticmethod
+    def send_project_submission_notification(project_enrollment) -> Tuple[bool, str]:
+        """Send notification email when a student submits a capstone project"""
+        try:
+            course = project_enrollment.enrollment.course
+            student = project_enrollment.enrollment.user
+            project = project_enrollment.project
+            
+            # Determine recipients (instructor and admin)
+            recipients = []
+            if course.instructor and course.instructor.email:
+                recipients.append(course.instructor.email)
+            
+            # Add admin emails as fallback
+            admin_emails = [email for name, email in getattr(settings, 'ADMINS', [])]
+            if admin_emails:
+                recipients.extend(admin_emails)
+            else:
+                recipients.append('info@lumdataacademy.org')
+            
+            # Remove duplicates
+            recipients = list(set(recipients))
+            
+            subject = f'New Project Submission - {project.title} | LUM Data Academy'
+            
+            # Build review URL
+            site_url = getattr(settings, 'SITE_URL', 'https://lumdataacademy.org')
+            review_url = f"{site_url}/courses/instructor/review/{course.slug}/project/{project.id}/{project_enrollment.id}/"
+            
+            email_context = {
+                'student': student,
+                'course': course,
+                'project': project,
+                'project_enrollment': project_enrollment,
+                'submission_links': project_enrollment.get_submission_links(),
+                'site_name': 'LUM Data Academy',
+                'site_url': site_url,
+                'review_url': review_url,
+                'current_year': timezone.now().year,
+            }
+            
+            return EmailService._send_templated_email(
+                template_name='project_submission_notification',
+                recipient_list=recipients,
+                context=email_context,
+                subject=subject,
+                from_email=settings.DEFAULT_FROM_EMAIL
+            )
+        except Exception as e:
+            logger.error(f"Failed to send project submission notification: {str(e)}")
+            return False, str(e)
+
+    @staticmethod
+    def send_project_completion_notification(project_enrollment) -> Tuple[bool, str]:
+        """Send notification email when a project is completed and certificate is generated"""
+        try:
+            student = project_enrollment.enrollment.user
+            course = project_enrollment.enrollment.course
+            project = project_enrollment.project
+            
+            subject = f'🎉 Project Completed - Certificate Ready! | LUM Data Academy'
+            
+            # Build certificate download URL
+            site_url = getattr(settings, 'SITE_URL', 'https://lumdataacademy.org')
+            certificate_url = f"{site_url}/courses/certificate/download/{project_enrollment.id}/"
+            course_materials_url = f"{site_url}/courses/materials/{course.slug}/"
+            
+            email_context = {
+                'student': student,
+                'course': course,
+                'project': project,
+                'project_enrollment': project_enrollment,
+                'instructor': project_enrollment.reviewed_by,
+                'grade': project_enrollment.grade,
+                'site_name': 'LUM Data Academy',
+                'site_url': site_url,
+                'certificate_url': certificate_url,
+                'course_materials_url': course_materials_url,
+                'current_year': timezone.now().year,
+            }
+            
+            return EmailService._send_templated_email(
+                template_name='project_completion_notification',
+                recipient_list=[student.email],
+                context=email_context,
+                subject=subject,
+                from_email=settings.DEFAULT_FROM_EMAIL
+            )
+        except Exception as e:
+            logger.error(f"Failed to send project completion notification to {student.email}: {str(e)}")
+            return False, str(e)
+
 
 # Legacy compatibility functions for existing code
 def send_verification_email(user: User, request) -> Tuple[bool, str]:
