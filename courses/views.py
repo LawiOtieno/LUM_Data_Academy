@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.contrib.auth.models import User
@@ -13,6 +14,7 @@ from datetime import timedelta, date
 import json
 
 from .models import Course, CourseCategory, Enrollment, PaymentInstallment, ModuleCompletion, ProjectEnrollment
+from .forms import ProjectSubmissionForm, InstructorReviewForm
 
 
 def courses(request):
@@ -385,3 +387,199 @@ def enroll_guest(request, slug):
         'form': form,
     }
     return render(request, 'courses/enroll_guest.html', context)
+
+
+@login_required
+def submit_project(request, slug, project_id):
+    """Submit a capstone project with links to GitHub, Colab, etc."""
+    course = get_object_or_404(Course, slug=slug, is_active=True)
+    project = get_object_or_404(course.capstone_projects, id=project_id)
+    
+    # Check if user has active enrollment
+    try:
+        enrollment = Enrollment.objects.get(
+            user=request.user, 
+            course=course, 
+            is_activated=True
+        )
+    except Enrollment.DoesNotExist:
+        messages.error(request, 'You do not have access to this course.')
+        return redirect('courses:course_detail', slug=course.slug)
+    
+    # Get or create project enrollment
+    try:
+        project_enrollment = ProjectEnrollment.objects.get(
+            enrollment=enrollment,
+            project=project
+        )
+    except ProjectEnrollment.DoesNotExist:
+        messages.error(request, 'Please start the project first before submitting.')
+        return redirect('courses:course_materials', slug=course.slug)
+    
+    # Check if project can be submitted
+    if project_enrollment.status not in ['in_progress', 'submitted']:
+        messages.error(request, f'Project cannot be submitted. Current status: {project_enrollment.get_status_display()}')
+        return redirect('courses:course_materials', slug=course.slug)
+    
+    if request.method == 'POST':
+        form = ProjectSubmissionForm(request.POST)
+        if form.is_valid():
+            # Submit the project with form data
+            submission_data = {
+                'submission_notes': form.cleaned_data['submission_notes'],
+                'github_repo_url': form.cleaned_data['github_repo_url'],
+                'google_colab_url': form.cleaned_data['google_colab_url'],
+                'jupyter_notebook_url': form.cleaned_data['jupyter_notebook_url'],
+                'additional_links': form.cleaned_data['additional_links'],
+            }
+            
+            project_enrollment.submit_project(submission_data)
+            
+            # Send notification email to instructor
+            from emails.services import EmailService
+            EmailService.send_project_submission_notification(project_enrollment)
+            
+            messages.success(request, f'Project "{project.title}" submitted successfully! Your instructor will review it shortly.')
+            return redirect('courses:course_materials', slug=course.slug)
+    else:
+        # Pre-fill form with existing data if already submitted
+        initial_data = {}
+        if project_enrollment.status == 'submitted':
+            initial_data = {
+                'submission_notes': project_enrollment.submission_notes,
+                'github_repo_url': project_enrollment.github_repo_url,
+                'google_colab_url': project_enrollment.google_colab_url,
+                'jupyter_notebook_url': project_enrollment.jupyter_notebook_url,
+                'additional_links': project_enrollment.additional_links,
+            }
+        form = ProjectSubmissionForm(initial=initial_data)
+    
+    context = {
+        'course': course,
+        'project': project,
+        'project_enrollment': project_enrollment,
+        'form': form,
+        'is_resubmission': project_enrollment.status == 'submitted',
+    }
+    return render(request, 'courses/submit_project.html', context)
+
+
+@login_required
+def instructor_review_project(request, slug, project_id, enrollment_id):
+    """Instructor interface to review and complete submitted projects"""
+    course = get_object_or_404(Course, slug=slug, is_active=True)
+    project = get_object_or_404(course.capstone_projects, id=project_id)
+    
+    # Check if user is instructor for this course
+    if not (request.user.is_staff or request.user == course.instructor):
+        messages.error(request, 'You do not have permission to review projects for this course.')
+        return redirect('courses:course_detail', slug=course.slug)
+    
+    # Get the project enrollment
+    project_enrollment = get_object_or_404(
+        ProjectEnrollment,
+        id=enrollment_id,
+        project=project,
+        status='submitted'
+    )
+    
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        
+        if action == 'complete':
+            form = InstructorReviewForm(request.POST, instance=project_enrollment)
+            if form.is_valid():
+                # Complete the project
+                form.save()
+                project_enrollment.complete_project(
+                    grade=form.cleaned_data.get('grade'),
+                    instructor=request.user
+                )
+                
+                # Send completion notification email
+                from emails.services import EmailService
+                EmailService.send_project_completion_notification(project_enrollment)
+                
+                messages.success(request, f'Project completed successfully. Certificate has been generated for {project_enrollment.enrollment.user.get_full_name()}.')
+                return redirect('courses:instructor_review_project', slug=course.slug, project_id=project_id, enrollment_id=enrollment_id)
+        
+        elif action == 'request_changes':
+            # Set status back to in_progress for resubmission
+            project_enrollment.status = 'in_progress'
+            project_enrollment.save()
+            
+            messages.success(request, 'Project returned for revisions. Student has been notified.')
+            return redirect('courses:instructor_review_project', slug=course.slug, project_id=project_id, enrollment_id=enrollment_id)
+    
+    form = InstructorReviewForm(instance=project_enrollment)
+    
+    context = {
+        'course': course,
+        'project': project,
+        'project_enrollment': project_enrollment,
+        'form': form,
+        'submission_links': project_enrollment.get_submission_links(),
+    }
+    return render(request, 'courses/instructor_review.html', context)
+
+
+@login_required
+def download_certificate(request, enrollment_id):
+    """Download project completion certificate"""
+    project_enrollment = get_object_or_404(
+        ProjectEnrollment,
+        id=enrollment_id,
+        enrollment__user=request.user,
+        status='completed'
+    )
+    
+    if not project_enrollment.can_download_certificate():
+        messages.error(request, 'Certificate is not available for download.')
+        return redirect('courses:course_materials', slug=project_enrollment.enrollment.course.slug)
+    
+    # Increment download count
+    project_enrollment.certificate_download_count += 1
+    project_enrollment.save()
+    
+    # Return the certificate file
+    try:
+        response = HttpResponse(
+            project_enrollment.certificate_file.read(),
+            content_type='application/pdf'
+        )
+        filename = f"LUM_Certificate_{project_enrollment.enrollment.user.username}_{project_enrollment.project.title.replace(' ', '_')}.pdf"
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+    except Exception as e:
+        messages.error(request, 'Error downloading certificate. Please contact support.')
+        return redirect('courses:course_materials', slug=project_enrollment.enrollment.course.slug)
+
+
+@login_required
+def instructor_dashboard(request):
+    """Dashboard for instructors to view all submitted projects"""
+    if not request.user.is_staff:
+        # Check if user is an instructor for any courses
+        instructor_courses = Course.objects.filter(instructor=request.user, is_active=True)
+        if not instructor_courses.exists():
+            messages.error(request, 'You do not have instructor permissions.')
+            return redirect('courses:courses')
+    else:
+        # Staff can see all courses
+        instructor_courses = Course.objects.filter(is_active=True)
+    
+    # Get all submitted projects for instructor's courses
+    submitted_projects = ProjectEnrollment.objects.filter(
+        project__course__in=instructor_courses,
+        status='submitted'
+    ).select_related(
+        'enrollment__user',
+        'enrollment__course',
+        'project'
+    ).order_by('-submitted_at')
+    
+    context = {
+        'instructor_courses': instructor_courses,
+        'submitted_projects': submitted_projects,
+    }
+    return render(request, 'courses/instructor_dashboard.html', context)
