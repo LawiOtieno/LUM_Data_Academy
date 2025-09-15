@@ -337,6 +337,8 @@ def start_project(request, slug, project_id):
     )
     
     if created:
+        # Properly start the project to set status to 'in_progress'
+        project_enrollment.start_project()
         message = f"Project '{project.title}' started successfully! Good luck!"
         messages.success(request, message)
     else:
