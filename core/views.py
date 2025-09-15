@@ -144,8 +144,18 @@ def newsletter_subscribe(request):
 
 
 def admissions(request):
-    """Admissions and registration page"""
-    return render(request, 'core/admissions.html')
+    """Admissions and registration page with featured courses"""
+    # Get featured courses for the admissions page
+    featured_courses = Course.objects.filter(
+        is_featured=True, 
+        is_active=True,
+        is_published=True
+    ).order_by('-discount_price', '-created_at')[:6]
+    
+    context = {
+        'featured_courses': featured_courses,
+    }
+    return render(request, 'core/admissions.html', context)
 
 
 def student_resources(request):
