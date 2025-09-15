@@ -250,10 +250,23 @@ def instructor_dashboard(request):
         from courses.models import Course, Enrollment
         
         # Get courses assigned to this instructor
-        instructor_courses = Course.objects.filter(
-            instructor=request.user,
-            is_active=True
-        ).order_by('-created_at')
+        # Check both instructor field and if user is staff (can see all courses)
+        if request.user.is_staff:
+            instructor_courses = Course.objects.filter(
+                is_active=True
+            ).order_by('-created_at')
+        else:
+            instructor_courses = Course.objects.filter(
+                instructor=request.user,
+                is_active=True
+            ).order_by('-created_at')
+        
+        # If no courses found with instructor field, check if user is marked as instructor in profile
+        if not instructor_courses.exists() and profile.is_instructor:
+            # For now, show all courses if user is marked as instructor but no courses assigned
+            instructor_courses = Course.objects.filter(
+                is_active=True
+            ).order_by('-created_at')
         
         # Calculate total students across instructor's courses
         total_students = Enrollment.objects.filter(

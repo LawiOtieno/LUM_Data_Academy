@@ -562,15 +562,23 @@ def download_certificate(request, enrollment_id):
 @login_required
 def instructor_dashboard(request):
     """Dashboard for instructors to view all submitted projects"""
-    if not request.user.is_staff:
-        # Check if user is an instructor for any courses
-        instructor_courses = Course.objects.filter(instructor=request.user, is_active=True)
-        if not instructor_courses.exists():
-            messages.error(request, 'You do not have instructor permissions.')
-            return redirect('courses:courses')
-    else:
+    # Check if user has instructor permissions
+    profile = request.user.userprofile
+    if not profile.is_instructor and not request.user.is_staff:
+        messages.error(request, 'You do not have instructor permissions.')
+        return redirect('courses:courses')
+    
+    if request.user.is_staff:
         # Staff can see all courses
         instructor_courses = Course.objects.filter(is_active=True)
+    else:
+        # Get courses assigned to this instructor
+        instructor_courses = Course.objects.filter(instructor=request.user, is_active=True)
+        
+        # If no courses found with instructor field, check if user is marked as instructor in profile
+        if not instructor_courses.exists() and profile.is_instructor:
+            # For now, show all courses if user is marked as instructor but no courses assigned
+            instructor_courses = Course.objects.filter(is_active=True)
     
     # Get all submitted projects for instructor's courses
     submitted_projects = ProjectEnrollment.objects.filter(
