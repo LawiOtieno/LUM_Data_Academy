@@ -483,12 +483,12 @@ def instructor_review_project(request, slug, project_id, enrollment_id):
         messages.error(request, 'You do not have permission to review projects for this course.')
         return redirect('courses:course_detail', slug=course.slug)
     
-    # Get the project enrollment
+    # Get the project enrollment (allow both submitted and completed status for review)
     project_enrollment = get_object_or_404(
         ProjectEnrollment,
         id=enrollment_id,
         project=project,
-        status='submitted'
+        status__in=['submitted', 'completed']
     )
     
     if request.method == 'POST':
@@ -509,7 +509,7 @@ def instructor_review_project(request, slug, project_id, enrollment_id):
                 EmailService.send_project_completion_notification(project_enrollment)
                 
                 messages.success(request, f'Project completed successfully. Certificate has been generated for {project_enrollment.enrollment.user.get_full_name()}.')
-                return redirect('courses:instructor_review_project', slug=course.slug, project_id=project_id, enrollment_id=enrollment_id)
+                return redirect('courses:instructor_dashboard')
         
         elif action == 'request_changes':
             # Set status back to in_progress for resubmission
