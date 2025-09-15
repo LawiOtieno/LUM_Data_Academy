@@ -54,7 +54,7 @@
                 </div>
                 <div class="flex-1">
                     <h2 class="text-xl font-bold text-gray-900 mb-2">{{ project.title }}</h2>
-                    <p class="text-gray-600 mb-4">{{ project.description }}</p>
+                    <div class="text-gray-600 mb-4">{{ project.description|safe }}</div>
                     
                     {% if project.requirements %}
                     <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
