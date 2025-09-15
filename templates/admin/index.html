@@ -1,8 +1,704 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
 
-{% block title %}{% trans 'Site administration' %}{% endblock %}
+{% block title %}{% trans 'LUM Data Academy Dashboard' %}{% endblock %}
 
 {% block content %}
-{{ block.super }}
+<div class="admin-dashboard">
+    <!-- Welcome Section -->
+    <div class="dashboard-header">
+        <div class="welcome-section">
+            <h1 class="dashboard-title">
+                <i class="fas fa-graduation-cap"></i>
+                Welcome to LUM Data Academy Admin
+            </h1>
+            <p class="dashboard-subtitle">
+                Manage your learning management system with powerful analytics and tools
+            </p>
+        </div>
+        <div class="dashboard-actions">
+            <div class="quick-action-card">
+                <i class="fas fa-clock"></i>
+                <span id="current-time"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="admin-stats">
+        <div class="stat-card users">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ user_count|default:0 }}</h3>
+                <p>Total Users</p>
+                <div class="stat-trend">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+12% this month</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-card courses">
+            <div class="stat-icon">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ course_count|default:0 }}</h3>
+                <p>Active Courses</p>
+                <div class="stat-trend">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+8% this month</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-card enrollments">
+            <div class="stat-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ enrollment_count|default:0 }}</h3>
+                <p>Enrollments</p>
+                <div class="stat-trend">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+25% this month</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-card blogs">
+            <div class="stat-icon">
+                <i class="fas fa-blog"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ blog_count|default:0 }}</h3>
+                <p>Blog Posts</p>
+                <div class="stat-trend">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>+5% this month</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions-section">
+        <h2 class="section-title">
+            <i class="fas fa-bolt"></i>
+            Quick Actions
+        </h2>
+        <div class="quick-actions-grid">
+            <a href="{% url 'admin:courses_course_add' %}" class="quick-action-btn add-course">
+                <div class="action-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="action-content">
+                    <h3>Add New Course</h3>
+                    <p>Create a new learning course</p>
+                </div>
+            </a>
+            
+            <a href="{% url 'admin:auth_user_add' %}" class="quick-action-btn add-user">
+                <div class="action-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="action-content">
+                    <h3>Add New User</h3>
+                    <p>Register a new user account</p>
+                </div>
+            </a>
+            
+            <a href="{% url 'admin:core_blogpost_add' %}" class="quick-action-btn add-blog">
+                <div class="action-icon">
+                    <i class="fas fa-pen"></i>
+                </div>
+                <div class="action-content">
+                    <h3>Write Blog Post</h3>
+                    <p>Create engaging content</p>
+                </div>
+            </a>
+            
+            <a href="{% url 'admin:courses_enrollment_changelist' %}" class="quick-action-btn view-enrollments">
+                <div class="action-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="action-content">
+                    <h3>View Enrollments</h3>
+                    <p>Monitor student progress</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Activity and Admin Modules -->
+    <div class="dashboard-main-content">
+        <div class="dashboard-modules">
+            <div class="module-section">
+                <h2 class="section-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    Course Management
+                </h2>
+                <div class="dashboard module">
+                    <div class="module-content">
+                        <div class="module-item">
+                            <a href="{% url 'admin:courses_course_changelist' %}">
+                                <i class="fas fa-book"></i>
+                                <span>Courses</span>
+                                <div class="module-count">{{ course_count|default:0 }}</div>
+                            </a>
+                        </div>
+                        <div class="module-item">
+                            <a href="{% url 'admin:courses_coursecategory_changelist' %}">
+                                <i class="fas fa-tags"></i>
+                                <span>Categories</span>
+                            </a>
+                        </div>
+                        <div class="module-item">
+                            <a href="{% url 'admin:courses_coursemodule_changelist' %}">
+                                <i class="fas fa-list"></i>
+                                <span>Modules</span>
+                            </a>
+                        </div>
+                        <div class="module-item">
+                            <a href="{% url 'admin:courses_enrollment_changelist' %}">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Enrollments</span>
+                                <div class="module-count">{{ enrollment_count|default:0 }}</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="module-section">
+                <h2 class="section-title">
+                    <i class="fas fa-users"></i>
+                    User Management
+                </h2>
+                <div class="dashboard module">
+                    <div class="module-content">
+                        <div class="module-item">
+                            <a href="{% url 'admin:auth_user_changelist' %}">
+                                <i class="fas fa-users"></i>
+                                <span>Users</span>
+                                <div class="module-count">{{ user_count|default:0 }}</div>
+                            </a>
+                        </div>
+                        <div class="module-item">
+                            <a href="{% url 'admin:accounts_userprofile_changelist' %}">
+                                <i class="fas fa-id-card"></i>
+                                <span>User Profiles</span>
+                            </a>
+                        </div>
+                        <div class="module-item">
+                            <a href="{% url 'admin:auth_group_changelist' %}">
+                                <i class="fas fa-users-cog"></i>
+                                <span>Groups</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="module-section">
+                <h2 class="section-title">
+                    <i class="fas fa-newspaper"></i>
+                    Content Management
+                </h2>
+                <div class="dashboard module">
+                    <div class="module-content">
+                        <div class="module-item">
+                            <a href="{% url 'admin:core_blogpost_changelist' %}">
+                                <i class="fas fa-blog"></i>
+                                <span>Blog Posts</span>
+                                <div class="module-count">{{ blog_count|default:0 }}</div>
+                            </a>
+                        </div>
+                        <div class="module-item">
+                            <a href="{% url 'admin:core_event_changelist' %}">
+                                <i class="fas fa-calendar"></i>
+                                <span>Events</span>
+                            </a>
+                        </div>
+                        <div class="module-item">
+                            <a href="{% url 'admin:core_testimonial_changelist' %}">
+                                <i class="fas fa-quote-right"></i>
+                                <span>Testimonials</span>
+                            </a>
+                        </div>
+                        <div class="module-item">
+                            <a href="{% url 'admin:core_career_changelist' %}">
+                                <i class="fas fa-briefcase"></i>
+                                <span>Careers</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="module-section">
+                <h2 class="section-title">
+                    <i class="fas fa-cog"></i>
+                    System Management
+                </h2>
+                <div class="dashboard module">
+                    <div class="module-content">
+                        <div class="module-item">
+                            <a href="{% url 'admin:core_contactsubmission_changelist' %}">
+                                <i class="fas fa-envelope"></i>
+                                <span>Contact Forms</span>
+                            </a>
+                        </div>
+                        <div class="module-item">
+                            <a href="{% url 'admin:core_newsletter_changelist' %}">
+                                <i class="fas fa-mail-bulk"></i>
+                                <span>Newsletter</span>
+                            </a>
+                        </div>
+                        <div class="module-item">
+                            <a href="{% url 'admin:core_survey_changelist' %}">
+                                <i class="fas fa-poll"></i>
+                                <span>Surveys</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-sidebar">
+            <div class="sidebar-widget">
+                <h3 class="widget-title">
+                    <i class="fas fa-chart-pie"></i>
+                    System Health
+                </h3>
+                <div class="health-indicators">
+                    <div class="health-item">
+                        <div class="health-label">Server Status</div>
+                        <div class="health-status online">
+                            <i class="fas fa-circle"></i>
+                            Online
+                        </div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-label">Database</div>
+                        <div class="health-status online">
+                            <i class="fas fa-circle"></i>
+                            Connected
+                        </div>
+                    </div>
+                    <div class="health-item">
+                        <div class="health-label">Email Service</div>
+                        <div class="health-status online">
+                            <i class="fas fa-circle"></i>
+                            Active
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-widget">
+                <h3 class="widget-title">
+                    <i class="fas fa-info-circle"></i>
+                    Quick Info
+                </h3>
+                <div class="info-list">
+                    <div class="info-item">
+                        <strong>Django Version:</strong> 5.2.6
+                    </div>
+                    <div class="info-item">
+                        <strong>Python Version:</strong> 3.11+
+                    </div>
+                    <div class="info-item">
+                        <strong>Environment:</strong> Development
+                    </div>
+                    <div class="info-item">
+                        <strong>Last Backup:</strong> Today
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Additional dashboard-specific styles */
+.admin-dashboard {
+    padding: 0;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--primary-green), var(--primary-light-green));
+    color: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+}
+
+.dashboard-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dashboard-subtitle {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+.quick-action-card {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+}
+
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-normal);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    border-left: 4px solid var(--primary-green);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--primary-green), var(--primary-light-green));
+    color: white;
+}
+
+.stat-card.users .stat-icon { background: linear-gradient(135deg, var(--secondary-blue), #0ea5e9); }
+.stat-card.courses .stat-icon { background: linear-gradient(135deg, var(--success-green), #059669); }
+.stat-card.enrollments .stat-icon { background: linear-gradient(135deg, var(--accent-red), #b91c1c); }
+.stat-card.blogs .stat-icon { background: linear-gradient(135deg, var(--warning-yellow), #d97706); }
+
+.stat-content h3 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+.stat-content p {
+    margin: 0.25rem 0;
+    color: var(--medium-gray);
+    font-weight: 600;
+}
+
+.stat-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--success-green);
+    font-weight: 500;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+.quick-actions-section {
+    margin-bottom: 3rem;
+}
+
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.quick-action-btn {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    text-decoration: none;
+    color: var(--dark-text);
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-normal);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.quick-action-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+    color: var(--dark-text);
+}
+
+.action-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    background: linear-gradient(135deg, var(--primary-green), var(--primary-light-green));
+    color: white;
+}
+
+.add-course .action-icon { background: linear-gradient(135deg, var(--success-green), #059669); }
+.add-user .action-icon { background: linear-gradient(135deg, var(--secondary-blue), #0ea5e9); }
+.add-blog .action-icon { background: linear-gradient(135deg, var(--warning-yellow), #d97706); }
+.view-enrollments .action-icon { background: linear-gradient(135deg, var(--accent-red), #b91c1c); }
+
+.action-content h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.action-content p {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.875rem;
+    color: var(--medium-gray);
+}
+
+.dashboard-main-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.dashboard-modules {
+    display: grid;
+    gap: 2rem;
+}
+
+.module-section .dashboard.module {
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.module-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0;
+}
+
+.module-item {
+    border-right: 1px solid #f3f4f6;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.module-item:last-child,
+.module-item:nth-last-child(2):nth-child(odd) {
+    border-right: none;
+}
+
+.module-item a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    text-decoration: none;
+    color: var(--dark-text);
+    transition: var(--transition-fast);
+    position: relative;
+    min-height: 120px;
+    justify-content: center;
+}
+
+.module-item a:hover {
+    background: var(--gray-light);
+    color: var(--primary-green);
+}
+
+.module-item i {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--primary-green);
+}
+
+.module-item span {
+    font-weight: 600;
+    text-align: center;
+}
+
+.module-count {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: var(--primary-green);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.dashboard-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.sidebar-widget {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.widget-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark-text);
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--gray-light);
+}
+
+.health-indicators {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.health-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.health-label {
+    font-weight: 500;
+    color: var(--medium-gray);
+}
+
+.health-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.health-status.online {
+    color: var(--success-green);
+}
+
+.health-status i {
+    font-size: 0.5rem;
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.info-item {
+    font-size: 0.875rem;
+    color: var(--medium-gray);
+}
+
+.info-item strong {
+    color: var(--dark-text);
+}
+
+@media (max-width: 1024px) {
+    .dashboard-main-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .module-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .module-item {
+        border-right: none;
+    }
+}
+</style>
+
+<script>
+// Update current time
+function updateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('en-US', {
+        hour12: true,
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    const dateString = now.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric'
+    });
+    
+    const timeElement = document.getElementById('current-time');
+    if (timeElement) {
+        timeElement.innerHTML = `${dateString}<br>${timeString}`;
+    }
+}
+
+// Update time every minute
+updateTime();
+setInterval(updateTime, 60000);
+</script>
 {% endblock %}

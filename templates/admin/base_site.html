@@ -1,12 +1,168 @@
 
 {% extends "admin/base.html" %}
+{% load static %}
 
 {% block title %}{{ title }} | LUM Data Academy Admin{% endblock %}
 
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/material_admin.css' %}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#045334">
+{% endblock %}
+
 {% block branding %}
-<h1 id="site-name">
-    <a href="{% url 'admin:index' %}">
-        LUM Data Academy Admin
-    </a>
-</h1>
+<div class="admin-header">
+    <div class="admin-logo">
+        <i class="fas fa-graduation-cap"></i>
+        <div class="admin-title">
+            <h1 class="main-title">LUM Data Academy</h1>
+            <p class="sub-title">Learning Management System</p>
+        </div>
+    </div>
+    <div class="admin-header-actions">
+        <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
+            <i class="fas fa-moon"></i>
+        </button>
+        <div class="user-menu">
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span>{{ user.get_full_name|default:user.username }}</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="user-dropdown">
+                <a href="{% url 'admin:password_change' %}" class="dropdown-item">
+                    <i class="fas fa-key"></i> Change Password
+                </a>
+                <a href="{% url 'admin:logout' %}" class="dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block nav-sidebar %}
+<nav class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-content">
+        <div class="sidebar-section">
+            <h3 class="sidebar-section-title">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
+            </h3>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'admin:index' %}" class="sidebar-item {% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                    <i class="fas fa-home"></i> Overview
+                </a></li>
+            </ul>
+        </div>
+        
+        <div class="sidebar-section">
+            <h3 class="sidebar-section-title">
+                <i class="fas fa-users"></i>
+                User Management
+            </h3>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'admin:auth_user_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-users"></i> Users
+                </a></li>
+                <li><a href="{% url 'admin:accounts_userprofile_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-id-card"></i> User Profiles
+                </a></li>
+                <li><a href="{% url 'admin:auth_group_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-users-cog"></i> Groups
+                </a></li>
+            </ul>
+        </div>
+        
+        <div class="sidebar-section">
+            <h3 class="sidebar-section-title">
+                <i class="fas fa-graduation-cap"></i>
+                Course Management
+            </h3>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'admin:courses_course_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-book"></i> Courses
+                </a></li>
+                <li><a href="{% url 'admin:courses_coursecategory_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-tags"></i> Categories
+                </a></li>
+                <li><a href="{% url 'admin:courses_coursemodule_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-list"></i> Modules
+                </a></li>
+                <li><a href="{% url 'admin:courses_enrollment_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-user-plus"></i> Enrollments
+                </a></li>
+                <li><a href="{% url 'admin:courses_capstoneproject_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-project-diagram"></i> Projects
+                </a></li>
+            </ul>
+        </div>
+        
+        <div class="sidebar-section">
+            <h3 class="sidebar-section-title">
+                <i class="fas fa-newspaper"></i>
+                Content Management
+            </h3>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'admin:core_blogpost_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-blog"></i> Blog Posts
+                </a></li>
+                <li><a href="{% url 'admin:core_event_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-calendar"></i> Events
+                </a></li>
+                <li><a href="{% url 'admin:core_testimonial_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-quote-right"></i> Testimonials
+                </a></li>
+                <li><a href="{% url 'admin:core_career_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-briefcase"></i> Careers
+                </a></li>
+            </ul>
+        </div>
+        
+        <div class="sidebar-section">
+            <h3 class="sidebar-section-title">
+                <i class="fas fa-cog"></i>
+                System
+            </h3>
+            <ul class="sidebar-menu">
+                <li><a href="{% url 'admin:core_contactsubmission_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-envelope"></i> Contact Forms
+                </a></li>
+                <li><a href="{% url 'admin:core_newsletter_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-mail-bulk"></i> Newsletter
+                </a></li>
+                <li><a href="{% url 'admin:core_survey_changelist' %}" class="sidebar-item">
+                    <i class="fas fa-poll"></i> Surveys
+                </a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="sidebar-footer">
+        <a href="/" class="view-site-link" target="_blank">
+            <i class="fas fa-external-link-alt"></i>
+            View Site
+        </a>
+    </div>
+</nav>
+
+<button class="sidebar-toggle" id="sidebarToggle">
+    <i class="fas fa-bars"></i>
+</button>
+{% endblock %}
+
+{% block extrajs %}
+{{ block.super }}
+<script src="{% static 'admin/js/material_admin.js' %}"></script>
 {% endblock %}

@@ -6,6 +6,13 @@ from django.urls import path
 from django.contrib.auth.models import User
 from .models import BlogPost
 
+# Import models for statistics
+try:
+    from courses.models import Course, Enrollment
+except ImportError:
+    Course = None
+    Enrollment = None
+
 class CustomAdminSite(AdminSite):
     site_header = "LUM Data Academy Administration"
     site_title = "LUM Admin"
@@ -45,11 +52,11 @@ class CustomAdminSite(AdminSite):
         try:
             extra_context.update({
                 'user_count': User.objects.count(),
-                'course_count': Course.objects.count(),
+                'course_count': Course.objects.count() if Course else 0,
                 'blog_count': BlogPost.objects.count(),
-                'enrollment_count': Enrollment.objects.count(),
+                'enrollment_count': Enrollment.objects.count() if Enrollment else 0,
             })
-        except:
+        except Exception:
             extra_context.update({
                 'user_count': 0,
                 'course_count': 0,

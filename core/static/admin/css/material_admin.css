@@ -1,0 +1,1487 @@
+/* ========================================================================
+   LUM Data Academy - Material Dashboard 2 Admin Styling
+   Inspired by Google's Material Design 2
+   ======================================================================== */
+
+/* ========================================================================
+   CSS Variables - Color Palette
+   ======================================================================== */
+:root {
+    /* Primary Colors */
+    --primary-green: #045334;
+    --primary-light-green: #065536;
+    --secondary-blue: #01bbe1;
+    --accent-red: #dc2626;
+    
+    /* Background Colors */
+    --light-background: #cccfd4;
+    --white: #ffffff;
+    --gray-light: #f8f9fa;
+    
+    /* Text Colors */
+    --dark-text: #333333;
+    --medium-gray: #666666;
+    --light-gray: #d0d0d0;
+    
+    /* Additional Material Colors */
+    --success-green: #10b981;
+    --warning-yellow: #f59e0b;
+    --error-red: #ef4444;
+    --info-blue: #3b82f6;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    /* Border Radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+}
+
+/* ========================================================================
+   Reset and Base Styles
+   ======================================================================== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--gray-light);
+    margin: 0;
+    padding: 0;
+    color: var(--dark-text);
+    line-height: 1.6;
+}
+
+/* Hide default Django admin elements */
+#header {
+    display: none !important;
+}
+
+.breadcrumbs {
+    background: transparent;
+    padding: 1rem 2rem;
+    border: none;
+    margin: 0;
+}
+
+.breadcrumbs a {
+    color: var(--primary-green);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.breadcrumbs a:hover {
+    color: var(--primary-light-green);
+}
+
+/* ========================================================================
+   Admin Header
+   ======================================================================== */
+.admin-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-light-green) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    z-index: 1000;
+    box-shadow: var(--shadow-md);
+}
+
+.admin-logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-logo i {
+    font-size: 2rem;
+    color: white;
+}
+
+.admin-title .main-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.admin-title .sub-title {
+    margin: 0;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 400;
+}
+
+.admin-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.theme-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.user-menu {
+    position: relative;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border: 2px solid transparent;
+}
+
+.user-info:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+.user-info:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.user-info i.fa-user-circle {
+    font-size: 1.5rem;
+}
+
+.user-info i.fa-chevron-down {
+    font-size: 0.75rem;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: var(--transition-normal);
+}
+
+.user-menu.active .user-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Keep hover support for desktop but not required for keyboard */
+.user-menu:hover .user-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: var(--dark-text);
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+.dropdown-item:hover {
+    background: var(--gray-light);
+}
+
+.dropdown-item:first-child {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.dropdown-item:last-child {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* ========================================================================
+   Sidebar Navigation
+   ======================================================================== */
+.admin-sidebar {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 280px;
+    height: calc(100vh - 70px);
+    background: white;
+    border-right: 1px solid #e5e7eb;
+    overflow-y: auto;
+    z-index: 999;
+    transition: var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-content {
+    flex: 1;
+    padding: 1.5rem 0;
+}
+
+.sidebar-section {
+    margin-bottom: 2rem;
+}
+
+.sidebar-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 1rem 0;
+    padding: 0 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--medium-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sidebar-section-title i {
+    font-size: 1rem;
+    color: var(--primary-green);
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    color: var(--dark-text);
+    text-decoration: none;
+    transition: var(--transition-fast);
+    font-weight: 500;
+    border-radius: 0;
+}
+
+.sidebar-item:hover {
+    background: linear-gradient(90deg, rgba(4, 83, 52, 0.1), transparent);
+    color: var(--primary-green);
+    border-right: 3px solid var(--primary-green);
+}
+
+.sidebar-item.active {
+    background: linear-gradient(90deg, rgba(4, 83, 52, 0.2), transparent);
+    color: var(--primary-green);
+    border-right: 3px solid var(--primary-green);
+    font-weight: 600;
+}
+
+.sidebar-item i {
+    width: 20px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.sidebar-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.view-site-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, var(--secondary-blue), #0ea5e9);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    font-weight: 500;
+    transition: var(--transition-fast);
+}
+
+.view-site-link:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.sidebar-toggle {
+    position: fixed;
+    top: 80px;
+    left: 290px;
+    background: var(--primary-green);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1001;
+    transition: var(--transition-normal);
+    box-shadow: var(--shadow-md);
+}
+
+.sidebar-toggle:hover {
+    background: var(--primary-light-green);
+    transform: scale(1.1);
+}
+
+/* ========================================================================
+   Main Content Area
+   ======================================================================== */
+#content {
+    margin-left: 280px;
+    margin-top: 70px;
+    padding: 2rem;
+    min-height: calc(100vh - 70px);
+}
+
+#content-main {
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* ========================================================================
+   Admin Dashboard Cards
+   ======================================================================== */
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-normal);
+    border-left: 4px solid var(--primary-green);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-green);
+}
+
+.stat-card p {
+    margin: 0;
+    color: var(--medium-gray);
+    font-weight: 500;
+}
+
+.stat-card.users { border-left-color: var(--secondary-blue); }
+.stat-card.users h3 { color: var(--secondary-blue); }
+
+.stat-card.courses { border-left-color: var(--success-green); }
+.stat-card.courses h3 { color: var(--success-green); }
+
+.stat-card.enrollments { border-left-color: var(--accent-red); }
+.stat-card.enrollments h3 { color: var(--accent-red); }
+
+/* ========================================================================
+   Buttons and Form Elements
+   ======================================================================== */
+.button, .default, input[type="submit"], .submit-row input, button {
+    background: linear-gradient(135deg, var(--primary-green), var(--primary-light-green));
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.button:hover, .default:hover, input[type="submit"]:hover, .submit-row input:hover, button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    color: white;
+}
+
+.button.addlink, .addlink {
+    background: linear-gradient(135deg, var(--success-green), #059669);
+}
+
+.button.changelink, .changelink {
+    background: linear-gradient(135deg, var(--secondary-blue), #0ea5e9);
+}
+
+.button.viewlink, .viewlink {
+    background: linear-gradient(135deg, var(--info-blue), #2563eb);
+}
+
+.button.deletelink, .deletelink {
+    background: linear-gradient(135deg, var(--accent-red), #b91c1c);
+}
+
+/* Action buttons in admin */
+.object-tools {
+    margin-bottom: 1rem;
+}
+
+.object-tools li {
+    list-style: none;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.object-tools a {
+    background: linear-gradient(135deg, var(--success-green), #059669);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.object-tools a::before {
+    content: "\f067";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+
+.object-tools a:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* ========================================================================
+   Forms Styling
+   ======================================================================== */
+.form-row {
+    margin-bottom: 1.5rem;
+}
+
+.form-row label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+input[type="text"], input[type="email"], input[type="password"], 
+input[type="number"], input[type="tel"], input[type="url"], 
+select, textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    transition: var(--transition-fast);
+    background: white;
+}
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus,
+input[type="number"]:focus, input[type="tel"]:focus, input[type="url"]:focus,
+select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(4, 83, 52, 0.1);
+}
+
+.field-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ========================================================================
+   Tables Styling
+   ======================================================================== */
+#result_list {
+    background: white;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: none;
+}
+
+#result_list thead th {
+    background: linear-gradient(135deg, var(--primary-green), var(--primary-light-green));
+    color: white;
+    padding: 1rem;
+    font-weight: 600;
+    border: none;
+    text-align: left;
+}
+
+#result_list tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: var(--transition-fast);
+}
+
+#result_list tbody tr:hover {
+    background: var(--gray-light);
+}
+
+#result_list tbody td {
+    padding: 1rem;
+    border: none;
+    vertical-align: middle;
+}
+
+#result_list tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+#result_list tbody tr:nth-child(even):hover {
+    background: var(--gray-light);
+}
+
+/* ========================================================================
+   Filters and Search
+   ======================================================================== */
+#changelist-filter {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: none;
+}
+
+#changelist-filter h2 {
+    color: var(--primary-green);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary-green);
+}
+
+#changelist-filter h3 {
+    color: var(--dark-text);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.5rem 0;
+}
+
+#changelist-filter li {
+    padding: 0.5rem 0;
+}
+
+#changelist-filter a {
+    color: var(--medium-gray);
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+#changelist-filter a:hover {
+    color: var(--primary-green);
+}
+
+#changelist-filter a.selected {
+    color: var(--primary-green);
+    font-weight: 600;
+}
+
+#changelist-search {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--radius-xl);
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm);
+}
+
+#changelist-search input[type="text"] {
+    border: 2px solid #e5e7eb;
+    border-radius: var(--radius-lg);
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+}
+
+/* ========================================================================
+   Pagination
+   ======================================================================== */
+.paginator {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.paginator a, .paginator .this-page {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition-fast);
+}
+
+.paginator a {
+    background: white;
+    color: var(--primary-green);
+    border: 2px solid var(--primary-green);
+}
+
+.paginator a:hover {
+    background: var(--primary-green);
+    color: white;
+}
+
+.paginator .this-page {
+    background: var(--primary-green);
+    color: white;
+}
+
+/* ========================================================================
+   Messages and Alerts
+   ======================================================================== */
+.messagelist {
+    margin: 0 0 2rem 0;
+    padding: 0;
+    list-style: none;
+}
+
+.messagelist li {
+    padding: 1rem 1.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: var(--radius-lg);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.messagelist li.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success-green);
+    border-left: 4px solid var(--success-green);
+}
+
+.messagelist li.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error-red);
+    border-left: 4px solid var(--error-red);
+}
+
+.messagelist li.warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning-yellow);
+    border-left: 4px solid var(--warning-yellow);
+}
+
+.messagelist li.info {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--info-blue);
+    border-left: 4px solid var(--info-blue);
+}
+
+/* ========================================================================
+   Enhanced Focus Styles for Accessibility
+   ======================================================================== */
+/* Global focus outline with high contrast */
+*:focus {
+    outline: 2px solid var(--secondary-blue);
+    outline-offset: 2px;
+}
+
+/* Button focus styles */
+.button:focus, .default:focus, input[type="submit"]:focus, 
+.submit-row input:focus, button:focus {
+    outline: 2px solid var(--secondary-blue);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(1, 187, 225, 0.2);
+}
+
+/* Sidebar item focus styles */
+.sidebar-item:focus {
+    outline: none;
+    background: linear-gradient(90deg, rgba(1, 187, 225, 0.15), transparent);
+    border-right: 3px solid var(--secondary-blue);
+    box-shadow: inset 0 0 0 2px var(--secondary-blue);
+}
+
+/* Theme toggle focus */
+.theme-toggle:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+/* Sidebar toggle focus */
+.sidebar-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(1, 187, 225, 0.4);
+    transform: scale(1.05);
+}
+
+/* Form input focus enhancements */
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus,
+input[type="number"]:focus, input[type="tel"]:focus, input[type="url"]:focus,
+select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--secondary-blue);
+    box-shadow: 0 0 0 3px rgba(1, 187, 225, 0.2);
+}
+
+/* Link focus styles */
+a:focus {
+    outline: 2px solid var(--secondary-blue);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* Dropdown item focus */
+.dropdown-item:focus {
+    outline: none;
+    background: var(--secondary-blue);
+    color: white;
+}
+
+/* Pagination focus */
+.paginator a:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(1, 187, 225, 0.3);
+}
+
+/* Table row focus for keyboard navigation */
+#result_list tbody tr:focus {
+    outline: 2px solid var(--secondary-blue);
+    outline-offset: -2px;
+    background: rgba(1, 187, 225, 0.1);
+}
+
+/* Filter link focus */
+#changelist-filter a:focus {
+    outline: 2px solid var(--secondary-blue);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* Search input focus enhancement */
+#changelist-search input[type="text"]:focus {
+    border-color: var(--secondary-blue);
+    box-shadow: 0 0 0 3px rgba(1, 187, 225, 0.2);
+}
+
+/* Skip link for screen readers */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--primary-green);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 4px;
+    z-index: 10000;
+    transition: top 0.3s;
+}
+
+.skip-link:focus {
+    top: 6px;
+    outline: 2px solid var(--secondary-blue);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    *:focus {
+        outline-width: 3px;
+        outline-offset: 3px;
+    }
+    
+    .sidebar-item:focus {
+        box-shadow: inset 0 0 0 3px #000;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *:focus {
+        transition: none;
+    }
+    
+    .sidebar-item:focus,
+    .button:focus,
+    .theme-toggle:focus,
+    .sidebar-toggle:focus {
+        transition: none;
+    }
+}
+
+/* ========================================================================
+   Responsive Design
+   ======================================================================== */
+/* Tablet and Mobile Breakpoint */
+@media (max-width: 1024px) {
+    .admin-sidebar {
+        transform: translateX(-100%);
+        z-index: 999;
+    }
+    
+    .admin-sidebar.active {
+        transform: translateX(0);
+        box-shadow: var(--shadow-xl);
+    }
+    
+    #content {
+        margin-left: 0;
+        transition: margin-left var(--transition-normal);
+    }
+    
+    .sidebar-toggle {
+        left: 1rem;
+        display: flex;
+    }
+    
+    .admin-header {
+        padding: 0 1rem;
+    }
+    
+    /* Improve mobile sidebar overlay */
+    .sidebar-overlay {
+        backdrop-filter: blur(4px);
+    }
+    
+    /* Better mobile navigation */
+    .sidebar-item {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .sidebar-section-title {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* Mobile Breakpoint */
+@media (max-width: 768px) {
+    .admin-stats {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    #content {
+        padding: 1rem;
+    }
+    
+    #content-main {
+        padding: 1rem;
+        border-radius: var(--radius-lg);
+    }
+    
+    .admin-header {
+        height: 60px;
+        padding: 0 1rem;
+    }
+    
+    .admin-sidebar {
+        top: 60px;
+        height: calc(100vh - 60px);
+    }
+    
+    .sidebar-toggle {
+        top: 70px;
+    }
+    
+    .admin-header-actions {
+        gap: 0.5rem;
+    }
+    
+    .user-info span {
+        display: none;
+    }
+    
+    .theme-toggle {
+        width: 36px;
+        height: 36px;
+        padding: 0.25rem;
+    }
+    
+    /* Mobile-optimized buttons */
+    .button, .default, input[type="submit"], 
+    .submit-row input, button {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.875rem;
+        min-height: 44px; /* Touch target size */
+    }
+    
+    /* Mobile form improvements */
+    input[type="text"], input[type="email"], input[type="password"],
+    input[type="number"], input[type="tel"], input[type="url"],
+    select, textarea {
+        padding: 1rem;
+        font-size: 1rem;
+        min-height: 44px;
+    }
+    
+    /* Mobile table improvements */
+    #result_list {
+        font-size: 0.875rem;
+    }
+    
+    #result_list th,
+    #result_list td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    /* Mobile pagination */
+    .paginator a, .paginator .this-page {
+        min-width: 44px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Small Mobile Breakpoint */
+@media (max-width: 480px) {
+    .admin-header {
+        height: 56px;
+        padding: 0 0.75rem;
+    }
+    
+    .admin-sidebar {
+        top: 56px;
+        height: calc(100vh - 56px);
+        width: 100%;
+    }
+    
+    .sidebar-toggle {
+        top: 66px;
+    }
+    
+    #content {
+        margin-top: 56px;
+        padding: 0.75rem;
+    }
+    
+    #content-main {
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    
+    .admin-title .main-title {
+        font-size: 1.25rem;
+    }
+    
+    .admin-title .sub-title {
+        display: none;
+    }
+    
+    .admin-stats {
+        gap: 0.75rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .stat-card h3 {
+        font-size: 1.5rem;
+    }
+    
+    /* Improve touch targets */
+    .sidebar-item {
+        padding: 1.25rem 1rem;
+        font-size: 0.875rem;
+    }
+    
+    .user-dropdown {
+        right: -0.75rem;
+        min-width: 180px;
+    }
+    
+    /* Mobile filters */
+    #changelist-filter {
+        margin-bottom: 1rem;
+    }
+    
+    #changelist-search {
+        margin-bottom: 0.75rem;
+    }
+}
+
+/* High DPI / Retina Display Support */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .admin-logo i,
+    .sidebar-item i,
+    .theme-toggle i {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Landscape Phone Orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+    .admin-header {
+        height: 50px;
+    }
+    
+    .admin-sidebar {
+        top: 50px;
+        height: calc(100vh - 50px);
+    }
+    
+    #content {
+        margin-top: 50px;
+    }
+    
+    .sidebar-toggle {
+        top: 60px;
+    }
+    
+    .sidebar-item {
+        padding: 0.75rem 1rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .admin-header,
+    .admin-sidebar,
+    .sidebar-toggle,
+    .theme-toggle,
+    .user-dropdown,
+    .object-tools,
+    .paginator {
+        display: none !important;
+    }
+    
+    #content {
+        margin-left: 0 !important;
+        margin-top: 0 !important;
+        padding: 0 !important;
+    }
+    
+    #content-main {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    
+    .stat-card {
+        break-inside: avoid;
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+    }
+}
+
+/* ========================================================================
+   Dark Mode Support
+   ======================================================================== */
+body.dark-mode {
+    --dark-background: #0f172a;
+    --dark-surface: #1e293b;
+    --dark-surface-light: #334155;
+    --dark-border: #475569;
+    --dark-text: #f1f5f9;
+    --dark-text-muted: #cbd5e1;
+    
+    background: var(--dark-background);
+    color: var(--dark-text);
+}
+
+/* Admin Header Dark Mode */
+body.dark-mode .admin-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-bottom: 1px solid var(--dark-border);
+}
+
+/* Sidebar Dark Mode */
+body.dark-mode .admin-sidebar {
+    background: var(--dark-surface);
+    border-right-color: var(--dark-border);
+}
+
+body.dark-mode .sidebar-section-title {
+    color: var(--dark-text-muted);
+}
+
+body.dark-mode .sidebar-item {
+    color: var(--dark-text);
+}
+
+body.dark-mode .sidebar-item:hover {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), transparent);
+    color: var(--secondary-blue);
+}
+
+body.dark-mode .sidebar-item.active {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), transparent);
+    color: var(--secondary-blue);
+}
+
+body.dark-mode .sidebar-footer {
+    border-top-color: var(--dark-border);
+}
+
+/* Content Area Dark Mode */
+body.dark-mode #content-main {
+    background: var(--dark-surface);
+    color: var(--dark-text);
+}
+
+body.dark-mode .field-box {
+    background: var(--dark-surface-light);
+    color: var(--dark-text);
+}
+
+/* Cards and Statistics Dark Mode */
+body.dark-mode .stat-card {
+    background: var(--dark-surface);
+    color: var(--dark-text);
+}
+
+/* Tables Dark Mode */
+body.dark-mode #result_list {
+    background: var(--dark-surface);
+}
+
+body.dark-mode #result_list thead th {
+    background: linear-gradient(135deg, var(--primary-green), var(--primary-light-green));
+}
+
+body.dark-mode #result_list tbody tr {
+    border-bottom-color: var(--dark-border);
+}
+
+body.dark-mode #result_list tbody tr:nth-child(even) {
+    background: var(--dark-surface-light);
+}
+
+body.dark-mode #result_list tbody tr:hover {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+/* Forms Dark Mode */
+body.dark-mode input[type="text"], 
+body.dark-mode input[type="email"], 
+body.dark-mode input[type="password"],
+body.dark-mode input[type="number"], 
+body.dark-mode input[type="tel"], 
+body.dark-mode input[type="url"],
+body.dark-mode select, 
+body.dark-mode textarea {
+    background: var(--dark-surface-light);
+    color: var(--dark-text);
+    border-color: var(--dark-border);
+}
+
+body.dark-mode input[type="text"]:focus,
+body.dark-mode input[type="email"]:focus,
+body.dark-mode input[type="password"]:focus,
+body.dark-mode input[type="number"]:focus,
+body.dark-mode input[type="tel"]:focus,
+body.dark-mode input[type="url"]:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+    border-color: var(--secondary-blue);
+    background: var(--dark-surface);
+}
+
+body.dark-mode .form-row label {
+    color: var(--dark-text);
+}
+
+/* Filters and Search Dark Mode */
+body.dark-mode #changelist-filter {
+    background: var(--dark-surface);
+    color: var(--dark-text);
+}
+
+body.dark-mode #changelist-filter h2 {
+    color: var(--secondary-blue);
+    border-bottom-color: var(--secondary-blue);
+}
+
+body.dark-mode #changelist-filter h3 {
+    color: var(--dark-text);
+}
+
+body.dark-mode #changelist-filter a {
+    color: var(--dark-text-muted);
+}
+
+body.dark-mode #changelist-filter a:hover {
+    color: var(--secondary-blue);
+}
+
+body.dark-mode #changelist-filter a.selected {
+    color: var(--secondary-blue);
+}
+
+body.dark-mode #changelist-search {
+    background: var(--dark-surface);
+}
+
+body.dark-mode #changelist-search input[type="text"] {
+    background: var(--dark-surface-light);
+    color: var(--dark-text);
+    border-color: var(--dark-border);
+}
+
+/* Messages Dark Mode */
+body.dark-mode .messagelist li.success {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success-green);
+}
+
+body.dark-mode .messagelist li.error {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--error-red);
+}
+
+body.dark-mode .messagelist li.warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--warning-yellow);
+}
+
+body.dark-mode .messagelist li.info {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--info-blue);
+}
+
+/* Dashboard Modules Dark Mode */
+body.dark-mode .dashboard .module {
+    background: var(--dark-surface);
+}
+
+body.dark-mode .dashboard .module td {
+    border-bottom-color: var(--dark-border);
+    color: var(--dark-text);
+}
+
+body.dark-mode .dashboard .module a {
+    color: var(--secondary-blue);
+}
+
+body.dark-mode .dashboard .module a:hover {
+    color: #60a5fa;
+}
+
+/* Pagination Dark Mode */
+body.dark-mode .paginator a {
+    background: var(--dark-surface);
+    color: var(--secondary-blue);
+    border-color: var(--secondary-blue);
+}
+
+body.dark-mode .paginator a:hover {
+    background: var(--secondary-blue);
+    color: white;
+}
+
+body.dark-mode .paginator .this-page {
+    background: var(--secondary-blue);
+    color: white;
+}
+
+/* Dropdown Dark Mode */
+body.dark-mode .user-dropdown {
+    background: var(--dark-surface);
+    border: 1px solid var(--dark-border);
+}
+
+body.dark-mode .dropdown-item {
+    color: var(--dark-text);
+}
+
+body.dark-mode .dropdown-item:hover {
+    background: var(--dark-surface-light);
+}
+
+/* Theme Toggle Enhancement */
+body.dark-mode .theme-toggle {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+body.dark-mode .theme-toggle:hover {
+    background: rgba(59, 130, 246, 0.3);
+}
+
+/* Focus styles for dark mode */
+body.dark-mode *:focus {
+    outline-color: var(--secondary-blue);
+}
+
+body.dark-mode .sidebar-item:focus {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), transparent);
+    border-right-color: var(--secondary-blue);
+    box-shadow: inset 0 0 0 2px var(--secondary-blue);
+}
+
+/* ========================================================================
+   Animations and Loading States
+   ======================================================================== */
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-sidebar {
+    animation: slideIn 0.3s ease;
+}
+
+#content-main {
+    animation: fadeIn 0.5s ease;
+}
+
+.stat-card {
+    animation: fadeIn 0.5s ease;
+}
+
+/* ========================================================================
+   Custom Admin Index Styling
+   ======================================================================== */
+.dashboard .module {
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.dashboard .module h2 {
+    background: linear-gradient(135deg, var(--primary-green), var(--primary-light-green));
+    color: white;
+    margin: 0;
+    padding: 1rem 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.dashboard .module table {
+    margin: 0;
+    width: 100%;
+}
+
+.dashboard .module td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.dashboard .module tr:last-child td {
+    border-bottom: none;
+}
+
+.dashboard .module a {
+    color: var(--primary-green);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition-fast);
+}
+
+.dashboard .module a:hover {
+    color: var(--primary-light-green);
+}
+
+/* ========================================================================
+   Footer Styling
+   ======================================================================== */
+#footer {
+    margin-top: 2rem;
+    padding: 1rem;
+    text-align: center;
+    color: var(--medium-gray);
+    border-top: 1px solid #e5e7eb;
+    background: white;
+}
+
+/* ========================================================================
+   Print Styles
+   ======================================================================== */
+@media print {
+    .admin-header, .admin-sidebar, .sidebar-toggle {
+        display: none !important;
+    }
+    
+    #content {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    body {
+        background: white !important;
+    }
+}
