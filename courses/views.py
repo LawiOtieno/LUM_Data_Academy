@@ -240,6 +240,9 @@ def course_materials(request, slug):
     for project in capstone_projects:
         project.is_started = project.id in started_projects
         project.project_enrollment = project_enrollments.get(project.id)
+        # Debug: Ensure we have the enrollment object with proper status
+        if project.project_enrollment:
+            print(f"Project {project.title} has enrollment with status: {project.project_enrollment.status}")
     
     context = {
         'course': course,
@@ -333,15 +336,16 @@ def start_project(request, slug, project_id):
     project_enrollment, created = ProjectEnrollment.objects.get_or_create(
         enrollment=enrollment,
         project=project,
-        defaults={'started_at': timezone.now()}
+        defaults={'started_at': timezone.now(), 'status': 'in_progress'}
     )
     
     if created:
-        # Properly start the project to set status to 'in_progress'
-        project_enrollment.start_project()
         message = f"Project '{project.title}' started successfully! Good luck!"
         messages.success(request, message)
     else:
+        # If not created but status is still 'not_started', update it
+        if project_enrollment.status == 'not_started':
+            project_enrollment.start_project()
         message = f"You have already started project '{project.title}'"
         messages.info(request, message)
     
@@ -563,7 +567,13 @@ def download_certificate(request, enrollment_id):
 def instructor_dashboard(request):
     """Dashboard for instructors to view all submitted projects"""
     # Check if user has instructor permissions
-    profile = request.user.userprofile
+    try:
+        profile = request.user.userprofile
+    except:
+        # Create profile if doesn't exist
+        from accounts.models import UserProfile
+        profile = UserProfile.objects.create(user=request.user)
+    
     if not profile.is_instructor and not request.user.is_staff:
         messages.error(request, 'You do not have instructor permissions.')
         return redirect('courses:courses')
@@ -586,9 +596,12 @@ def instructor_dashboard(request):
         status='submitted'
     ).select_related(
         'enrollment__user',
-        'enrollment__course',
+        'enrollment__course', 
         'project'
     ).order_by('-submitted_at')
+    
+    # Debug: Print submitted projects count
+    print(f"Found {submitted_projects.count()} submitted projects for instructor courses: {[c.title for c in instructor_courses]}")
     
     context = {
         'instructor_courses': instructor_courses,

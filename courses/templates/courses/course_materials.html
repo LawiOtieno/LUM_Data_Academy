@@ -332,6 +332,18 @@
                                     {% endif %}
                                 </div>
                                 
+                                {% if enrollment.status == 'not_started' %}
+                                <!-- Not Started Status - This shouldn't happen if project_enrollment exists -->
+                                <div class="space-y-3">
+                                    <p class="text-sm text-gray-600">Project has been enrolled but not started yet.</p>
+                                    <form method="post" action="{% url 'courses:start_project' course.slug project.id %}" class="inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                            🚀 Start Working
+                                        </button>
+                                    </form>
+                                </div>
+                                
                                 {% if enrollment.status == 'in_progress' %}
                                 <!-- Submit Project Section -->
                                 <div class="space-y-3">
